@@ -73,7 +73,8 @@ export class Components implements Disposable {
     const size = new THREE.Vector2(width, height);
     for (const name in this.tools.list) {
       if (this.tools.list[name].isResizeable()) {
-        this.tools.list[name].resize(size);
+        //@ts-ignore
+        this.tools.list[name].resize!(size);
       }
     }
   };

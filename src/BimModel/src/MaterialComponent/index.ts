@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {Components} from "../Components";
 import {ToolComponent} from "../Tool";
 import {Component, Disposable, UUID} from "../types";
-export class MaterialComponent extends Component<any> implements Disposable {
+export class MaterialComponent extends Component<string> implements Disposable {
   static readonly uuid = UUID.MaterialComponent;
   enabled = false;
   listMaterial: Map<
@@ -11,7 +11,7 @@ export class MaterialComponent extends Component<any> implements Disposable {
   > = new Map();
 
   get() {
-    throw new Error("Method not implemented.");
+    return MaterialComponent.uuid;
   }
   /**
    *
