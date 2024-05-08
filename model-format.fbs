@@ -1,0 +1,87 @@
+namespace Compression.schema; 
+
+
+table IColorBuffer  {
+  x: float32;
+  y: float32;
+  z: float32;
+  w: float32;
+}
+table IMetadataBuffer  {
+  name: string ;
+  description: string ;
+  schema: string ;
+  max_element_id: uint32 ;
+}
+
+table IStructureBuffer  {
+  element_id: uint32 ;
+  keys: [uint32] ;
+  rels: [uint32] ;
+}
+table IKeyFragmentsBuffer  {
+  key: uint32 ;
+  value: string ;
+}
+table IInputModelBuffer  {
+  metadata: IMetadataBuffer ;
+  units: string ;
+  structure: [IStructureBuffer] ;
+  key_fragments: [IKeyFragmentsBuffer] ;
+  coordination_matrix: [uint32] ;
+}
+
+table ICompositeBuffer  {
+  id: string ;
+  value: uint32 ; 
+}
+
+table IExportElementMeshBuffer   {
+  material: [uint8];
+  position: [float32];
+  normal: [float32];
+  index: [uint32];
+}
+table IExportElementBuffer   {
+  element_mesh: IExportElementMeshBuffer;
+  blocks: [uint32];
+  instance_color: [uint8];
+  instance_matrix: [float32];
+  composites: [ICompositeBuffer];
+  count: uint8;
+  uuid: string;
+  items: [string];
+}
+
+table StreamedInstanceBuffer   {
+  ids: [string];
+  transform: [float32];
+  color: [float32];
+}
+table StreamedAssetBuffer   {
+  uuid: string;
+  instances: [StreamedInstanceBuffer];
+  bounding_box: [float32];
+  has_holes: bool;
+  geometry_file: string;
+}
+
+table StreamedSettingsBuffer   {
+  assets: [StreamedAssetBuffer];
+}
+
+
+table StreamedElementBuffer   {
+  position: [float32];
+  normal: [float32];
+  index: [uint32];
+  vertices: [uint32];
+  composites: [ICompositeBuffer];
+  count: uint16;
+  uuid: string;
+}
+table StreamedElementFileBuffer   {
+  elements:[StreamedElementBuffer];
+}
+
+root_type IInputModelBuffer;

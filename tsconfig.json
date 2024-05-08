@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "preserveSymlinks": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react",
+    "typeRoots": ["./typings", "./node_modules/@types"],
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@assets/*": ["src/assets/*"],
+      "@BimModel/*": ["src/BimModel/*"],
+      "@signals/*": ["src/signals/*"],
+      "@pages/*": ["src/pages/*"],
+      "@baseTypes/*": ["src/baseTypes/*"],
+      "@/*": [
+        "./src/*"
+      ]
+    },
+  },
+  "include": ["src", "worker/*", "worker/Culling/CullingWorker.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
