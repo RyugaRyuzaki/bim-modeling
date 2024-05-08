@@ -36,7 +36,7 @@ export default defineConfig(() => {
     },
     base: "./bim-modeling",
     build: {
-      outDir: "build",
+      outDir: "./build",
     },
     test: {
       global: true,
