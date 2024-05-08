@@ -34,7 +34,7 @@ export default defineConfig(() => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    base: "./bim-modeling",
+    base: "./bim-modeling/",
     build: {
       outDir: "build",
     },
