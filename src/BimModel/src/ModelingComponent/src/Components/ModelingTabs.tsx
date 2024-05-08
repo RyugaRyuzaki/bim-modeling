@@ -1,29 +1,37 @@
 import React, {memo} from "react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {ModelingTools} from "../constants";
+import {IModelingToolTabs} from "@BimModel/src/types";
+import ContentModeling from "./ContentModeling";
+import {disciplineSignal, modelingSignal} from "@BimModel/src/Signals";
 
 const ModelingTabs = () => {
   return (
-    <Tabs defaultValue="Architecture" className="w-full">
-      <TabsList className="rounded-none bg-slate-200">
-        <TabsTrigger value="Architecture" className="mx-1 select-none">
-          Architecture
-        </TabsTrigger>
-        <TabsTrigger value="Structure" className="mx-1 ">
-          Structure
-        </TabsTrigger>
-        <TabsTrigger value="Plumbing" className="mx-1 ">
-          Plumbing
-        </TabsTrigger>
+    <Tabs defaultValue={disciplineSignal.value} className="w-full">
+      <TabsList className="rounded-none">
+        {ModelingTools.map((tab: IModelingToolTabs, index: number) => (
+          <TabsTrigger
+            key={`${tab.discipline}-${index}--TabsTrigger`}
+            value={tab.discipline}
+            className="mx-1 select-none"
+            disabled={
+              modelingSignal.value !== null &&
+              modelingSignal.value.discipline !== tab.discipline
+            }
+          >
+            {tab.discipline}
+          </TabsTrigger>
+        ))}
       </TabsList>
-      <TabsContent value="Architecture" className="mt-0 h-[60px]">
-        This is on processing...
-      </TabsContent>
-      <TabsContent value="Structure" className="mt-0 h-[60px]">
-        Change your password here.
-      </TabsContent>
-      <TabsContent value="Plumbing" className="mt-0 h-[60px]">
-        This is on processing...
-      </TabsContent>
+      {ModelingTools.map((tab: IModelingToolTabs, index: number) => (
+        <TabsContent
+          key={`${tab.discipline}-${index}-TabsContent`}
+          value={tab.discipline}
+          className="mt-0 h-[60px]"
+        >
+          <ContentModeling types={tab.types} discipline={tab.discipline} />
+        </TabsContent>
+      ))}
     </Tabs>
   );
 };
