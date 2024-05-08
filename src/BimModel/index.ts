@@ -1,6 +1,7 @@
 import {
   Components,
   CubeMapComponent,
+  disposeSignals,
   MaterialComponent,
   ModelingComponent,
   PropertyComponent,
@@ -25,6 +26,7 @@ export class BimModel {
   }
   async dispose() {
     this.components.dispose();
+    disposeSignals();
   }
 
   private init() {
