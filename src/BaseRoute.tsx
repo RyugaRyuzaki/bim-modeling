@@ -8,7 +8,7 @@ const BaseRoute = () => {
     <>
       <Routes>
         <Route
-          index
+          path="/bim-modeling"
           element={
             <>
               <Helmet>
