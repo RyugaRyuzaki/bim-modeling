@@ -3,6 +3,7 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
+    "homepage": "https://github.com/RyugaRyuzaki/bim-modeling",
     "scripts": {
         "dev": "vite --open",
         "build": "tsc && vite build",
