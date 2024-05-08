@@ -16,7 +16,7 @@ export type ICubeMapPosition =
   | "bottom-right";
 
 export class CubeMapComponent
-  extends Component<any>
+  extends Component<string>
   implements Disposable, Updateable
 {
   static readonly uuid = UUID.CubeMapComponent;
@@ -137,7 +137,7 @@ export class CubeMapComponent
     (this.container as any) = null;
   }
   get() {
-    throw new Error("Method not implemented.");
+    return CubeMapComponent.uuid;
   }
   private init() {
     const container = this.components.container;

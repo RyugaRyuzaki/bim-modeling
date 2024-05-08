@@ -2,12 +2,12 @@ import * as THREE from "three";
 import {Components} from "../Components";
 import {ToolComponent} from "../Tool";
 import {Component, Disposable, UUID} from "../types";
-export class PropertyComponent extends Component<any> implements Disposable {
+export class PropertyComponent extends Component<string> implements Disposable {
   static readonly uuid = UUID.PropertyComponent;
   enabled = false;
 
   get() {
-    throw new Error("Method not implemented.");
+    return PropertyComponent.uuid;
   }
   /**
    *

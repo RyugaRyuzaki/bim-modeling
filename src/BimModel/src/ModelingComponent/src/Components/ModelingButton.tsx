@@ -2,6 +2,8 @@ import React, {FC} from "react";
 import {
   IArchitectureModeling,
   IDiscipline,
+  IFile,
+  IModify,
   IPlumbingModeling,
   IStructureModeling,
   ITool,
@@ -18,7 +20,12 @@ import {useComputed} from "@preact/signals-react";
 
 const ModelingButton: FC<Props> = ({type, discipline}) => {
   const handleModeling = (
-    type: IArchitectureModeling | IStructureModeling | IPlumbingModeling
+    type:
+      | IArchitectureModeling
+      | IStructureModeling
+      | IPlumbingModeling
+      | IFile
+      | IModify
   ) => {
     modelingSignal.value = {discipline, type};
   };
