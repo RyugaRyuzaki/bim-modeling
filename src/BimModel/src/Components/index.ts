@@ -65,7 +65,7 @@ export class Components implements Disposable {
     this.canvas.style.width = "100%";
     this.canvas.style.height = "100%";
     this.canvas.style.position = "absolute";
-    this.canvas.style.zIndex = "5000";
+    this.canvas.style.zIndex = "10";
     this.clock = this.initClock();
   }
   private onResize = () => {

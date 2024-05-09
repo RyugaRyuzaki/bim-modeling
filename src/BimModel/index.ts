@@ -7,6 +7,7 @@ import {
   PropertyComponent,
   RendererComponent,
   StructureComponent,
+  ProjectComponent,
 } from "./src";
 
 export class BimModel {
@@ -33,13 +34,15 @@ export class BimModel {
     this.components = new Components(this.container);
     const materialManager = this.components.tools.get(MaterialComponent);
     materialManager.enabled = true;
+    const projectComponent = this.components.tools.get(ProjectComponent);
+    projectComponent.enabled = true;
     const renderer = this.components.tools.get(RendererComponent);
     renderer.enabled = true;
     const cubeMapComponent = this.components.tools.get(CubeMapComponent);
     cubeMapComponent.enabled = true;
     const modelingComponent = this.components.tools.get(ModelingComponent);
     modelingComponent.enabled = true;
-    modelingComponent.init(this.modeling);
+    modelingComponent.init(this.modeling, this.option);
     const propertyComponent = this.components.tools.get(PropertyComponent);
     propertyComponent.enabled = true;
     const structureComponent = this.components.tools.get(StructureComponent);

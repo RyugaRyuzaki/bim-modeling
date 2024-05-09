@@ -1,9 +1,17 @@
 import * as THREE from "three";
 import {Components} from "../Components";
 import {ToolComponent} from "../Tool";
-import {Component, Disposable, pixelRatio, Updateable, UUID} from "../types";
+import {
+  Component,
+  Disposable,
+  INavigation,
+  pixelRatio,
+  Updateable,
+  UUID,
+} from "../types";
 import {CubeMapMaterial, BoxCube} from "./src";
 import {RendererComponent} from "../RendererComponent";
+import {defaultBox, defaultSphere, switchPick} from "../utils";
 
 const near = 1,
   far = 10000;
@@ -22,7 +30,8 @@ export class CubeMapComponent
   static readonly uuid = UUID.CubeMapComponent;
   enabled = false;
   private materials = new CubeMapMaterial();
-
+  private box: THREE.Box3 = defaultBox;
+  private sphere: THREE.Sphere = defaultSphere();
   private container!: HTMLDivElement;
   private canvas!: HTMLCanvasElement;
   set align(position: ICubeMapPosition) {
@@ -148,7 +157,7 @@ export class CubeMapComponent
     this.container.style.width = this.width + "px";
     this.container.style.height = this.height + "px";
     this.container.style.position = "absolute";
-    this.container.style.zIndex = "6000";
+    this.container.style.zIndex = "20";
     this.container.appendChild(this.canvas);
     container.appendChild(this.container);
     this.align = "top-right";
@@ -231,7 +240,7 @@ export class CubeMapComponent
       if (!this.found) return;
       const name = this.found.object.name;
       if (!name) return;
-      // this.onNavigationView(name);
+      this.onNavigationView(name);
     });
   }
   /**
@@ -266,6 +275,14 @@ export class CubeMapComponent
     camera.position.copy(pos0);
     camera.lookAt(0, 0, 0);
     return camera;
+  }
+  private onNavigationView(name: INavigation) {
+    const controls =
+      this.components.tools.get(RendererComponent).camera.cameraControls;
+    const {center} = this.sphere;
+    const pos = switchPick(name, this.sphere, this.box);
+    controls.setLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z);
+    controls.fitToSphere(this.sphere, true);
   }
 }
 ToolComponent.libraryUUIDs.add(CubeMapComponent.uuid);

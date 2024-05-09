@@ -1,12 +1,5 @@
 import React, {FC} from "react";
-import {
-  IArchitectureModeling,
-  IDiscipline,
-  IModeling,
-  IPlumbingModeling,
-  IStructureModeling,
-  ITool,
-} from "@BimModel/src/types";
+import {IModeling} from "@BimModel/src/types";
 import {Button} from "@/components/ui/button";
 import {
   Tooltip,

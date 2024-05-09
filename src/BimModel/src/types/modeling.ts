@@ -1,29 +1,5 @@
 import {ReactElement, ReactNode} from "react";
 
-export type IArchitectureModeling =
-  | "Wall"
-  | "Floor"
-  | "Ceiling"
-  | "Roof"
-  | "Column"
-  | "Door"
-  | "Window";
-export type IStructureModeling =
-  | "Structure Beam"
-  | "Structure Column"
-  | "Structure Wall"
-  | "Structure Slab"
-  | "Structure Foundation"
-  | "ReinForcement";
-export type IPlumbingModeling = "Duct" | "Pipe";
-export type IModify = "Copy" | "Move" | "Trim" | "Extend";
-export type IFile =
-  | "New Project"
-  | "Open"
-  | "Save"
-  | "Export Ifc"
-  | "Export .bim"
-  | "Export .glb";
 export type IDrawType =
   | "Line"
   | "Rectangular"
@@ -38,32 +14,16 @@ export interface IModeling {
   drawType: IDrawType;
   onClick?: (drawType: IDrawType) => void;
 }
-export type IDiscipline =
-  | "Files"
-  | "Architecture"
-  | "Structure"
-  | "Plumbing"
-  | "Modify";
 
 export interface IModelingTool {
-  discipline: IDiscipline;
-  type:
-    | IArchitectureModeling
-    | IStructureModeling
-    | IPlumbingModeling
-    | IFile
-    | IModify;
+  discipline: string;
+  type: string;
 }
 export interface IModelingToolTabs {
-  discipline: IDiscipline;
+  discipline: string;
   types: ITool[];
 }
 export interface ITool {
-  type:
-    | IArchitectureModeling
-    | IStructureModeling
-    | IPlumbingModeling
-    | IFile
-    | IModify;
+  type: string;
   icon: ReactNode;
 }

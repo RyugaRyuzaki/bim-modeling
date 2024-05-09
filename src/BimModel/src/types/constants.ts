@@ -7,4 +7,5 @@ export const UUID = {
   ModelingComponent: "387fd9c7-c4b8-4140-ab1e-a704fa2346c8",
   StructureComponent: "84f65fed-d260-4abd-9f0b-e5d82f974bb7",
   PropertyComponent: "a93ae755-5ad7-4cef-991b-88e91d6c8b06",
+  ProjectComponent: "cc33b376-7b0c-4e3d-a335-7acaf7f625f6",
 };
