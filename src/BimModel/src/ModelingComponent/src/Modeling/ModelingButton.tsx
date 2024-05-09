@@ -1,13 +1,5 @@
 import React, {FC} from "react";
-import {
-  IArchitectureModeling,
-  IDiscipline,
-  IFile,
-  IModify,
-  IPlumbingModeling,
-  IStructureModeling,
-  ITool,
-} from "@BimModel/src/types";
+import {ITool} from "@BimModel/src/types";
 import {Button} from "@/components/ui/button";
 import {
   Tooltip,
@@ -19,14 +11,7 @@ import {modelingSignal} from "@BimModel/src/Signals";
 import {useComputed} from "@preact/signals-react";
 
 const ModelingButton: FC<Props> = ({type, discipline}) => {
-  const handleModeling = (
-    type:
-      | IArchitectureModeling
-      | IStructureModeling
-      | IPlumbingModeling
-      | IFile
-      | IModify
-  ) => {
+  const handleModeling = (type: string) => {
     modelingSignal.value = {discipline, type};
   };
   const disabled = useComputed(() => {
@@ -51,7 +36,6 @@ const ModelingButton: FC<Props> = ({type, discipline}) => {
             onClick={() => handleModeling(type.type)}
             disabled={disabled.value}
           >
-            <p className="mx-2">{type.type}</p>
             {type.icon}
           </Button>
         </TooltipTrigger>
@@ -64,6 +48,6 @@ const ModelingButton: FC<Props> = ({type, discipline}) => {
 };
 interface Props {
   type: ITool;
-  discipline: IDiscipline;
+  discipline: string;
 }
 export default ModelingButton;

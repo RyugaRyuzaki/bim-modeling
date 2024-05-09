@@ -8,7 +8,7 @@ const BaseRoute = () => {
     <>
       <Routes>
         <Route
-          path="/bim-modeling"
+          path={import.meta.env.PROD ? "/bim-modeling" : "/"}
           element={
             <>
               <Helmet>

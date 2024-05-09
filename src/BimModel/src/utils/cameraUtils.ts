@@ -9,6 +9,10 @@ const max = new THREE.Vector3(corner, corner, corner);
 const pos1 = new THREE.Vector3(corner, corner, corner);
 const min = new THREE.Vector3(-corner, -corner, -corner);
 export const defaultBox = new THREE.Box3(min, max);
+export const defaultSphere = () => {
+  const center = new THREE.Vector3().lerpVectors(max, min, 0.5);
+  return new THREE.Sphere(center, max.distanceTo(min) / 2);
+};
 export function initPerspectiveCamera(aspect: number): THREE.PerspectiveCamera {
   const camera = new THREE.PerspectiveCamera(45, aspect, near, far);
   camera.position.copy(max);

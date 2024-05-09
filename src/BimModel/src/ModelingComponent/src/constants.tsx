@@ -1,13 +1,8 @@
 import React from "react";
 import {
-  IArchitectureModeling,
   IDrawType,
-  IFile,
   IModeling,
   IModelingToolTabs,
-  IModify,
-  IPlumbingModeling,
-  IStructureModeling,
   ITool,
 } from "@BimModel/src/types";
 //#region Draw
@@ -41,7 +36,7 @@ const onClick = (drawType: IDrawType) => {
   }
 };
 
-const Modelings = {
+export const Modelings = {
   Finish: {
     icon: <Finish className={iConClassName} />,
     drawType: "Finish",
@@ -108,173 +103,90 @@ import {IoMdMove as Move} from "react-icons/io";
 import {BiTrim as Trim} from "react-icons/bi";
 import {CgExtension as Extend} from "react-icons/cg";
 //#endregion
-//#region File
-import {MdOutlineCreateNewFolder as NewProject} from "react-icons/md";
-import {GoFileDirectory as Open} from "react-icons/go";
-import {CiSaveDown2 as Save} from "react-icons/ci";
-import dotbim from "@assets/dotbim.png";
-import gltf from "@assets/gltf-icon.png";
-import ifc from "@assets/ifc-icon.png";
-import revit from "@assets/revit-256.png";
-
-//#endregion
 
 const Architecture = [
   {
     type: "Wall",
-    icon: <Wall />,
+    icon: <Wall className={iConClassName} />,
   },
   {
     type: "Floor",
-    icon: <Floor />,
+    icon: <Floor className={iConClassName} />,
   },
   {
     type: "Column",
-    icon: <Column />,
+    icon: <Column className={iConClassName} />,
   },
   {
     type: "Roof",
-    icon: <Roof />,
+    icon: <Roof className={iConClassName} />,
   },
   {
     type: "Door",
-    icon: <Door />,
+    icon: <Door className={iConClassName} />,
   },
   {
     type: "Window",
-    icon: <Window />,
+    icon: <Window className={iConClassName} />,
   },
 ] as ITool[];
 
 const Structure = [
   {
     type: "Structure Beam",
-    icon: <StructureBeam />,
+    icon: <StructureBeam className={iConClassName} />,
   },
   {
     type: "Structure Column",
-    icon: <StructureColumn />,
+    icon: <StructureColumn className={iConClassName} />,
   },
   {
     type: "Structure Wall",
-    icon: <StructureWall />,
+    icon: <StructureWall className={iConClassName} />,
   },
   {
     type: "Structure Slab",
-    icon: <StructureSlab />,
+    icon: <StructureSlab className={iConClassName} />,
   },
   {
     type: "Structure Foundation",
-    icon: <StructureFoundation />,
+    icon: <StructureFoundation className={iConClassName} />,
   },
   {
     type: "ReinForcement",
-    icon: <ReinForcement />,
+    icon: <ReinForcement className={iConClassName} />,
   },
 ] as ITool[];
 const Plumbing = [
   {
     type: "Duct",
-    icon: <Duct />,
+    icon: <Duct className={iConClassName} />,
   },
   {
     type: "Pipe",
-    icon: <Pipe />,
+    icon: <Pipe className={iConClassName} />,
   },
 ] as ITool[];
 const Modify = [
   {
     type: "Copy",
-    icon: <Copy />,
+    icon: <Copy className={iConClassName} />,
   },
   {
     type: "Move",
-    icon: <Move />,
+    icon: <Move className={iConClassName} />,
   },
   {
     type: "Trim",
-    icon: <Trim />,
+    icon: <Trim className={iConClassName} />,
   },
   {
     type: "Extend",
-    icon: <Extend />,
-  },
-] as ITool[];
-const Files = [
-  {
-    type: "New Project",
-    icon: <NewProject />,
-  },
-  {
-    type: "Open",
-    icon: <Open />,
-  },
-  {
-    type: "Save",
-    icon: <Save />,
-  },
-  {
-    type: "Export Ifc",
-    icon: <img src={ifc} className={iConClassName} />,
-  },
-  {
-    type: "Export .bim",
-    icon: <img src={dotbim} className={iConClassName} />,
-  },
-  {
-    type: "Export .glb",
-    icon: <img src={gltf} className={iConClassName} />,
+    icon: <Extend className={iConClassName} />,
   },
 ] as ITool[];
 
-export function getModelings(
-  type:
-    | IArchitectureModeling
-    | IStructureModeling
-    | IPlumbingModeling
-    | IFile
-    | IModify
-    | null
-): IModeling[] {
-  if (!type) return [];
-  const {Finish, Cancel, Line, Rectangular, Arc, PolyLines, Point} = Modelings;
-  switch (type) {
-    case "Wall":
-      return [Line, Rectangular, Arc, PolyLines];
-    case "Floor":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
-    case "Ceiling":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
-    case "Roof":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
-    case "Column":
-      return [Point, Cancel];
-    case "Door":
-      return [Point, Cancel];
-    case "Window":
-      return [Point, Cancel];
-    case "Structure Beam":
-      return [Line, Arc];
-    case "Structure Column":
-      return [Point, Cancel];
-    case "Structure Wall":
-      return [Line, Rectangular, Arc, PolyLines];
-    case "Structure Slab":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
-    case "Structure Foundation":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
-    case "ReinForcement":
-      return [];
-    case "Duct":
-      return [Line, Cancel];
-    case "Pipe":
-      return [Line, Cancel];
-    default:
-      return [];
-  }
-}
 export const ModelingTools: IModelingToolTabs[] = [
-  {discipline: "Files", types: Files},
   {discipline: "Architecture", types: Architecture},
   {discipline: "Structure", types: Structure},
   {discipline: "Plumbing", types: Plumbing},

@@ -1,9 +1,9 @@
 import React, {FC, useState} from "react";
-import {IDiscipline, IModeling, ITool} from "@BimModel/src/types";
+import {IModeling, ITool} from "@BimModel/src/types";
 import ModelingButton from "./ModelingButton";
 import {useSignalEffect} from "@preact/signals-react";
 import {modelingSignal} from "@BimModel/src/Signals";
-import {getModelings} from "../constants";
+import {getModelings} from "../utils";
 import ToolButton from "./ToolButton";
 
 const ContentModeling: FC<Props> = ({types, discipline}) => {
@@ -39,6 +39,6 @@ const ContentModeling: FC<Props> = ({types, discipline}) => {
 };
 interface Props {
   types: ITool[];
-  discipline: IDiscipline;
+  discipline: string;
 }
 export default ContentModeling;
