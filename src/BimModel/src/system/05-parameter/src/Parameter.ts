@@ -1,7 +1,5 @@
-import {BaseParameter, IBaseParameterValue} from "../../00-base";
-
-export class Parameter extends BaseParameter {
+export class Parameter {
   name!: string;
   value!: string;
-  valueType!: IBaseParameterValue;
+  valueType!: string;
 }

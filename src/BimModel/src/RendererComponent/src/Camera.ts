@@ -5,7 +5,11 @@ import * as THREE from "three";
 import CameraControls from "camera-controls";
 import {Disposable, Resizeable, Updateable} from "../../types";
 import {Components} from "../../Components";
-import {initOrthographicCamera, initPerspectiveCamera} from "../../utils";
+import {
+  defaultCameraFar,
+  initOrthographicCamera,
+  initPerspectiveCamera,
+} from "../../utils";
 
 CameraControls.install({
   THREE,
@@ -43,6 +47,10 @@ export class Camera implements Disposable, Resizeable, Updateable {
   get projection() {
     return this._projection;
   }
+  private state: {position: THREE.Vector3; target: THREE.Vector3} = {
+    position: new THREE.Vector3(),
+    target: new THREE.Vector3(),
+  };
 
   constructor(private components: Components) {
     this.init();
@@ -81,7 +89,30 @@ export class Camera implements Disposable, Resizeable, Updateable {
   getSize() {
     return this.size;
   }
-
+  setLookAt(position: THREE.Vector3, target: THREE.Vector3) {
+    this.cameraControls.setLookAt(
+      position.x,
+      position.y,
+      position.z,
+      target.x,
+      target.y,
+      target.z
+    );
+  }
+  saveState() {
+    const {position, target} = this.state;
+    this.cameraControls.getPosition(position);
+    this.cameraControls.getTarget(target);
+    this.cameraControls.mouseButtons.left = 0;
+  }
+  resetState() {
+    if (!this.cameraControls) return;
+    const {position, target} = this.state;
+    this.setLookAt(position, target);
+    this.cameraControls.mouseButtons.left = 1;
+    this.currentCamera.far = defaultCameraFar;
+    this.currentCamera.near = -defaultCameraFar;
+  }
   private init() {
     const {width, height} = this.components.rect;
     this.size.x = width;
@@ -97,5 +128,8 @@ export class Camera implements Disposable, Resizeable, Updateable {
     this.cameraControls.infinityDolly = true;
     this.cameraControls.dollySpeed = 2;
     this.cameraControls.setTarget(0, 0, 0);
+    const {position, target} = this.state;
+    this.cameraControls.getPosition(position);
+    this.cameraControls.getTarget(target);
   }
 }

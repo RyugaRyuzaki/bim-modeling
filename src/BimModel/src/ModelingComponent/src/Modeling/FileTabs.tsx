@@ -8,8 +8,7 @@ import {CiSaveDown2 as Save} from "react-icons/ci";
 import dotbim from "@assets/dotbim.png";
 import gltf from "@assets/gltf-icon.png";
 import ifc from "@assets/ifc-icon.png";
-import revit from "@assets/revit-256.png";
-import {ITool} from "@BimModel/src/types";
+import {ITool} from "@ModelingComponent/types";
 import {
   Tooltip,
   TooltipContent,

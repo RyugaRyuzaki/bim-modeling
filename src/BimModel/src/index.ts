@@ -7,4 +7,5 @@ export * from "./PropertyComponent";
 export * from "./CubeMapComponent";
 export * from "./ProjectComponent";
 export * from "./Signals";
+export * from "./system";
 export * from "./types";

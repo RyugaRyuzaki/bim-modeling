@@ -27,6 +27,35 @@ export default defineConfig(() => {
       alias: {
         "@assets": path.resolve(__dirname, "./src/assets"),
         "@BimModel": path.resolve(__dirname, "./src/BimModel"),
+        "@CubeMapComponent": path.resolve(
+          __dirname,
+          "./src/BimModel/src/CubeMapComponent"
+        ),
+        "@MaterialComponent": path.resolve(
+          __dirname,
+          "./src/BimModel/src/MaterialComponent"
+        ),
+        "@ModelingComponent": path.resolve(
+          __dirname,
+          "./src/BimModel/src/ModelingComponent"
+        ),
+        "@PropertyComponent": path.resolve(
+          __dirname,
+          "./src/BimModel/src/PropertyComponent"
+        ),
+        "@RendererComponent": path.resolve(
+          __dirname,
+          "./src/BimModel/src/RendererComponent"
+        ),
+        "@StructureComponent": path.resolve(
+          __dirname,
+          "./src/BimModel/src/StructureComponent"
+        ),
+        "@ProjectComponent": path.resolve(
+          __dirname,
+          "./src/BimModel/src/ProjectComponent"
+        ),
+        "@system": path.resolve(__dirname, "./src/BimModel/src/system"),
         "@components": path.resolve(__dirname, "./src/components"),
         "@signals": path.resolve(__dirname, "./src/signals"),
         "@pages": path.resolve(__dirname, "./src/pages"),

@@ -1,5 +1,5 @@
 import React, {FC, useState} from "react";
-import {IModeling, ITool} from "@BimModel/src/types";
+import {IModeling, ITool} from "@ModelingComponent/types";
 import ModelingButton from "./ModelingButton";
 import {useSignalEffect} from "@preact/signals-react";
 import {modelingSignal} from "@BimModel/src/Signals";

@@ -1,18 +1,19 @@
-import {IModeling} from "@BimModel/src/types";
+import {IModeling} from "@ModelingComponent/types";
 import {Modelings} from "./constants";
 
 export function getModelings(type: string): IModeling[] {
   if (!type) return [];
-  const {Finish, Cancel, Line, Rectangular, Arc, PolyLines, Point} = Modelings;
+  const {Finish, Cancel, Line, Rectangular, Arc, PolyLines, Point, PickLine} =
+    Modelings;
   switch (type) {
     case "Wall":
       return [Line, Rectangular, Arc, PolyLines];
     case "Floor":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
+      return [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel];
     case "Ceiling":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
+      return [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel];
     case "Roof":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
+      return [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel];
     case "Column":
       return [Point, Cancel];
     case "Door":
@@ -26,9 +27,9 @@ export function getModelings(type: string): IModeling[] {
     case "Structure Wall":
       return [Line, Rectangular, Arc, PolyLines];
     case "Structure Slab":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
+      return [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel];
     case "Structure Foundation":
-      return [Finish, Line, Rectangular, Arc, PolyLines, Cancel];
+      return [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel];
     case "ReinForcement":
       return [];
     case "Duct":

@@ -1,15 +1,20 @@
-import * as THREE from "three";
-import {Disposable} from "../../types";
-import {Components} from "../../Components";
-import {Camera} from "./Camera";
-
 /**
- * An infinite grid. Created by
- * [fyrestar](https://github.com/Fyrestar/THREE.InfiniteGridHelper)
- * and translated to typescript by
- * [dkaraush](https://github.com/dkaraush/THREE.InfiniteGridHelper/blob/master/InfiniteGridHelper.ts).
+ * @module WorkPlaneSystem
  */
-export class Grid implements Disposable {
+
+import * as THREE from "three";
+import {Components} from "@BimModel/src/Components";
+import {ToolComponent} from "@BimModel/src/Tool";
+import {Component, Disposable} from "@BimModel/src/types";
+import {systemGUID} from "../constants";
+import {Camera, RendererComponent} from "@BimModel/src/RendererComponent";
+export class WorkPlaneSystem extends Component<string> implements Disposable {
+  static readonly uuid = systemGUID.workPlane;
+  static readonly size1 = 1;
+  static readonly size2 = 10;
+  static readonly distance = 500;
+  static readonly color = new THREE.Color(0x666666);
+  enabled = false;
   /** The material of the grid. */
   get material() {
     return this._grid.material as THREE.ShaderMaterial;
@@ -41,29 +46,22 @@ export class Grid implements Disposable {
     return this._grid.visible;
   }
 
+  get camera() {
+    return this.components.tools.get(RendererComponent)!.camera;
+  }
   get cameraControls() {
     return this.camera.cameraControls;
   }
-  set setupEvents(active: boolean) {
-    if (active) {
-      this.cameraControls.addEventListener("update", this.updateZoom);
-    } else {
-      this.cameraControls.removeEventListener("update", this.updateZoom);
-    }
-  }
+
   get grid() {
     return this._grid;
   }
-  constructor(
-    private components: Components,
-    private camera: Camera,
-    color = new THREE.Color(0x666666),
-    size1 = 1,
-    size2 = 10,
-    distance = 500
-  ) {
-    // Source: https://github.com/dkaraush/THREE.InfiniteGridHelper/blob/master/InfiniteGridHelper.ts
-    // Author: Fyrestar https://mevedia.com (https://github.com/Fyrestar/THREE.InfiniteGridHelper)
+  /**
+   *
+   */
+  constructor(components: Components) {
+    super(components);
+    this.components.tools.add(WorkPlaneSystem.uuid, this);
 
     const geometry = new THREE.PlaneGeometry(2, 2, 1, 1);
 
@@ -72,16 +70,16 @@ export class Grid implements Disposable {
 
       uniforms: {
         uSize1: {
-          value: size1,
+          value: WorkPlaneSystem.size1,
         },
         uSize2: {
-          value: size2,
+          value: WorkPlaneSystem.size2,
         },
         uColor: {
-          value: color,
+          value: WorkPlaneSystem.color,
         },
         uDistance: {
-          value: distance,
+          value: WorkPlaneSystem.distance,
         },
         uFade: {
           value: this._fade,
@@ -164,15 +162,16 @@ export class Grid implements Disposable {
     this._grid = new THREE.Mesh(geometry, material);
     this._grid.frustumCulled = false;
     this.components.scene.add(this._grid);
-    this.setupEvents = true;
   }
-
-  /** {@link Disposable.dispose} */
   async dispose() {
-    this.setupEvents = false;
+    this.enabled = false;
+    (this._grid.material as THREE.ShaderMaterial).dispose();
+    (this._grid.material as any) = null;
+    this._grid.geometry.dispose();
   }
 
-  private updateZoom = () => {
-    this.material.uniforms.uZoom.value = this.camera.currentCamera.zoom;
-  };
+  get() {
+    return WorkPlaneSystem.uuid;
+  }
 }
+ToolComponent.libraryUUIDs.add(WorkPlaneSystem.uuid);

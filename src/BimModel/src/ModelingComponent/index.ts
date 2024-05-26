@@ -11,6 +11,7 @@ export class ModelingComponent extends Component<any> implements Disposable {
   get ProjectComponent(): ProjectComponent {
     return this.components.tools.get(ProjectComponent);
   }
+
   /**
    *
    */
@@ -22,6 +23,7 @@ export class ModelingComponent extends Component<any> implements Disposable {
     this.modelingContainer?.remove();
     this.optionContainer?.remove();
     (this.modelingContainer as any) = null;
+    (this.optionContainer as any) = null;
   }
   get() {
     throw new Error("Method not implemented.");
@@ -33,4 +35,5 @@ export class ModelingComponent extends Component<any> implements Disposable {
     option.appendChild(this.optionContainer);
   }
 }
+//
 ToolComponent.libraryUUIDs.add(ModelingComponent.uuid);

@@ -1,0 +1,103 @@
+.showPanel {
+    width: 15%;
+    transition: width 0.05s;
+}
+
+.hidePanel {
+    width: 0;
+    transition: width 0.05s;
+}
+
+:root {
+    --color: rgb(8, 8, 255)
+}
+
+.snap-intersect {
+    position: relative;
+    height: 30px;
+    /* this can be anything */
+    width: 30px;
+    /* ...but maintain 1:1 aspect ratio */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.snap-intersect::before,
+.snap-intersect::after {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 1px;
+    /* cross thickness */
+    background-color: var(--color);
+}
+
+.snap-intersect::before {
+    transform: rotate(45deg);
+}
+
+.snap-intersect::after {
+    transform: rotate(-45deg);
+}
+
+.snap-middle {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 17.32px solid var(--color)
+}
+
+.snap-endpoint {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--color)
+}
+
+.endLine {
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--color);
+    border-radius: 50%;
+    background-color: #8cae69;
+}
+
+.tag {
+    position: absolute;
+    left: 0;
+    font-family: monospace;
+    width: auto;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    margin: auto;
+    background: transparent;
+    background-color: rgb(78, 78, 174);
+    color: white!important;
+    font-weight: 700;
+    z-index: 4000;
+    padding: 5px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.tag.info {
+    border-radius: 5px;
+    background-color: rgb(168, 197, 197);
+    top: 0px!important;
+    height: auto;
+    color: white!important;
+    font-weight: 700;
+}
+
+.selectionWindow {
+    border: 1px solid #55aaff;
+    background: transparent;
+    position: fixed;
+    z-index: 3000;
+    pointer-events: none;
+    top: 0;
+    left: 0
+}

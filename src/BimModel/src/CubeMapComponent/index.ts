@@ -98,6 +98,17 @@ export class CubeMapComponent
     if (!this.container) throw new Error("Not Initialized!");
     return this.container.getBoundingClientRect();
   }
+  private _visible = false;
+  set visible(visible: boolean) {
+    if (!this.container || !this.components.container) return;
+    if (this._visible === visible) return;
+    this._visible = visible;
+    if (visible) {
+      this.components.container.appendChild(this.container);
+    } else {
+      this.container.remove();
+    }
+  }
   /**
    *
    */
@@ -159,7 +170,7 @@ export class CubeMapComponent
     this.container.style.position = "absolute";
     this.container.style.zIndex = "20";
     this.container.appendChild(this.canvas);
-    container.appendChild(this.container);
+    this.visible = true;
     this.align = "top-right";
   }
 

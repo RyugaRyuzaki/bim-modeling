@@ -2,19 +2,24 @@ import * as THREE from "three";
 import {INavigation} from "../types";
 
 const near = 1,
-  far = 10000,
   distance = 20,
   corner = Math.sqrt(3 * distance * distance);
 const max = new THREE.Vector3(corner, corner, corner);
 const pos1 = new THREE.Vector3(corner, corner, corner);
 const min = new THREE.Vector3(-corner, -corner, -corner);
+export const defaultCameraFar = 10000;
 export const defaultBox = new THREE.Box3(min, max);
 export const defaultSphere = () => {
   const center = new THREE.Vector3().lerpVectors(max, min, 0.5);
   return new THREE.Sphere(center, max.distanceTo(min) / 2);
 };
 export function initPerspectiveCamera(aspect: number): THREE.PerspectiveCamera {
-  const camera = new THREE.PerspectiveCamera(45, aspect, near, far);
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    aspect,
+    near,
+    defaultCameraFar
+  );
   camera.position.copy(max);
   camera.lookAt(0, 0, 0);
   return camera;
@@ -25,8 +30,8 @@ export function initOrthographicCamera(width: number, height: number) {
     width / 50,
     height / 50,
     height / -50,
-    -far,
-    far
+    -defaultCameraFar,
+    defaultCameraFar
   );
   camera.position.copy(pos1);
   camera.lookAt(0, 0, 0);

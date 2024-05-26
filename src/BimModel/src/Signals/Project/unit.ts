@@ -1,4 +1,4 @@
-import {IUnit} from "@BimModel/src/types";
+import {IUnit} from "@ProjectComponent/types";
 import {effect, signal} from "@preact/signals-react";
 
 export const ListUnits: IUnit[] = ["m", "mm"];

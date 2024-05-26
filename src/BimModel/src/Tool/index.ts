@@ -86,6 +86,7 @@ export class ToolComponent
       tool.enabled = false;
       if (tool.isDisposeable()) {
         await tool.dispose();
+        this.notifyDispose(tool);
       }
     }
   }
@@ -102,5 +103,12 @@ export class ToolComponent
 
 - If you're using a platform tool, verify the uuid isn't misspelled or contact the tool creator.`
       );
+  }
+  notifyDispose(tool: Component<any>) {
+    const isDev = import.meta.env.DEV;
+    if (!isDev) return;
+    if (!tool.constructor || !tool.constructor.name) return;
+    const name = tool.constructor.name;
+    console.log(`${name} disposed!`);
   }
 }

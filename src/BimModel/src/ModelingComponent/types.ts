@@ -8,6 +8,7 @@ export type IDrawType =
   | "Cancel"
   | "Finish"
   | "Point"
+  | "PickLine"
   | "None";
 export interface IModeling {
   icon: ReactElement;
@@ -25,5 +26,10 @@ export interface IModelingToolTabs {
 }
 export interface ITool {
   type: string;
+  icon: ReactNode;
+}
+export type IVisibility = "3D" | "Plane" | "Elevation";
+export interface IVisibilityButton {
+  tooltip: IVisibility;
   icon: ReactNode;
 }
