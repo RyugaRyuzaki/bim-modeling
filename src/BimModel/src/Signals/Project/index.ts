@@ -1,5 +1,6 @@
 import {signal} from "@preact/signals-react";
 export * from "./unit";
+export * from "./line";
 export const projectSignal = signal<any | null>(null);
 export const openProjectInfoSignal = signal<boolean>(false);
 export const newProjectInfoSignal = signal<boolean>(false);

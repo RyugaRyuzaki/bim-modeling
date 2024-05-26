@@ -13,7 +13,9 @@ import {
   UUID,
 } from "../types";
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
-import {Camera, Grid, PostProduction} from "./src";
+import {Camera, PostProduction} from "./src";
+import {WorkPlaneSystem} from "../system";
+export * from "./src";
 /**
  *
  */
@@ -25,10 +27,9 @@ export class RendererComponent
   enabled = false;
   size: THREE.Vector2 = new THREE.Vector2();
   public camera!: Camera;
-  private labelRenderer!: CSS2DRenderer;
-  private renderer!: THREE.WebGLRenderer;
-  private grid!: Grid;
-  private postProduction!: PostProduction;
+  public labelRenderer!: CSS2DRenderer;
+  public renderer!: THREE.WebGLRenderer;
+  public postProduction!: PostProduction;
   set setupEvents(setupEvents: boolean) {
     const controls = this.camera.cameraControls;
     const domElement = this.components.canvas;
@@ -39,6 +40,7 @@ export class RendererComponent
       controls.addEventListener("wake", this.onWake);
       controls.addEventListener("controlend", this.onControlEnd);
       controls.addEventListener("sleep", this.onSleep);
+      controls.addEventListener("update", this.onUpdate);
       domElement.addEventListener("wheel", this.onWheel);
     } else {
       controls.removeEventListener("control", this.onControl);
@@ -46,6 +48,7 @@ export class RendererComponent
       controls.removeEventListener("wake", this.onWake);
       controls.removeEventListener("controlend", this.onControlEnd);
       controls.removeEventListener("sleep", this.onSleep);
+      controls.removeEventListener("update", this.onUpdate);
       domElement.removeEventListener("wheel", this.onWheel);
     }
   }
@@ -54,23 +57,22 @@ export class RendererComponent
   private lastWheelUsed = 0;
   private lastResized = 0;
   private resizeDelay = 200;
+
   constructor(components: Components) {
     super(components);
     this.components.tools.add(RendererComponent.uuid, this);
     this.camera = new Camera(this.components);
     this.camera.enabled = true;
-    this.grid = new Grid(this.components, this.camera);
+
     this.initRenderer();
     this.initLabelRenderer();
     this.initPostProduction();
-    this.postProduction.customEffects.excludedMeshes.push(this.grid.grid);
+
     this.setupEvents = true;
   }
   async dispose() {
     this.enabled = false;
     this.setupEvents = false;
-    this.grid?.dispose();
-    (this.grid as any) = null;
     this.camera?.dispose();
     (this.camera as any) = null;
     this.postProduction?.dispose();
@@ -162,19 +164,19 @@ export class RendererComponent
     this.postProduction.enabled = true;
     this.postProduction.customEffects.outlineEnabled = true;
   }
-  onControlStart = (_event: any) => {
+  private onControlStart = (_event: any) => {
     this.isUserControllingCamera = true;
   };
-  onWake = (_event: any) => {
+  private onWake = (_event: any) => {
     this.isControlSleeping = false;
   };
 
-  onControl = (_event: any) => {
+  private onControl = (_event: any) => {
     if (!this.postProduction.enabled) return;
     this.postProduction.visible = false;
   };
 
-  onControlEnd = (_event: any) => {
+  private onControlEnd = (_event: any) => {
     if (!this.postProduction.enabled) return;
     this.isUserControllingCamera = false;
     if (!this.isUserControllingCamera && this.isControlSleeping) {
@@ -182,12 +184,12 @@ export class RendererComponent
     }
   };
 
-  onWheel = (_event: any) => {
+  private onWheel = (_event: any) => {
     if (!this.postProduction.enabled) return;
     this.lastResized = performance.now();
   };
 
-  onSleep = (_event: any) => {
+  private onSleep = (_event: any) => {
     if (!this.postProduction.enabled) return;
     this.isControlSleeping = true;
     const currentWheel = performance.now();
@@ -197,6 +199,10 @@ export class RendererComponent
         this.postProduction.visible = true;
       }
     }, 100);
+  };
+  private onUpdate = () => {
+    const materialGrid = this.components.tools.get(WorkPlaneSystem).material;
+    materialGrid.uniforms.uZoom.value = this.camera.currentCamera.zoom;
   };
 }
 ToolComponent.libraryUUIDs.add(RendererComponent.uuid);

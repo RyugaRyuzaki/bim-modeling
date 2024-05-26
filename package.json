@@ -42,6 +42,7 @@
         "three": "^0.163.0",
         "three-mesh-bvh": "^0.7.4",
         "three-stdlib": "^2.29.6",
+        "uuid": "^9.0.1",
         "web-ifc": "^0.0.54"
     },
     "devDependencies": {

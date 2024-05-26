@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {Component, Disposable} from "../types";
+import {Disposable} from "../types";
 import {ToolComponent} from "../Tool";
 import {
   acceleratedRaycast,
@@ -8,6 +8,7 @@ import {
 } from "three-mesh-bvh";
 import {effect} from "@preact/signals-react";
 import {appTheme} from "@signals/theme";
+import {isModelingSignal, isOrthoSignal, keyboardSignal} from "../Signals";
 /**
  * The entry point of Open BIM Components.
  * It contains the basic items to create a BIM 3D scene based on Three.js, as
@@ -32,21 +33,26 @@ export class Components implements Disposable {
   set setupEvent(enabled: boolean) {
     if (enabled) {
       window.addEventListener("resize", this.onResize);
+      document.addEventListener("keydown", this.onKeyDown);
+      document.addEventListener("keyup", this.onKeyUp);
     } else {
       window.removeEventListener("resize", this.onResize);
+      document.removeEventListener("keydown", this.onKeyDown);
+      document.removeEventListener("keyup", this.onKeyUp);
     }
   }
   get rect(): DOMRect {
     if (!this.container) throw new Error("Not Initialized!");
     return this.container.getBoundingClientRect();
   }
+
   constructor(public container: HTMLDivElement) {
     this.init();
     this.setupBVH();
     this.tools = new ToolComponent(this);
     this.setupEvent = true;
     effect(() => {
-      this.scene.background = appTheme.value === "dark" ? sceneBG : null;
+      this.scene.background = appTheme.value === "dark" ? null : sceneBG;
     });
   }
   async dispose() {
@@ -78,6 +84,16 @@ export class Components implements Disposable {
       }
     }
   };
+  private onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Escape" && isModelingSignal.value)
+      isModelingSignal.value = false;
+    if (e.key === "F8") isOrthoSignal.value = !isOrthoSignal.value;
+    keyboardSignal.value = e.key;
+  };
+  private onKeyUp = (_e: KeyboardEvent) => {
+    keyboardSignal.value = null;
+  };
+
   private initClock() {
     const clock = new THREE.Clock();
     clock.start();

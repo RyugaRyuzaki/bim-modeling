@@ -1,7 +1,7 @@
 import React, {memo} from "react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ModelingTools} from "../constants";
-import {IModelingToolTabs} from "@BimModel/src/types";
+import {IModelingToolTabs} from "@ModelingComponent/types";
 import ContentModeling from "./ContentModeling";
 import {
   disciplineSignal,
@@ -28,9 +28,8 @@ const ModelingTabs = () => {
             value={tab.discipline}
             className="mx-1 select-none"
             disabled={
-              !projectSignal.value ||
-              (modelingSignal.value !== null &&
-                modelingSignal.value.discipline !== tab.discipline)
+              modelingSignal.value !== null &&
+              modelingSignal.value.discipline !== tab.discipline
             }
           >
             {tab.discipline}

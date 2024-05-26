@@ -9,6 +9,7 @@ export class StructureComponent
 {
   static readonly uuid = UUID.StructureComponent;
   enabled = false;
+  private container!: HTMLDivElement;
   get ProjectComponent(): ProjectComponent {
     return this.components.tools.get(ProjectComponent);
   }
@@ -24,5 +25,6 @@ export class StructureComponent
   get() {
     return StructureComponent.uuid;
   }
+  init(_structure: HTMLDivElement) {}
 }
 ToolComponent.libraryUUIDs.add(StructureComponent.uuid);

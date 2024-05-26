@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {IModeling} from "@BimModel/src/types";
+import {IModeling} from "@ModelingComponent/types";
 import {Button} from "@/components/ui/button";
 import {
   Tooltip,

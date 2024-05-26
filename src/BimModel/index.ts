@@ -1,13 +1,14 @@
 import {
   Components,
-  CubeMapComponent,
   disposeSignals,
+  CubeMapComponent,
   MaterialComponent,
   ModelingComponent,
   PropertyComponent,
   RendererComponent,
   StructureComponent,
   ProjectComponent,
+  SystemComponent,
 } from "./src";
 
 export class BimModel {
@@ -47,6 +48,8 @@ export class BimModel {
     propertyComponent.enabled = true;
     const structureComponent = this.components.tools.get(StructureComponent);
     structureComponent.enabled = true;
+    structureComponent.init(this.structure);
+    new SystemComponent(this.components);
     this.components.gameLoop();
   }
 }

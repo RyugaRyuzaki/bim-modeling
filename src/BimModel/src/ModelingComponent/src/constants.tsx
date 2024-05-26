@@ -4,36 +4,25 @@ import {
   IModeling,
   IModelingToolTabs,
   ITool,
-} from "@BimModel/src/types";
+  IVisibilityButton,
+} from "@ModelingComponent/types";
 //#region Draw
 import {AiOutlineCheckCircle as Finish} from "react-icons/ai";
 import {PiLineSegmentDuotone as Line} from "react-icons/pi";
 import {BsBoundingBoxCircles as Rectangular} from "react-icons/bs";
-import {BsDashCircleDotted as Arc} from "react-icons/bs";
+import {CgArrowLongUp as PickLine} from "react-icons/cg";
+import {BiCircle as Arc} from "react-icons/bi";
 import {MdOutlineShare as PolyLines} from "react-icons/md";
 import {TiDeleteOutline as Cancel} from "react-icons/ti";
 import {FaRegCircleDot as Point} from "react-icons/fa6";
 export const iConClassName = "w-[30px] h-[30px]";
 const onClick = (drawType: IDrawType) => {
-  switch (drawType) {
-    case "Finish":
-    case "Cancel":
-      drawingTypeSignal.value = "None";
-      modelingSignal.value = null;
-      break;
-    case "Line":
-      break;
-    case "Rectangular":
-      break;
-    case "PolyLines":
-      break;
-    case "Arc":
-      break;
-    case "Point":
-      break;
-    default:
-      break;
+  if (drawType === "Finish" || drawType === "Cancel") {
+    drawingTypeSignal.value = "None";
+    modelingSignal.value = null;
+    return;
   }
+  drawingTypeSignal.value = drawType;
 };
 
 export const Modelings = {
@@ -67,12 +56,38 @@ export const Modelings = {
     drawType: "Point",
     onClick,
   } as IModeling,
+  PickLine: {
+    icon: <PickLine className={iConClassName} />,
+    drawType: "PickLine",
+    onClick,
+  } as IModeling,
   Cancel: {
     icon: <Cancel className={iConClassName} />,
     drawType: "Cancel",
     onClick,
   } as IModeling,
 };
+
+//#endregion
+//#region IVisibilityButton
+import {BsBoxSeam as Icon3D} from "react-icons/bs";
+import {FiGrid as IconElevation} from "react-icons/fi";
+import {LuGrid as IConPlane} from "react-icons/lu";
+
+export const VisibilityStates: IVisibilityButton[] = [
+  {
+    tooltip: "3D",
+    icon: <Icon3D className={iConClassName} />,
+  },
+  {
+    tooltip: "Plane",
+    icon: <IConPlane className={iConClassName} />,
+  },
+  {
+    tooltip: "Elevation",
+    icon: <IconElevation className={iConClassName} />,
+  },
+];
 
 //#endregion
 

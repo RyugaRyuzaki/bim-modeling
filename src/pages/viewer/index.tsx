@@ -1,8 +1,10 @@
+import React, {useEffect, useRef} from "react";
+
 import {BimModel} from "@BimModel/index";
 import SwitchTheme from "@components/SwitchTheme/SwitchTheme";
 import {disposeSignal} from "@signals/disposeSignal";
+import "./Viewer.css";
 
-import React, {useEffect, useRef} from "react";
 const Viewer = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const modelingRef = useRef<HTMLDivElement | null>(null);

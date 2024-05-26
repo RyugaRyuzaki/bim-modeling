@@ -1,5 +1,5 @@
 import React, {FC} from "react";
-import {ITool} from "@BimModel/src/types";
+import {ITool} from "@ModelingComponent/types";
 import {Button} from "@/components/ui/button";
 import {
   Tooltip,
@@ -7,12 +7,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {modelingSignal} from "@BimModel/src/Signals";
+import {isModelingSignal, modelingSignal} from "@BimModel/src/Signals";
 import {useComputed} from "@preact/signals-react";
 
 const ModelingButton: FC<Props> = ({type, discipline}) => {
   const handleModeling = (type: string) => {
     modelingSignal.value = {discipline, type};
+    isModelingSignal.value = true;
   };
   const disabled = useComputed(() => {
     return (
@@ -24,6 +25,7 @@ const ModelingButton: FC<Props> = ({type, discipline}) => {
       modelingSignal.value !== null && modelingSignal.value.type === type.type
     );
   });
+
   return (
     <TooltipProvider delayDuration={10}>
       <Tooltip>

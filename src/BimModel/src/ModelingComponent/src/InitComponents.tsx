@@ -6,6 +6,8 @@ import ProjectInfo from "./Project/ProjectInfo";
 import ModelingOption from "./ModelingOption/ModelingOption";
 import Units from "./Units/Units";
 import NewProject from "./Project/NewProject";
+import VisibilityOption from "./VisibilityOption/VisibilityOption";
+import LineOption from "./LineOption/LineOption";
 
 export function createModelingContainer(modeling: ModelingComponent) {
   const div = document.createElement("div");
@@ -25,7 +27,11 @@ export function createOptionContainer(_modeling: ModelingComponent) {
   ReactDOM.createRoot(div).render(
     <>
       <ModelingOption />
-      <Units />
+      <div className="relative h-full flex justify-end">
+        <VisibilityOption />
+        <LineOption />
+        <Units />
+      </div>
     </>
   );
   return div;
