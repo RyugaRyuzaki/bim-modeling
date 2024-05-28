@@ -5,6 +5,7 @@ export type IDrawType =
   | "Rectangular"
   | "PolyLines"
   | "Arc"
+  | "Circle"
   | "Cancel"
   | "Finish"
   | "Point"

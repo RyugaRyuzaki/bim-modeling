@@ -8,6 +8,8 @@ import {ToolComponent} from "@BimModel/src/Tool";
 import {Component, Disposable} from "@BimModel/src/types";
 import {systemGUID} from "../constants";
 import {Camera, RendererComponent} from "@BimModel/src/RendererComponent";
+import {effect} from "@preact/signals-react";
+import {showWorkPlaneSignal} from "@BimModel/src/Signals";
 export class WorkPlaneSystem extends Component<string> implements Disposable {
   static readonly uuid = systemGUID.workPlane;
   static readonly size1 = 1;
@@ -161,7 +163,13 @@ export class WorkPlaneSystem extends Component<string> implements Disposable {
 
     this._grid = new THREE.Mesh(geometry, material);
     this._grid.frustumCulled = false;
-    this.components.scene.add(this._grid);
+    effect(() => {
+      if (showWorkPlaneSignal.value) {
+        this.components.annotationScene.add(this._grid);
+      } else {
+        this._grid.removeFromParent();
+      }
+    });
   }
   async dispose() {
     this.enabled = false;

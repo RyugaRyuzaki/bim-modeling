@@ -7,9 +7,12 @@ import {Components} from "@BimModel/src/Components";
 import {ToolComponent} from "@BimModel/src/Tool";
 import {Component, Disposable} from "@BimModel/src/types";
 import {systemGUID} from "../constants";
+import {Dimension} from "./src";
+export * from "./src/location";
 export class GeometrySystem extends Component<string> implements Disposable {
   static readonly uuid = systemGUID.geometry;
   enabled = false;
+  drawingDimension: Dimension = new Dimension(this.components);
   /**
    *
    */
@@ -17,7 +20,9 @@ export class GeometrySystem extends Component<string> implements Disposable {
     super(components);
     this.components.tools.add(GeometrySystem.uuid, this);
   }
-  async dispose() {}
+  async dispose() {
+    this.drawingDimension?.dispose();
+  }
 
   get() {
     return GeometrySystem.uuid;

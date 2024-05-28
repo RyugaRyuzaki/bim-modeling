@@ -8,7 +8,14 @@ import {
 } from "three-mesh-bvh";
 import {effect} from "@preact/signals-react";
 import {appTheme} from "@signals/theme";
-import {isModelingSignal, isOrthoSignal, keyboardSignal} from "../Signals";
+import {
+  isModelingSignal,
+  isOrthoSignal,
+  keyboardSignal,
+  visibilityStateSignal,
+} from "../Signals";
+import {RendererComponent} from "../RendererComponent";
+import {SceneBuilder} from "./types";
 /**
  * The entry point of Open BIM Components.
  * It contains the basic items to create a BIM 3D scene based on Three.js, as
@@ -28,8 +35,21 @@ export class Components implements Disposable {
 
   enabled = true;
   public scene = new THREE.Scene();
+  public modelScene = new SceneBuilder();
+  public annotationScene = new SceneBuilder();
   public canvas!: HTMLCanvasElement;
   private clock!: THREE.Clock;
+  get rect(): DOMRect {
+    if (!this.container) throw new Error("Not Initialized!");
+    return this.container.getBoundingClientRect();
+  }
+
+  set ctrlKey(enabled: boolean) {
+    const mouseButtons =
+      this.tools.get(RendererComponent)!.camera.cameraControls.mouseButtons;
+    if (!mouseButtons) return;
+    mouseButtons.left = visibilityStateSignal.value === "3D" && enabled ? 1 : 0;
+  }
   set setupEvent(enabled: boolean) {
     if (enabled) {
       window.addEventListener("resize", this.onResize);
@@ -41,16 +61,14 @@ export class Components implements Disposable {
       document.removeEventListener("keyup", this.onKeyUp);
     }
   }
-  get rect(): DOMRect {
-    if (!this.container) throw new Error("Not Initialized!");
-    return this.container.getBoundingClientRect();
-  }
 
   constructor(public container: HTMLDivElement) {
     this.init();
     this.setupBVH();
     this.tools = new ToolComponent(this);
     this.setupEvent = true;
+    this.scene.add(this.modelScene);
+    this.scene.add(this.annotationScene);
     effect(() => {
       this.scene.background = appTheme.value === "dark" ? null : sceneBG;
     });
@@ -60,6 +78,13 @@ export class Components implements Disposable {
     this.setupEvent = false;
     this.canvas?.remove();
     (this.canvas as any) = null;
+    this.modelScene.dispose();
+    this.modelScene.removeFromParent();
+    (this.modelScene as any) = null;
+    this.annotationScene.dispose();
+    this.annotationScene.removeFromParent();
+    (this.annotationScene as any) = null;
+    (this.scene as any) = null;
     await this.tools.dispose();
   }
   async init() {
@@ -89,9 +114,11 @@ export class Components implements Disposable {
       isModelingSignal.value = false;
     if (e.key === "F8") isOrthoSignal.value = !isOrthoSignal.value;
     keyboardSignal.value = e.key;
+    this.ctrlKey = e.key === "Control";
   };
   private onKeyUp = (_e: KeyboardEvent) => {
     keyboardSignal.value = null;
+    this.ctrlKey = false;
   };
 
   private initClock() {

@@ -11,14 +11,17 @@ export class MaterialComponent
   implements Disposable, Updateable
 {
   static readonly uuid = UUID.MaterialComponent;
-  static readonly exclude = ["LocationMaterial"];
+  static readonly exclude = ["LocationMaterial", "DimensionMaterial"];
   enabled = false;
   listMaterial: Map<
     string,
     THREE.MeshLambertMaterial | THREE.MeshBasicMaterial | LineMaterial
   > = new Map();
-  get LocationMaterial() {
-    return this.listMaterial.get("LocationMaterial");
+  get LocationMaterial(): LineMaterial {
+    return this.listMaterial.get("LocationMaterial") as LineMaterial;
+  }
+  get DimensionMaterial(): LineMaterial {
+    return this.listMaterial.get("DimensionMaterial") as LineMaterial;
   }
   get() {
     return MaterialComponent.uuid;
@@ -34,12 +37,18 @@ export class MaterialComponent
       new LineMaterial({
         linewidth: 1, // in world units with size attenuation, pixels otherwise
         vertexColors: true,
-        color: 0xfcb603,
+        color: 0xeb1405,
         alphaToCoverage: true,
-        dashed: false,
-        dashScale: 1,
-        dashSize: 1,
-        gapSize: 1,
+        depthTest: false,
+      })
+    );
+    this.addMaterial(
+      "DimensionMaterial",
+      new LineMaterial({
+        linewidth: 0.5, // in world units with size attenuation, pixels otherwise
+        vertexColors: true,
+        color: 0x0303fc,
+        alphaToCoverage: true,
         depthTest: false,
       })
     );
@@ -51,12 +60,13 @@ export class MaterialComponent
     });
     effect(() => {
       (this.LocationMaterial as LineMaterial).linewidth =
-        lineTypeSignal.value === "thin" ? 0.5 : 3;
+        lineTypeSignal.value === "thin" ? 2 : 6;
     });
   }
   update(_delta?: number): void {
     const {width, height} = this.components.rect;
     (this.LocationMaterial as LineMaterial)?.resolution.set(width, height);
+    (this.DimensionMaterial as LineMaterial)?.resolution.set(width, height);
   }
   async dispose() {
     for (const [_, mat] of this.listMaterial) {
