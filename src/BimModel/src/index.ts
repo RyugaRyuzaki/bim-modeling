@@ -1,5 +1,6 @@
 export * from "./Components";
 export * from "./RendererComponent";
+export * from "./RaycasterComponent";
 export * from "./MaterialComponent";
 export * from "./ModelingComponent";
 export * from "./StructureComponent";

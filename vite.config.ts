@@ -1,7 +1,8 @@
 import {defineConfig, loadEnv} from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-
+import svgr from "vite-plugin-svgr";
+import glsl from "vite-plugin-glsl";
 // https://vitejs.dev/config/
 //@ts-ignore
 export default defineConfig(() => {
@@ -12,7 +13,35 @@ export default defineConfig(() => {
   return {
     // vite config
 
-    plugins: [react()],
+    plugins: [
+      react(),
+      glsl({
+        include: [
+          // Glob pattern, or array of glob patterns to import
+          "**/*.glsl",
+          "**/*.wgsl",
+          "**/*.vert",
+          "**/*.frag",
+          "**/*.vs",
+          "**/*.fs",
+        ],
+        exclude: undefined, // Glob pattern, or array of glob patterns to ignore
+        warnDuplicatedImports: true, // Warn if the same chunk was imported multiple times
+        defaultExtension: "glsl", // Shader suffix when no extension is specified
+        compress: false, // Compress output shader code
+        watch: true, // Recompile shader on change
+        root: "/", // Directory for root imports
+      }),
+      svgr({
+        svgrOptions: {
+          exportType: "named",
+          ref: true,
+          svgo: false,
+          titleProp: true,
+        },
+        include: "**/*.svg",
+      }),
+    ],
     worker: {
       plugins: [react()],
     },

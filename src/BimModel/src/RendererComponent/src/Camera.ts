@@ -103,13 +103,11 @@ export class Camera implements Disposable, Resizeable, Updateable {
     const {position, target} = this.state;
     this.cameraControls.getPosition(position);
     this.cameraControls.getTarget(target);
-    this.cameraControls.mouseButtons.left = 0;
   }
   resetState() {
     if (!this.cameraControls) return;
     const {position, target} = this.state;
     this.setLookAt(position, target);
-    this.cameraControls.mouseButtons.left = 1;
     this.currentCamera.far = defaultCameraFar;
     this.currentCamera.near = -defaultCameraFar;
   }
@@ -131,5 +129,7 @@ export class Camera implements Disposable, Resizeable, Updateable {
     const {position, target} = this.state;
     this.cameraControls.getPosition(position);
     this.cameraControls.getTarget(target);
+    this.cameraControls.mouseButtons.left = 0;
+    this.cameraControls.mouseButtons.middle = 2;
   }
 }

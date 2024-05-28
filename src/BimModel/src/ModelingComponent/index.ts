@@ -1,8 +1,18 @@
+/**
+ * @module ModelingComponent
+ */
+
 import {Components} from "../Components";
 import {ProjectComponent} from "../ProjectComponent";
 import {ToolComponent} from "../Tool";
 import {Component, Disposable, UUID} from "../types";
 import {createModelingContainer, createOptionContainer} from "./src";
+
+export {ModelingTools} from "./src/constants";
+
+/**
+ *
+ */
 export class ModelingComponent extends Component<any> implements Disposable {
   static readonly uuid = UUID.ModelingComponent;
   enabled = false;
@@ -21,8 +31,8 @@ export class ModelingComponent extends Component<any> implements Disposable {
   }
   async dispose() {
     this.modelingContainer?.remove();
-    this.optionContainer?.remove();
     (this.modelingContainer as any) = null;
+    this.optionContainer?.remove();
     (this.optionContainer as any) = null;
   }
   get() {

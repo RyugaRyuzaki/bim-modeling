@@ -3,8 +3,17 @@ import {Modelings} from "./constants";
 
 export function getModelings(type: string): IModeling[] {
   if (!type) return [];
-  const {Finish, Cancel, Line, Rectangular, Arc, PolyLines, Point, PickLine} =
-    Modelings;
+  const {
+    Finish,
+    Cancel,
+    Line,
+    Rectangular,
+    Arc,
+    Circle,
+    PolyLines,
+    Point,
+    PickLine,
+  } = Modelings;
   switch (type) {
     case "Wall":
       return [Line, Rectangular, Arc, PolyLines];
@@ -21,15 +30,33 @@ export function getModelings(type: string): IModeling[] {
     case "Window":
       return [Point, Cancel];
     case "Structure Beam":
-      return [Line, Arc];
+      return [Line, Arc, Circle];
     case "Structure Column":
       return [Point, Cancel];
     case "Structure Wall":
-      return [Line, Rectangular, Arc, PolyLines];
+      return [Line, Rectangular, Arc, Circle, PolyLines];
     case "Structure Slab":
-      return [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel];
+      return [
+        Finish,
+        Line,
+        Rectangular,
+        Arc,
+        Circle,
+        PolyLines,
+        PickLine,
+        Cancel,
+      ];
     case "Structure Foundation":
-      return [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel];
+      return [
+        Finish,
+        Line,
+        Rectangular,
+        Arc,
+        Circle,
+        PolyLines,
+        PickLine,
+        Cancel,
+      ];
     case "ReinForcement":
       return [];
     case "Duct":

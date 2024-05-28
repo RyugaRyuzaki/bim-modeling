@@ -7,7 +7,7 @@
     "skipLibCheck": true,
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "Bundler",
     "allowImportingTsExtensions": false,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
@@ -16,7 +16,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "typeRoots": ["./typings", "./node_modules/@types"],
+    "typeRoots": [
+      "./node_modules/@types",  
+      "vite/client",
+    "vite-plugin-svgr/client"
+  ],
     /* Linting */
     "strict": true,
     "noUnusedLocals": false,
@@ -25,6 +29,7 @@
     "noImplicitAny": false,
     "baseUrl": ".",
     "paths": {
+      "react": ["./node_modules/@types/react"],
       "@components/*": ["src/components/*"],
       "@assets/*": ["src/assets/*"],
       "@BimModel/*": ["src/BimModel/*"],

@@ -8,6 +8,7 @@ import Units from "./Units/Units";
 import NewProject from "./Project/NewProject";
 import VisibilityOption from "./VisibilityOption/VisibilityOption";
 import LineOption from "./LineOption/LineOption";
+import WorkPlaneOption from "./WorkPlaneOption/WorkPlaneOption";
 
 export function createModelingContainer(modeling: ModelingComponent) {
   const div = document.createElement("div");
@@ -29,6 +30,7 @@ export function createOptionContainer(_modeling: ModelingComponent) {
       <ModelingOption />
       <div className="relative h-full flex justify-end">
         <VisibilityOption />
+        <WorkPlaneOption />
         <LineOption />
         <Units />
       </div>

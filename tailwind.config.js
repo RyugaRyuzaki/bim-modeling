@@ -105,6 +105,15 @@ export default {
           to: {height: "0"},
         },
       },
+      animationDelay: {
+        275: "275ms",
+        5000: "5s",
+      },
+      animationDuration: {
+        2000: "2s",
+        long: "10s",
+        "very-long": "20s",
+      },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
