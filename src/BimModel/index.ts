@@ -4,12 +4,13 @@ import {
   CubeMapComponent,
   MaterialComponent,
   ModelingComponent,
-  PropertyComponent,
   RendererComponent,
   RaycasterComponent,
-  StructureComponent,
   ProjectComponent,
-  SystemComponent,
+  WorkPlane,
+  Snapper,
+  DrawTool,
+  LevelSystem,
 } from "./src";
 
 export class BimModel {
@@ -42,7 +43,7 @@ export class BimModel {
     /* =====ProjectComponent===== */
     const projectComponent = this.components.tools.get(ProjectComponent);
     projectComponent.enabled = true;
-
+    projectComponent.init(this.structure);
     /* =====RendererComponent===== */
     const renderer = this.components.tools.get(RendererComponent);
     renderer.enabled = true;
@@ -54,22 +55,28 @@ export class BimModel {
     /* =====CubeMapComponent===== */
     const cubeMapComponent = this.components.tools.get(CubeMapComponent);
     cubeMapComponent.enabled = true;
+    /* =====WorkPlane===== */
+    const workPlane = this.components.tools.get(WorkPlane);
+    workPlane.enabled = true;
+
+    /* =====Snapper===== */
+    const snapper = this.components.tools.get(Snapper);
+    snapper.enabled = true;
+
+    /* =====DrawTool===== */
+    const drawTool = this.components.tools.get(DrawTool);
+    drawTool.enabled = true;
+
+    /* =====LevelSystem===== */
+    const levelSystem = this.components.tools.get(LevelSystem);
+    levelSystem.enabled = true;
 
     /* =====ModelingComponent===== */
     const modelingComponent = this.components.tools.get(ModelingComponent);
     modelingComponent.enabled = true;
     modelingComponent.init(this.modeling, this.option);
 
-    /* =====PropertyComponent===== */
-    const propertyComponent = this.components.tools.get(PropertyComponent);
-    propertyComponent.enabled = true;
-
-    /* =====StructureComponent===== */
-    const structureComponent = this.components.tools.get(StructureComponent);
-    structureComponent.enabled = true;
-    structureComponent.init(this.structure);
-
-    new SystemComponent(this.components);
     this.components.gameLoop();
   }
 }
+//

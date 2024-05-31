@@ -9,6 +9,7 @@ import NewProject from "./Project/NewProject";
 import VisibilityOption from "./VisibilityOption/VisibilityOption";
 import LineOption from "./LineOption/LineOption";
 import WorkPlaneOption from "./WorkPlaneOption/WorkPlaneOption";
+import ElementType from "./ModelingOption/ElementType/ElementType";
 
 export function createModelingContainer(modeling: ModelingComponent) {
   const div = document.createElement("div");
@@ -18,6 +19,7 @@ export function createModelingContainer(modeling: ModelingComponent) {
       <ModelingTabs></ModelingTabs>
       <ProjectInfo modeling={modeling}></ProjectInfo>
       <NewProject modeling={modeling}></NewProject>
+      <ElementType></ElementType>
     </>
   );
   return div;

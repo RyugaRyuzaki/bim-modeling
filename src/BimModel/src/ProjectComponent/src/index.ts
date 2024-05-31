@@ -1,1 +1,2 @@
-export const element = 5;
+export * from "./InitComponents";
+export * from "./ifc";
