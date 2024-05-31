@@ -8,13 +8,17 @@ import {
   currentLevelSignal,
   visibilityStateSignal,
 } from "../Signals";
-import {LevelSystem} from "../system";
+import {LevelSystem} from "../LevelSystem";
 import {RendererComponent} from "../RendererComponent";
+import {IStructure} from "./types";
+import {createStructureContainer} from "./src";
 
-export * from "./src";
 export class ProjectComponent extends Component<string> implements Disposable {
   static readonly uuid = UUID.ProjectComponent;
   enabled = false;
+  private structureContainer!: HTMLDivElement;
+  readonly modelStructure = "Model Tree";
+
   get camera() {
     return this.components.tools.get(RendererComponent)?.camera;
   }
@@ -48,5 +52,10 @@ export class ProjectComponent extends Component<string> implements Disposable {
   get() {
     return ProjectComponent.uuid;
   }
+  init(_structure: HTMLDivElement) {
+    this.structureContainer = createStructureContainer(this);
+    _structure.appendChild(this.structureContainer);
+  }
+  onVisibility = (_visible: boolean, _structure: IStructure) => {};
 }
 ToolComponent.libraryUUIDs.add(ProjectComponent.uuid);

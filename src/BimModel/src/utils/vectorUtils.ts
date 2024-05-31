@@ -1,5 +1,8 @@
 import {Box3, BufferGeometry, InstancedMesh, Mesh, Plane, Sphere} from "three";
+
 import {Vector3} from "three";
+
+export const defaultToleranceDistance = 0.01;
 /**
  * compare 2 value number using for tolorence
  * @param {*} firstValue
@@ -10,7 +13,7 @@ import {Vector3} from "three";
 export function areEqual(
   firstValue: number,
   secondValue: number,
-  tolerance = 1.0e-9
+  tolerance = defaultToleranceDistance
 ) {
   return (
     secondValue - tolerance < firstValue && firstValue < secondValue + tolerance
@@ -35,11 +38,15 @@ export function getDirection(start: Vector3, end: Vector3) {
  * @param {*} v2
  * @returns
  */
-export function areEqualVector(v1: Vector3, v2: Vector3) {
+export function areEqualVector(
+  v1: Vector3,
+  v2: Vector3,
+  tolerance = defaultToleranceDistance
+) {
   return (
-    areEqual(v1.x, v2.x, 1.0e-3) &&
-    areEqual(v1.y, v2.y, 1.0e-3) &&
-    areEqual(v1.z, v2.z, 1.0e-3)
+    areEqual(v1.x, v2.x, tolerance) &&
+    areEqual(v1.y, v2.y, tolerance) &&
+    areEqual(v1.z, v2.z, tolerance)
   );
 }
 

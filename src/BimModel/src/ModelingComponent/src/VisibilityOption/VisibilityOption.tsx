@@ -2,58 +2,21 @@ import React, {memo, ReactElement, useState} from "react";
 import {VisibilityStates} from "../constants";
 import {IVisibilityButton} from "../../types";
 import VisibilityButton from "./VisibilityButton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/ui/select";
+
 import {useSignalEffect} from "@preact/signals-react";
 import {
+  visibilityStateSignal,
   currentLevelSignal,
   listLevelSignal,
-  visibilityStateSignal,
 } from "@BimModel/src/Signals";
-import {ILevel} from "@BimModel/src/system/08-level/types";
-const Levels = () => {
-  return (
-    <div className="relative h-full flex justify-center items-center mr-[20px]">
-      <Select
-        value={currentLevelSignal.value?.index.toString() || "0"}
-        onValueChange={(value: string) =>
-          (currentLevelSignal.value = listLevelSignal.value[+value])
-        }
-      >
-        <SelectTrigger className="w-[130px] h-[80%] my-auto">
-          <SelectValue placeholder="Level" />
-        </SelectTrigger>
-        <SelectContent>
-          {listLevelSignal.value.map((level: ILevel) => (
-            <SelectItem key={`${level.name}`} value={level.index.toString()}>
-              {level.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-};
-const Elevations = () => {
-  return (
-    <div className="relative h-full flex justify-center items-center mx-1">
-      <Select>
-        <SelectTrigger className="w-[130px] h-[80%] my-auto">
-          <SelectValue placeholder="Level" />
-        </SelectTrigger>
-        <SelectContent></SelectContent>
-      </Select>
-    </div>
-  );
-};
+import Levels from "./Levels";
+import Elevations from "./Elevations";
 
 const VisibilityOption = () => {
   const [option, setOption] = useState<ReactElement>(<></>);
+  const onChangeLevel = (value: string) => {
+    currentLevelSignal.value = listLevelSignal.value[+value];
+  };
   useSignalEffect(() => {
     switch (visibilityStateSignal.value) {
       case "3D":
@@ -63,7 +26,12 @@ const VisibilityOption = () => {
         setOption(<Elevations />);
         break;
       case "Plane":
-        setOption(<Levels />);
+        setOption(
+          <Levels
+            onChangeLevel={onChangeLevel}
+            level={currentLevelSignal.value!}
+          />
+        );
         break;
     }
   });

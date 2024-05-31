@@ -14,7 +14,7 @@ import {
 } from "../types";
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {Camera, PostProduction} from "./src";
-import {WorkPlaneSystem} from "../system";
+import {WorkPlane} from "../WorkPlane";
 export * from "./src";
 /**
  *
@@ -203,7 +203,7 @@ export class RendererComponent
     }, 100);
   };
   private onUpdate = () => {
-    const materialGrid = this.components.tools.get(WorkPlaneSystem).material;
+    const materialGrid = this.components.tools.get(WorkPlane).material;
     materialGrid.uniforms.uZoom.value = this.camera.currentCamera.zoom;
   };
 }

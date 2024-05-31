@@ -76,14 +76,16 @@ export default defineConfig(() => {
           __dirname,
           "./src/BimModel/src/RendererComponent"
         ),
-        "@StructureComponent": path.resolve(
-          __dirname,
-          "./src/BimModel/src/StructureComponent"
-        ),
         "@ProjectComponent": path.resolve(
           __dirname,
           "./src/BimModel/src/ProjectComponent"
         ),
+        "@LevelSystem": path.resolve(
+          __dirname,
+          "./src/BimModel/src/LevelSystem"
+        ),
+        "@WorkPlane": path.resolve(__dirname, "./src/BimModel/src/WorkPlane"),
+        "@DrawTool": path.resolve(__dirname, "./src/BimModel/src/DrawTool"),
         "@system": path.resolve(__dirname, "./src/BimModel/src/system"),
         "@components": path.resolve(__dirname, "./src/components"),
         "@signals": path.resolve(__dirname, "./src/signals"),
