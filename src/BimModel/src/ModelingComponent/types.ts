@@ -1,4 +1,5 @@
 import {ReactElement, ReactNode} from "react";
+import {ICategory} from "../system";
 
 export type IDrawType =
   | "Line"
@@ -19,7 +20,7 @@ export interface IModeling {
 
 export interface IModelingTool {
   discipline: string;
-  type: string;
+  type: ICategory;
 }
 export interface IModelingToolTabs {
   discipline: string;

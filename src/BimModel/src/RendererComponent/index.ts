@@ -26,6 +26,8 @@ export class RendererComponent
   static readonly uuid = UUID.RendererComponent;
   enabled = false;
   size: THREE.Vector2 = new THREE.Vector2();
+  private ambientLight!: THREE.AmbientLight;
+  private directionalLight!: THREE.DirectionalLight;
   public camera!: Camera;
   public labelRenderer!: CSS2DRenderer;
   public renderer!: THREE.WebGLRenderer;
@@ -67,7 +69,7 @@ export class RendererComponent
     this.initRenderer();
     this.initLabelRenderer();
     this.initPostProduction();
-
+    this.initTool();
     this.setupEvents = true;
   }
   async dispose() {
@@ -87,13 +89,13 @@ export class RendererComponent
   }
   update(delta: number): void {
     this.camera?.update(delta!);
-    // const postProduction =
-    //   this.postProduction.enabled && this.postProduction.visible;
-    // if (postProduction) {
-    //   this.postProduction.update();
-    // } else {
-    // }
-    this.renderer.render(this.components.scene, this.camera.currentCamera);
+    const postProduction =
+      this.postProduction.enabled && this.postProduction.visible;
+    if (postProduction) {
+      this.postProduction.update();
+    } else {
+      this.renderer.render(this.components.scene, this.camera.currentCamera);
+    }
     this.labelRenderer.render(this.components.scene, this.camera.currentCamera);
   }
   resize(size?: THREE.Vector2 | undefined) {
@@ -165,6 +167,26 @@ export class RendererComponent
     );
     this.postProduction.enabled = true;
     this.postProduction.customEffects.outlineEnabled = true;
+  }
+  private initTool() {
+    this.ambientLight = new THREE.AmbientLight("white");
+    this.components.scene.add(this.ambientLight);
+    this.directionalLight = new THREE.DirectionalLight("white");
+    this.directionalLight.intensity = 2;
+    this.directionalLight.position.set(100, 100, 100);
+    this.directionalLight.target.position.set(-5, 0, 0);
+    this.directionalLight.castShadow = true;
+    this.directionalLight.shadow.bias = -0.001;
+    this.directionalLight.shadow.mapSize.width = 2048;
+    this.directionalLight.shadow.mapSize.height = 2048;
+    this.directionalLight.shadow.camera.near = 0.1;
+    this.directionalLight.shadow.camera.far = 1000.0;
+    this.directionalLight.shadow.camera.left = 10;
+    this.directionalLight.shadow.camera.right = -10;
+    this.directionalLight.shadow.camera.top = 10;
+    this.directionalLight.shadow.camera.bottom = -10;
+    this.components.scene.add(this.directionalLight);
+    this.components.scene.add(this.directionalLight.target);
   }
   private onControlStart = (_event: any) => {
     this.isUserControllingCamera = true;

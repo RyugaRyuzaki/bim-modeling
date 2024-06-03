@@ -1,7 +1,7 @@
 import {IDrawType, IModelingTool} from "@ModelingComponent/types";
 import {effect, signal} from "@preact/signals-react";
 
-export const disciplineSignal = signal<string>("Structure");
+export const disciplineSignal = signal<string>("Files");
 export const modelingSignal = signal<IModelingTool | null>(null);
 export const drawingTypeSignal = signal<IDrawType>("None");
 

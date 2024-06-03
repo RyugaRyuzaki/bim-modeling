@@ -3,7 +3,13 @@
  */
 
 import * as THREE from "three";
-import {Components, Dimension, RaycasterComponent} from "@BimModel/src";
+import {
+  Components,
+  Dimension,
+  LocationArc,
+  LocationLine,
+  RaycasterComponent,
+} from "@BimModel/src";
 import {ToolComponent} from "@BimModel/src/Tool";
 import {Component, Disposable, UUID} from "@BimModel/src/types";
 import {
@@ -18,12 +24,25 @@ import {
 } from "./src";
 import {effect} from "@preact/signals-react";
 import {drawingTypeSignal} from "@BimModel/src/Signals";
+import {ILevel} from "../LevelSystem/types";
 export class DrawTool extends Component<string> implements Disposable {
   static readonly uuid = UUID.DrawTool;
+  static upDirection = new THREE.Vector3(0, 1, 0);
   enabled = false;
-  drawingDimension!: Dimension;
-  private draws: {[name: string]: BaseDraw} = {};
 
+  /** @TempDraw */
+  drawingDimension!: Dimension;
+  workPlane = new THREE.Plane(DrawTool.upDirection, 0);
+
+  /** @draws  */
+  private draws: {[name: string]: BaseDraw} = {};
+  set workPlaneLevel(level: ILevel) {
+    const {elevation} = level;
+    this.workPlane.setFromNormalAndCoplanarPoint(
+      DrawTool.upDirection,
+      new THREE.Vector3(0, elevation, 0)
+    );
+  }
   /**
    *
    */
@@ -32,6 +51,7 @@ export class DrawTool extends Component<string> implements Disposable {
     this.components.tools.add(DrawTool.uuid, this);
     this.drawingDimension = new Dimension(components);
     this.initDraws();
+
     effect(() => {
       for (const name in this.draws) {
         const draw = this.draws[name];
@@ -58,13 +78,19 @@ export class DrawTool extends Component<string> implements Disposable {
     return DrawTool.uuid;
   }
   private initDraws() {
-    this.draws["Line"] = new DrawLine(this.components);
-    this.draws["Rectangular"] = new DrawRectangular(this.components);
-    this.draws["PolyLines"] = new DrawPolyLines(this.components);
-    this.draws["Arc"] = new DrawArc(this.components);
-    this.draws["Point"] = new DrawPoint(this.components);
-    this.draws["PickLine"] = new DrawPickLine(this.components);
-    this.draws["Circle"] = new DrawCircle(this.components);
+    this.draws["Line"] = new DrawLine(this.components, this.workPlane);
+    this.draws["Rectangular"] = new DrawRectangular(
+      this.components,
+      this.workPlane
+    );
+    this.draws["PolyLines"] = new DrawPolyLines(
+      this.components,
+      this.workPlane
+    );
+    this.draws["Arc"] = new DrawArc(this.components, this.workPlane);
+    this.draws["Circle"] = new DrawCircle(this.components, this.workPlane);
+    this.draws["Point"] = new DrawPoint(this.components, this.workPlane);
+    this.draws["PickLine"] = new DrawPickLine(this.components, this.workPlane);
   }
 }
 ToolComponent.libraryUUIDs.add(DrawTool.uuid);

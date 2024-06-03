@@ -9,9 +9,10 @@ import {
 } from "@/components/ui/tooltip";
 import {isModelingSignal, modelingSignal} from "@BimModel/src/Signals";
 import {useComputed} from "@preact/signals-react";
+import {ICategory} from "@BimModel/src/system";
 
 const ModelingButton: FC<Props> = ({type, discipline}) => {
-  const handleModeling = (type: string) => {
+  const handleModeling = (type: ICategory) => {
     modelingSignal.value = {discipline, type};
     isModelingSignal.value = true;
   };
@@ -35,7 +36,7 @@ const ModelingButton: FC<Props> = ({type, discipline}) => {
             className={`my-auto mx-1 hover:bg-green-400 disabled:cursor-none ${
               active.value ? "bg-blue-400" : ""
             }`}
-            onClick={() => handleModeling(type.type)}
+            onClick={() => handleModeling(type.type as ICategory)}
             disabled={disabled.value}
           >
             {type.icon}

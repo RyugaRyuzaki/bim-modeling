@@ -1,4 +1,4 @@
-export const pixelRatio = 2;
+export const pixelRatio = 1;
 
 export const UUID = {
   MaterialComponent: "7c39b308-a37d-422d-bdaa-1e897980f846",

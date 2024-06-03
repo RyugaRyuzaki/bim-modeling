@@ -1,7 +1,7 @@
 import {IModeling} from "@ModelingComponent/types";
 import {Modelings} from "./constants";
 
-import {ICategory} from "@BimModel/src/types";
+import {ICategory} from "@system/element/types";
 const {
   Finish,
   Cancel,
@@ -14,7 +14,7 @@ const {
   PickLine,
 } = Modelings;
 export const CategoryTool: Record<ICategory, IModeling[]> = {
-  Wall: [Line, Rectangular, Arc, PolyLines],
+  Wall: [Line, Rectangular, Arc],
   Floor: [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel],
   Ceiling: [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel],
   Roof: [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel],

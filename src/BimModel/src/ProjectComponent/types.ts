@@ -15,6 +15,11 @@ export interface IProjectInfo {
 export interface IProject {
   info: IProjectInfo;
 }
+export interface IBimElementType<T> {
+  types: T[];
+  selectType: T | null;
+}
+
 export interface IStructure {
   name: string;
   uuid: string;

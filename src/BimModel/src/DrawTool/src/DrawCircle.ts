@@ -5,19 +5,22 @@ import * as THREE from "three";
 import {Components} from "@BimModel/src/Components";
 import {BaseDraw} from "./BaseDraw";
 import {LocationArc} from "@system/geometry";
-import {getDirection} from "@BimModel/src/utils";
+import {getDirection} from "@BimModel/src";
+import {IDrawType} from "@ModelingComponent/types";
 
 export class DrawCircle extends BaseDraw {
-  private tempLeftLocation!: LocationArc;
-  private tempRightLocation!: LocationArc;
+  drawType: IDrawType = "Circle";
+  private leftLocationArc!: LocationArc;
+  private rightLocationArc!: LocationArc;
   private count = 0;
   private start: THREE.Vector3 = new THREE.Vector3();
   private end: THREE.Vector3 = new THREE.Vector3();
+  // this.leftLocationArc = new LocationArc(this.components, this.workPlane);
   /**
    *
    */
-  constructor(components: Components) {
-    super(components);
+  constructor(components: Components, workPlane: THREE.Plane) {
+    super(components, workPlane);
   }
   private getMirror() {
     const dir = getDirection(this.start, this.end);
@@ -41,18 +44,17 @@ export class DrawCircle extends BaseDraw {
     this.RaycasterComponent!.updateInfo(this.foundPoint);
     if (this.count === 0) return;
     this.end = this.foundPoint.clone();
-    // update tempLeftLocation
-    if (!this.tempLeftLocation)
-      this.tempLeftLocation = new LocationArc(this.components, this.workPlane);
-    this.tempLeftLocation.updateCircle(this.start, this.end);
-    this.tempLeftLocation.visible = true;
+    if (!this.leftLocationArc)
+      this.leftLocationArc = new LocationArc(this.components, this.workPlane);
+    this.leftLocationArc.updateCircle(this.start, this.end);
+    this.leftLocationArc.visible = true;
+    if (!this.rightLocationArc)
+      this.rightLocationArc = new LocationArc(this.components, this.workPlane);
     //update tempRightLocation
-    if (!this.tempRightLocation)
-      this.tempRightLocation = new LocationArc(this.components, this.workPlane);
-    this.tempRightLocation.updateCircle(this.start, this.getMirror());
-    this.tempRightLocation.visible = true;
+    this.rightLocationArc.updateCircle(this.start, this.getMirror());
+    this.rightLocationArc.visible = true;
     //update drawingDimension
-    this.drawingDimension.updateRadius(this.start, this.end, this.workPlane);
+    this.drawingDimension.updateRadius(this.start, this.end);
     this.drawingDimension.visible = true;
   };
   onMousedown = (_e: MouseEvent) => {
@@ -71,39 +73,34 @@ export class DrawCircle extends BaseDraw {
         this.inputKey = "";
         return;
       }
-      if (this.tempLeftLocation && this.tempRightLocation) {
-        this.end = this.getDistance(this.start, this.end, distance);
-        this.tempLeftLocation.updateCircle(this.start, this.end);
-        this.tempRightLocation.updateCircle(this.start, this.getMirror());
-        this.onFinished();
-        this.inputKey = "";
-        this.count = 0;
-      }
+      this.end = this.getDistance(this.start, this.end, distance);
+      if (this.leftLocationArc)
+        this.leftLocationArc.updateCircle(this.start, this.end);
+      if (this.rightLocationArc)
+        this.rightLocationArc.updateCircle(this.start, this.getMirror());
+      this.onFinished();
+      this.inputKey = "";
+      this.count = 0;
     }
     if (_e.key >= "0" && _e.key <= "9") {
       this.inputKey += _e.key;
     }
   };
   onFinished = () => {
+    if (this.leftLocationArc) this.leftLocationArc.visible = false;
+    if (this.rightLocationArc) this.rightLocationArc.visible = false;
     this.drawingDimension.visible = false;
-    if (this.tempLeftLocation) {
-      this.tempLeftLocation.visible = false;
-      (this.tempLeftLocation as any) = null;
-    }
-    if (this.tempRightLocation) {
-      this.tempRightLocation.visible = false;
-      (this.tempRightLocation as any) = null;
-    }
+
     this.inputKey = "";
     this.count = 0;
   };
   onCallBack = (_value?: number) => {};
   dispose = () => {
+    this.leftLocationArc?.dispose();
+    (this.leftLocationArc as any) = null;
+    this.rightLocationArc?.dispose();
+    (this.rightLocationArc as any) = null;
     this.drawingDimension.visible = false;
-    this.tempLeftLocation?.dispose();
-    (this.tempLeftLocation as any) = null;
-    this.tempRightLocation?.dispose();
-    (this.tempRightLocation as any) = null;
     this.count = 0;
   };
 }

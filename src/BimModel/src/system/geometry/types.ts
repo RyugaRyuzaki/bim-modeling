@@ -32,3 +32,5 @@ export interface IBaseLocation<T> {
   location: T;
   onChange: (value: T) => void;
 }
+
+export type IShapeType = "Rectangular" | "I-Section" | "Circle" | "Polygon";

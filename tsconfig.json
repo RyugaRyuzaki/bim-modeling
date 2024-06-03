@@ -51,6 +51,6 @@
       ]
     },
   },
-  "include": ["src", "worker/*", "worker/Culling/CullingWorker.ts"],
+  "include": ["src", "worker/*", "worker/Culling/CullingWorker.ts", "src/BimModel/src/ProjectComponent/src/project/IfcBase.ts", "src/BimModel/src/ProjectComponent/src/project/IfcBuilding.ts", "src/BimModel/src/ProjectComponent/src/project/IfcBuildingStorey.ts", "src/BimModel/src/ProjectComponent/src/project/IfcElement.ts", "src/BimModel/src/ProjectComponent/src/project/IfcInfo.ts", "src/BimModel/src/ProjectComponent/src/project/IfcProject.ts", "src/BimModel/src/ProjectComponent/src/project/IfcSite.ts", "packages/clay/src/base/IfcUnit.ts", "src/BimModel/src/ProjectComponent/src/project/index.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

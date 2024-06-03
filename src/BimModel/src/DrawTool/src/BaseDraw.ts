@@ -5,15 +5,13 @@ import * as THREE from "three";
 import {
   Components,
   RaycasterComponent,
-  MaterialComponent,
   lengthUnitSignal,
   Dimension,
   DrawTool,
+  getLocalVectorOnFace,
+  ProjectComponent,
 } from "@BimModel/src";
-import {LineMaterial} from "three/examples/jsm/lines/LineMaterial";
-import {getLocalVectorOnFace} from "@BimModel/src/utils";
-import {ILevel} from "@BimModel/src/LevelSystem/types";
-const upDirection = new THREE.Vector3(0, 1, 0);
+import {IDrawType} from "@ModelingComponent/types";
 
 export abstract class BaseDraw {
   abstract onClick: (_e: MouseEvent) => void;
@@ -23,10 +21,12 @@ export abstract class BaseDraw {
   abstract onFinished: () => void;
   abstract onCallBack: (_value?: number) => void;
   abstract dispose: () => void;
-
-  get LocationMaterial(): LineMaterial {
-    return this.components.tools.get(MaterialComponent)
-      ?.LocationMaterial as LineMaterial;
+  abstract drawType: IDrawType;
+  get elements() {
+    return this.components.tools.get(ProjectComponent).elements;
+  }
+  get modelScene() {
+    return this.components.modelScene;
   }
   get drawingDimension(): Dimension {
     return this.components.tools.get(DrawTool)?.drawingDimension;
@@ -34,12 +34,16 @@ export abstract class BaseDraw {
   get RaycasterComponent() {
     return this.components.tools.get(RaycasterComponent);
   }
+  get camera() {
+    return this.RaycasterComponent.currentCamera;
+  }
   get container() {
     return this.components.container;
   }
   private _setupEvent = false;
   set setupEvent(enabled: boolean) {
     if (!this.container) return;
+
     if (this._setupEvent === enabled) return;
     this._setupEvent = enabled;
     if (enabled) {
@@ -59,15 +63,7 @@ export abstract class BaseDraw {
   get setupEvent() {
     return this._setupEvent;
   }
-  public workPlane = new THREE.Plane(upDirection, 0);
 
-  set workPlaneLevel(level: ILevel) {
-    const {elevation} = level;
-    this.workPlane.setFromNormalAndCoplanarPoint(
-      upDirection,
-      new THREE.Vector3(0, elevation, 0)
-    );
-  }
   private _foundPoint: THREE.Vector3 | null = null;
   set findPoint(event: MouseEvent | null) {
     if (!event) {
@@ -95,7 +91,7 @@ export abstract class BaseDraw {
   /**
    *
    */
-  constructor(public components: Components) {}
+  constructor(public components: Components, public workPlane: THREE.Plane) {}
   private onMouseup = () => {
     this.mousedown = false;
   };

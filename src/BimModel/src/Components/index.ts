@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import {Model} from "clay";
 import {Disposable} from "../types";
 import {ToolComponent} from "../Tool";
 import {
@@ -39,6 +40,7 @@ export class Components implements Disposable {
   public annotationScene = new SceneBuilder();
   public canvas!: HTMLCanvasElement;
   private clock!: THREE.Clock;
+
   get rect(): DOMRect {
     if (!this.container) throw new Error("Not Initialized!");
     return this.container.getBoundingClientRect();
@@ -61,7 +63,12 @@ export class Components implements Disposable {
       document.removeEventListener("keyup", this.onKeyUp);
     }
   }
+  ifcModel: Model = new Model();
 
+  /**
+   *
+   * @param container
+   */
   constructor(public container: HTMLDivElement) {
     this.init();
     this.setupBVH();
@@ -69,6 +76,9 @@ export class Components implements Disposable {
     this.setupEvent = true;
     this.scene.add(this.modelScene);
     this.scene.add(this.annotationScene);
+    this.modelScene.renderOrder = 1;
+    this.annotationScene.renderOrder = 10;
+    this.ifcModel.ifcAPI.SetWasmPath("https://unpkg.com/web-ifc@0.0.54/", true);
     effect(() => {
       this.scene.background = appTheme.value === "dark" ? null : sceneBG;
     });
@@ -85,6 +95,8 @@ export class Components implements Disposable {
     this.annotationScene.removeFromParent();
     (this.annotationScene as any) = null;
     (this.scene as any) = null;
+    (this.ifcModel as any) = null;
+    this.ifcModel = new Model();
     await this.tools.dispose();
   }
   async init() {
@@ -99,6 +111,7 @@ export class Components implements Disposable {
     this.canvas.style.zIndex = "10";
     this.clock = this.initClock();
   }
+
   private onResize = () => {
     const {width, height} = this.container.getBoundingClientRect();
     const size = new THREE.Vector2(width, height);
@@ -124,7 +137,7 @@ export class Components implements Disposable {
   private initClock() {
     const clock = new THREE.Clock();
     clock.start();
-    this.scene.add(new THREE.AxesHelper(5));
+    this.scene.add(new THREE.AxesHelper(2));
     return clock;
   }
   gameLoop = () => {

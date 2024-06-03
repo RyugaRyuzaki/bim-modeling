@@ -19,7 +19,7 @@ export function createModelingContainer(modeling: ModelingComponent) {
       <ModelingTabs></ModelingTabs>
       <ProjectInfo modeling={modeling}></ProjectInfo>
       <NewProject modeling={modeling}></NewProject>
-      <ElementType></ElementType>
+      <ElementType />
     </>
   );
   return div;

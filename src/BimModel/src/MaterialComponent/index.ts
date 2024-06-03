@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import {LineMaterial} from "three/examples/jsm/lines/LineMaterial";
 import {Components} from "../Components";
 import {ToolComponent} from "../Tool";
 import {Component, Disposable, Updateable, UUID} from "../types";
@@ -15,13 +14,15 @@ export class MaterialComponent
   enabled = false;
   listMaterial: Map<
     string,
-    THREE.MeshLambertMaterial | THREE.MeshBasicMaterial | LineMaterial
+    THREE.MeshLambertMaterial | THREE.MeshBasicMaterial
   > = new Map();
-  get LocationMaterial(): LineMaterial {
-    return this.listMaterial.get("LocationMaterial") as LineMaterial;
+  get LocationMaterial(): THREE.MeshBasicMaterial {
+    return this.listMaterial.get("LocationMaterial") as THREE.MeshBasicMaterial;
   }
-  get DimensionMaterial(): LineMaterial {
-    return this.listMaterial.get("DimensionMaterial") as LineMaterial;
+  get DimensionMaterial(): THREE.MeshBasicMaterial {
+    return this.listMaterial.get(
+      "DimensionMaterial"
+    ) as THREE.MeshBasicMaterial;
   }
   get() {
     return MaterialComponent.uuid;
@@ -34,21 +35,15 @@ export class MaterialComponent
     this.components.tools.add(MaterialComponent.uuid, this);
     this.addMaterial(
       "LocationMaterial",
-      new LineMaterial({
-        linewidth: 1, // in world units with size attenuation, pixels otherwise
-        vertexColors: true,
+      new THREE.MeshBasicMaterial({
         color: 0xeb1405,
-        alphaToCoverage: true,
         depthTest: false,
       })
     );
     this.addMaterial(
       "DimensionMaterial",
-      new LineMaterial({
-        linewidth: 0.5, // in world units with size attenuation, pixels otherwise
-        vertexColors: true,
+      new THREE.MeshBasicMaterial({
         color: 0x0303fc,
-        alphaToCoverage: true,
         depthTest: false,
       })
     );
@@ -58,15 +53,11 @@ export class MaterialComponent
         mat.clippingPlanes = clippingPlanesSignal.value;
       }
     });
-    effect(() => {
-      (this.LocationMaterial as LineMaterial).linewidth =
-        lineTypeSignal.value === "thin" ? 2 : 6;
-    });
   }
   update(_delta?: number): void {
     const {width, height} = this.components.rect;
-    (this.LocationMaterial as LineMaterial)?.resolution.set(width, height);
-    (this.DimensionMaterial as LineMaterial)?.resolution.set(width, height);
+    // (this.LocationMaterial as LineMaterial)?.resolution.set(width, height);
+    // (this.DimensionMaterial as LineMaterial)?.resolution.set(width, height);
   }
   async dispose() {
     for (const [_, mat] of this.listMaterial) {
@@ -77,7 +68,7 @@ export class MaterialComponent
 
   addMaterial(
     name: string,
-    mat: THREE.MeshLambertMaterial | THREE.MeshBasicMaterial | LineMaterial
+    mat: THREE.MeshLambertMaterial | THREE.MeshBasicMaterial
   ) {
     if (this.listMaterial.has(name))
       throw new Error("Material's name is existed!");
