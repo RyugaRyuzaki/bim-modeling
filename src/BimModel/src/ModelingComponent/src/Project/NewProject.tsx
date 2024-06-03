@@ -1,4 +1,4 @@
-import React, {FC, useEffect} from "react";
+import React, {FC} from "react";
 import {Button} from "@/components/ui/button";
 import {
   Dialog,
@@ -21,12 +21,10 @@ const NewProject: FC<Props> = ({modeling}) => {
       open={newProjectInfoSignal.value}
       onOpenChange={(open: boolean) => (newProjectInfoSignal.value = open)}
     >
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="xl:max-w-[800px]">
         <DialogHeader>
           <DialogTitle>New Project</DialogTitle>
-          <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DialogDescription>
+          <DialogDescription>This on processing!...</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4"></div>
         <DialogFooter>

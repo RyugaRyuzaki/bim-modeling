@@ -1,9 +1,9 @@
 import React, {useEffect, useRef} from "react";
-
 import {BimModel} from "@BimModel/index";
 import SwitchTheme from "@components/SwitchTheme/SwitchTheme";
 import {disposeSignal} from "@signals/disposeSignal";
 import "./Viewer.css";
+import Spinner from "@components/Spinner/Spinner";
 
 const Viewer = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -35,7 +35,7 @@ const Viewer = () => {
       <div className="flex-1 w-full relative overflow-hidden flex flex-row">
         <div
           className="w-[15%] h-full relative overflow-hidden"
-          ref={structureRef}
+          ref={propertyRef}
         ></div>
         <div className="w-[1px] h-full relative  bg-slate-500"></div>
         <div
@@ -45,7 +45,7 @@ const Viewer = () => {
         <div className="w-[1px] h-full relative  bg-slate-500"></div>
         <div
           className="w-[15%] h-full relative overflow-hidden"
-          ref={propertyRef}
+          ref={structureRef}
         ></div>
       </div>
     </div>

@@ -1,2 +1,2 @@
 export * from "./InitComponents";
-export * from "./ifc";
+export * from "./project";

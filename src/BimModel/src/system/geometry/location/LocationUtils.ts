@@ -4,10 +4,9 @@
 
 import * as THREE from "three";
 import {ILocationArc, ILocationLine} from "@system/geometry/types";
-import {LineMaterial} from "three/examples/jsm/lines/LineMaterial";
-import {Line2} from "three/examples/jsm/lines/Line2";
-import {LineGeometry} from "three/examples/jsm/lines/LineGeometry";
 import {getDirection, getLocalVectorOnFace} from "@BimModel/src/utils";
+
+const MAX_POINTS = 10000;
 export class LocationUtils {
   /**
    *
@@ -29,27 +28,27 @@ export class LocationUtils {
     return colors;
   }
   static createLocationLine(
-    material: LineMaterial,
+    material: THREE.MeshBasicMaterial,
     location: ILocationLine
-  ): Line2 {
+  ): THREE.LineSegments {
     const {start, end} = location;
     const position = this.getPositionLocationFromPoints([start, end]);
     return this.createSegment(material, position, 2);
   }
   static createLocationArc(
-    material: LineMaterial,
+    material: THREE.MeshBasicMaterial,
     location: ILocationArc
-  ): Line2 {
-    const {start, end} = location;
+  ): THREE.LineSegments {
+    const {start, end, numberSegment} = location;
     if (!start || !end) throw new Error("Missing params");
     const position = this.getPositionLocationFromPoints([start, end]);
-    return this.createSegment(material, position, 2);
+    return this.createSegment(material, position, numberSegment);
   }
   static createLocationCircle(
-    material: LineMaterial,
+    material: THREE.MeshBasicMaterial,
     location: ILocationArc,
     workPlane: THREE.Plane
-  ): Line2 {
+  ): THREE.LineSegments {
     const {radius, center, numberSegment} = location;
     const {x, z} = getLocalVectorOnFace(workPlane.normal);
     const angle0 = (2 * Math.PI) / numberSegment;
@@ -74,23 +73,29 @@ export class LocationUtils {
     return position;
   }
   static createSegment(
-    material: LineMaterial,
+    material: THREE.MeshBasicMaterial,
     position: number[],
     numberSegment: number
-  ): Line2 {
-    const colors = this.getColorArray(numberSegment, this.colorBaseLine);
+  ): THREE.LineSegments {
     // define a LineGeometry
-    const geometry = new LineGeometry();
+    const positions = new Float32Array(MAX_POINTS * 3);
+    positions.fill(0);
+    for (let i = 0; i < position.length; i++) {
+      positions[i] = position[i];
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setDrawRange(0, numberSegment);
+    geometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(new Float32Array(positions), 3)
+    );
     // set position from p1, p2
-    geometry.setPositions(position);
-    // set color
-    geometry.setColors(colors);
     // create a Line2 object 3D in threeJS
-    const segment = new Line2(geometry, material);
+    const segment = new THREE.LineSegments(geometry, material);
     // compute line distance that means allow every moment this line change , color and line width change
     segment.computeLineDistances();
     // scale this to default
-    segment.scale.set(1, 1, 1);
+    segment.renderOrder = 10;
     return segment;
   }
   static getPointsCircle(
@@ -165,5 +170,18 @@ export class LocationUtils {
       position.push(pTemp.z);
     }
     return position;
+  }
+  static updateLineSegmentPosition(
+    position: number[],
+    segment: THREE.LineSegments
+  ) {
+    if (!segment) return;
+    segment.geometry.setDrawRange(0, position.length / 3);
+    const corePositions = segment.geometry.attributes.position.array;
+    for (let i = 0; i < position.length; i++) {
+      corePositions[i] = position[i];
+    }
+    segment.computeLineDistances();
+    segment.geometry.attributes.position.needsUpdate = true;
   }
 }

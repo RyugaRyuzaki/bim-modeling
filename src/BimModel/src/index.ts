@@ -11,4 +11,5 @@ export * from "./WorkPlane";
 export * from "./LevelSystem";
 export * from "./Snapper";
 export * from "./DrawTool";
+export * from "./utils";
 export * from "./types";

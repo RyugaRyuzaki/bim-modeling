@@ -1,3 +1,4 @@
+import * as WEBIFC from "web-ifc";
 import {
   Components,
   disposeSignals,
@@ -11,6 +12,7 @@ import {
   Snapper,
   DrawTool,
   LevelSystem,
+  modelStructureSignal,
 } from "./src";
 
 export class BimModel {
@@ -43,7 +45,7 @@ export class BimModel {
     /* =====ProjectComponent===== */
     const projectComponent = this.components.tools.get(ProjectComponent);
     projectComponent.enabled = true;
-    projectComponent.init(this.structure);
+
     /* =====RendererComponent===== */
     const renderer = this.components.tools.get(RendererComponent);
     renderer.enabled = true;
@@ -74,8 +76,12 @@ export class BimModel {
     /* =====ModelingComponent===== */
     const modelingComponent = this.components.tools.get(ModelingComponent);
     modelingComponent.enabled = true;
-    modelingComponent.init(this.modeling, this.option);
 
+    this.components.ifcModel.init().then(() => {
+      projectComponent.init(this.structure, this.property);
+      projectComponent.initElement();
+      modelingComponent.init(this.modeling, this.option);
+    });
     this.components.gameLoop();
   }
 }

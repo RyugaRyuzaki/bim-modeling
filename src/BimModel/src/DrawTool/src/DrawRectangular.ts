@@ -1,12 +1,16 @@
+import * as THREE from "three";
 import {Components} from "@BimModel/src/Components";
 import {BaseDraw} from "./BaseDraw";
+import {IDrawType} from "@ModelingComponent/types";
 
 export class DrawRectangular extends BaseDraw {
+  drawType: IDrawType = "Rectangular";
+
   /**
    *
    */
-  constructor(components: Components) {
-    super(components);
+  constructor(components: Components, workPlane: THREE.Plane) {
+    super(components, workPlane);
   }
   onClick = (_e: MouseEvent) => {};
   onMouseMove = (_e: MouseEvent) => {};

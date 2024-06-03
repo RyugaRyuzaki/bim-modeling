@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {INavigation} from "../types";
 
 const near = 1,
-  distance = 20,
+  distance = 10,
   corner = Math.sqrt(3 * distance * distance);
 const max = new THREE.Vector3(corner, corner, corner);
 const pos1 = new THREE.Vector3(corner, corner, corner);
@@ -26,10 +26,10 @@ export function initPerspectiveCamera(aspect: number): THREE.PerspectiveCamera {
 }
 export function initOrthographicCamera(width: number, height: number) {
   const camera = new THREE.OrthographicCamera(
-    width / -50,
-    width / 50,
-    height / 50,
-    height / -50,
+    width / -100,
+    width / 100,
+    height / 100,
+    height / -100,
     -defaultCameraFar,
     defaultCameraFar
   );

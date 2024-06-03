@@ -1,1 +1,3 @@
-export const element = 10;
+export * from "./types";
+export * from "./BaseElement";
+export * from "./WallElement";

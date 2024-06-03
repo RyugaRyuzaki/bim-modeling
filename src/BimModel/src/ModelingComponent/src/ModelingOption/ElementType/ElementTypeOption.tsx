@@ -13,15 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/ui/select";
-import {elementTypesSignal, openElementTypeSignal} from "@BimModel/src/Signals";
-import {
-  BeamType,
-  ColumnType,
-  FoundationType,
-  ReinforcementType,
-  SlabType,
-  WallType,
-} from "@system/element-type";
+import {openElementTypeSignal} from "@BimModel/src/Signals";
+
 const ElementTypeOption = () => {
   return (
     <div className="relative h-full flex justify-center items-center mx-1">
@@ -29,27 +22,7 @@ const ElementTypeOption = () => {
         <SelectTrigger className="w-[130px] h-[80%] my-auto">
           <SelectValue placeholder="" />
         </SelectTrigger>
-        <SelectContent>
-          {elementTypesSignal.value.map(
-            (
-              type:
-                | WallType
-                | BeamType
-                | ColumnType
-                | SlabType
-                | FoundationType
-                | ReinforcementType,
-              index: number
-            ) => (
-              <SelectItem
-                key={`${type.typeEnum}-${index}`}
-                value={index.toString()}
-              >
-                {type!.Name!.value}
-              </SelectItem>
-            )
-          )}
-        </SelectContent>
+        <SelectContent></SelectContent>
       </Select>
       <TooltipProvider delayDuration={10}>
         <Tooltip>
