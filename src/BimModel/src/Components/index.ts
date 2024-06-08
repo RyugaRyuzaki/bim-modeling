@@ -16,7 +16,7 @@ import {
   visibilityStateSignal,
 } from "../Signals";
 import {RendererComponent} from "../RendererComponent";
-import {SceneBuilder} from "./types";
+import {SceneBuilder} from "./SceneBuilder";
 /**
  * The entry point of Open BIM Components.
  * It contains the basic items to create a BIM 3D scene based on Three.js, as
@@ -76,8 +76,9 @@ export class Components implements Disposable {
     this.setupEvent = true;
     this.scene.add(this.modelScene);
     this.scene.add(this.annotationScene);
-    this.modelScene.renderOrder = 1;
+    this.modelScene.renderOrder = 10;
     this.annotationScene.renderOrder = 10;
+    // this.modelScene.add(new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2)));
     this.ifcModel.ifcAPI.SetWasmPath("https://unpkg.com/web-ifc@0.0.54/", true);
     effect(() => {
       this.scene.background = appTheme.value === "dark" ? null : sceneBG;
@@ -88,6 +89,7 @@ export class Components implements Disposable {
     this.setupEvent = false;
     this.canvas?.remove();
     (this.canvas as any) = null;
+
     this.modelScene.dispose();
     this.modelScene.removeFromParent();
     (this.modelScene as any) = null;
@@ -97,6 +99,7 @@ export class Components implements Disposable {
     (this.scene as any) = null;
     (this.ifcModel as any) = null;
     this.ifcModel = new Model();
+
     await this.tools.dispose();
   }
   async init() {

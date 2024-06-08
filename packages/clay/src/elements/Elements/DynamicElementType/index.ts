@@ -27,7 +27,6 @@ export abstract class DynamicElementType<
     this.elements.set(id, element);
     return element;
   }
-
   deleteInstance(id: number) {
     const element = this.elements.get(id);
     if (!element) {
@@ -48,6 +47,9 @@ export abstract class DynamicElementType<
       }
       geometry.delete();
       this.geometries.delete(id);
+      const clone = this.clones.get(id);
+      if (!clone) continue;
+      clone.dispose();
     }
   }
 

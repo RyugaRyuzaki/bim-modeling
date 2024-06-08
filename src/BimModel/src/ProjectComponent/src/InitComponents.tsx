@@ -1,11 +1,11 @@
-import React from "react";
+import React, {lazy} from "react";
 import ReactDOM from "react-dom/client";
 import {ProjectComponent} from "..";
-import ModelStructure from "./ModelStructure/ModelStructure";
+const ModelStructure = lazy(() => import("./ModelStructure/ModelStructure"));
 
-export function createStructureContainer(project: ProjectComponent) {
+export function createStructureContainer(_project: ProjectComponent) {
   const div = document.createElement("div");
   div.className = "h-full w-full relative";
-  ReactDOM.createRoot(div).render(<ModelStructure project={project} />);
+  ReactDOM.createRoot(div).render(<></>);
   return div;
 }

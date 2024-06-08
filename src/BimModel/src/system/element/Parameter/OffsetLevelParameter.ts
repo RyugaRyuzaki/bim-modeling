@@ -7,7 +7,9 @@ import {IFC4X3 as IFC} from "web-ifc";
  *
  */
 export class TopLevelParameter extends BaseParameter {
-  list!: any[] | ILevel[];
+  list!: string[] | number[] | BaseParameter[] | ILevel[];
+
+  element!: IElement;
   uuid = uuid4();
   name = "Top Offset" as const;
   type: IParameterType = "InputNumber";
@@ -15,19 +17,22 @@ export class TopLevelParameter extends BaseParameter {
   /**
    *
    */
-  constructor(element: IElement) {
-    super(element);
+  constructor(public level: ILevel) {
+    super();
   }
   toIfc!: () => IFC.IfcPropertySingleValue | IFC.IfcPropertyReferenceValue;
   onValueChange!: (
     value: string | number | boolean | ILevel | BaseParameter
   ) => void;
+  onValueListChange!: (value: number) => void;
 }
 /**
  *
  */
 export class BottomLevelParameter extends BaseParameter {
-  list!: any[] | ILevel[];
+  list!: string[] | number[] | BaseParameter[] | ILevel[];
+
+  element!: IElement;
   uuid = uuid4();
   name = "Bottom Offset" as const;
   type: IParameterType = "InputNumber";
@@ -35,11 +40,12 @@ export class BottomLevelParameter extends BaseParameter {
   /**
    *
    */
-  constructor(element: IElement) {
-    super(element);
+  constructor(public level: ILevel) {
+    super();
   }
   toIfc!: () => IFC.IfcPropertySingleValue | IFC.IfcPropertyReferenceValue;
   onValueChange!: (
     value: string | number | boolean | ILevel | BaseParameter
   ) => void;
+  onValueListChange!: (value: number) => void;
 }

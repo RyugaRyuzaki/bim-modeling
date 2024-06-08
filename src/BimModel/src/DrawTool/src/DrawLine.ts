@@ -2,18 +2,19 @@
  * @module DrawLine
  */
 import * as THREE from "three";
+import {IFC4X3 as IFC} from "web-ifc";
+
 import {
   Components,
-  DrawTool,
-  ICategory,
   isOrthoSignal,
   modelingSignal,
-  ProjectComponent,
+  modelStructureSignal,
+  tempElementSignal,
 } from "@BimModel/src";
 import {BaseDraw} from "./BaseDraw";
-import {LocationLine} from "@system/geometry";
-import {SimpleBeam} from "clay";
+import {LocationArc, LocationLine, LocationPoint} from "@system/geometry";
 import {IDrawType} from "@ModelingComponent/types";
+import {SimpleBeam, SimpleWall} from "clay";
 export class DrawLine extends BaseDraw {
   drawType: IDrawType = "Line";
   private locationLine!: LocationLine;
@@ -22,12 +23,6 @@ export class DrawLine extends BaseDraw {
   private start: THREE.Vector3 = new THREE.Vector3();
   private end: THREE.Vector3 = new THREE.Vector3();
 
-  get tempElementType() {
-    return this.components.tools.get(ProjectComponent).defaultElementTypes[
-      "SimpleBeamType"
-    ].selectType;
-  }
-  tempBeam!: SimpleBeam | null;
   /**
    *
    */
@@ -57,6 +52,7 @@ export class DrawLine extends BaseDraw {
   };
   onMouseMove = (_e: MouseEvent) => {
     this.findPoint = _e;
+    this.Snapper.find = _e;
     if (!this.foundPoint || this.mousedown) return;
     this.RaycasterComponent!.updateInfo(this.foundPoint);
     if (this.count === 0) return;
@@ -78,18 +74,8 @@ export class DrawLine extends BaseDraw {
     this.locationLine.visible = true;
     this.drawingDimension.updateLine(start, this.end, this.workPlane);
     this.drawingDimension.visible = true;
-    if (!this.tempElementType) return;
-    if (!this.tempBeam) {
-      this.tempBeam = this.tempElementType.addInstance() as SimpleBeam;
-      this.modelScene.add(...this.tempBeam.meshes);
-    }
-    this.tempBeam.startPoint.x = start.x;
-    this.tempBeam.startPoint.y = -start.z;
-    this.tempBeam.startPoint.z = start.y;
-    this.tempBeam.endPoint.x = this.end.x;
-    this.tempBeam.endPoint.y = -this.end.z;
-    this.tempBeam.endPoint.z = this.end.y;
-    this.tempBeam.update(true);
+    this.createElement();
+    this.updateElement(this.locationLine);
   };
   onMousedown = (_e: MouseEvent) => {
     if (_e.button === 0) this.mousedown = true;
@@ -127,17 +113,129 @@ export class DrawLine extends BaseDraw {
   };
   onCallBack = (_value?: number) => {};
   dispose = () => {
+    this.disposeElement();
     this.drawingDimension.visible = false;
     this.locationLine?.dispose();
     (this.locationLine as any) = null;
     this.count = 0;
     this.points = [];
   };
-  private addElement() {
-    if (!this.elements || !modelingSignal.value || !this.tempBeam) return;
-    const type = modelingSignal.value.type as ICategory;
-    const uuid = this.tempBeam.uuid;
-    if (!this.elements[type][uuid]) this.elements[type][uuid] = this.tempBeam;
-    (this.tempBeam as any) = null;
+  addElement = () => {
+    if (
+      !this.tempElement ||
+      !tempElementSignal.value ||
+      !modelingSignal.value ||
+      !modelStructureSignal.value
+    )
+      return;
+    const {type} = modelingSignal.value;
+    const bimElementTypes = {...tempElementSignal.value.bimElementTypes};
+    const element = this.ProjectComponent.setElement(
+      type,
+      bimElementTypes,
+      this.tempElement,
+      this.locationLine
+    );
+    element.groupParameter = {...tempElementSignal.value.groupParameter};
+    switch (type) {
+      case "Structure Beam":
+        element.addQsetBeamCommon();
+        break;
+      case "Structure Wall":
+        element.addQsetWallCommon();
+        break;
+      case "Structure Column":
+      case "Structure Slab":
+      case "Structure Foundation":
+      case "ReinForcement":
+        break;
+      default:
+        break;
+    }
+    (this.tempElement as any) = null;
+    (this.locationLine as any) = null;
+  };
+  createElement = () => {
+    if (!tempElementSignal.value || !modelingSignal.value) return;
+    const {selectType} = tempElementSignal.value.bimElementTypes;
+    if (!selectType) return;
+    const {type} = modelingSignal.value;
+    switch (type) {
+      case "Structure Beam":
+        if (!this.tempElement)
+          this.tempElement = selectType.addInstance(
+            this.MaterialComponent.BeamMaterial
+          ) as SimpleBeam;
+        this.tempElement.attributes.Name = new IFC.IfcLabel(
+          `${type} ${this.CurrentElementIndex + 1}`
+        );
+        break;
+      case "Structure Wall":
+        if (!this.tempElement)
+          this.tempElement = selectType.addInstance(
+            this.MaterialComponent.WallMaterial
+          ) as SimpleWall;
+
+        this.tempElement.attributes.Name = new IFC.IfcLabel(
+          `${type} ${this.CurrentElementIndex + 1}`
+        );
+
+        break;
+      case "Structure Column":
+      case "Structure Slab":
+      case "Structure Foundation":
+      case "ReinForcement":
+        break;
+      default:
+        break;
+    }
+    this.components.modelScene.updateMatrixWorld(true);
+    if (this.tempElement)
+      this.components.modelScene.add(...this.tempElement.meshes);
+  };
+
+  updateElement = (location: LocationPoint | LocationArc | LocationLine) => {
+    if (!tempElementSignal.value || !modelingSignal.value) return;
+    const {selectType} = tempElementSignal.value.bimElementTypes;
+    if (!selectType) return;
+    const {type} = modelingSignal.value;
+    if (!this.tempElement) return;
+    if (!(location instanceof LocationLine)) return;
+    const {start, end} = location.location;
+    switch (type) {
+      case "Structure Beam":
+        (this.tempElement as SimpleBeam).startPoint.x = start.x;
+        (this.tempElement as SimpleBeam).startPoint.y = -start.z;
+        (this.tempElement as SimpleBeam).startPoint.z = start.y;
+        (this.tempElement as SimpleBeam).endPoint.x = end.x;
+        (this.tempElement as SimpleBeam).endPoint.y = -end.z;
+        (this.tempElement as SimpleBeam).endPoint.z = end.y;
+        (this.tempElement as SimpleBeam).update(true);
+        break;
+      case "Structure Wall":
+        (this.tempElement as SimpleWall).startPoint.x = start.x;
+        (this.tempElement as SimpleWall).startPoint.y = -start.z;
+        (this.tempElement as SimpleWall).startPoint.z = start.y;
+        (this.tempElement as SimpleWall).endPoint.x = end.x;
+        (this.tempElement as SimpleWall).endPoint.y = -end.z;
+        (this.tempElement as SimpleWall).endPoint.z = end.y;
+        (this.tempElement as SimpleWall).update(true, true);
+        break;
+      case "Structure Column":
+      case "Structure Slab":
+      case "Structure Foundation":
+      case "ReinForcement":
+        break;
+      default:
+        break;
+    }
+  };
+  disposeElement() {
+    if (!this.tempElement) return;
+    for (const mesh of this.tempElement.meshes) {
+      mesh.removeFromParent();
+    }
+    this.tempElement.type.deleteInstance(this.tempElement.attributes.expressID);
+    (this.tempElement as any) = null;
   }
 }

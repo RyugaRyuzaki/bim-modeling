@@ -7,6 +7,7 @@ import {ElementType} from "../ElementType";
 import {IfcUtils} from "../../../utils/ifc-utils";
 import {SimpleOpening} from "../../Openings";
 import {IndexedGeometry, FragmentMesh} from "../../../fragment";
+import {BVH} from "../../../fragment/bvh";
 
 export abstract class Element extends ClayObject {
   abstract attributes: IFC.IfcElement;
@@ -39,7 +40,17 @@ export abstract class Element extends ClayObject {
     }
     return meshes;
   }
-
+  get clones() {
+    const meshes: FragmentMesh[] = [];
+    for (const id of this.geometries) {
+      const fragment = this.type.clones.get(id);
+      if (!fragment) {
+        throw new Error("Fragment not found!");
+      }
+      meshes.push(fragment.mesh);
+    }
+    return meshes;
+  }
   protected constructor(model: Model, type: ElementType) {
     super(model);
     this.type = type;
@@ -57,26 +68,25 @@ export abstract class Element extends ClayObject {
         const geomID = geometry.geometryExpressID;
         const transformArray = geometry.flatTransformation;
         const fragment = this.type.fragments.get(geomID);
-        if (!fragment) {
-          throw new Error("Fragment not found!");
-        }
+        if (!fragment) throw new Error("Fragment not found!");
         const instances = fragment.getInstancesIDs(id);
-        if (!instances) {
-          throw new Error("Instances not found!");
-        }
+        if (!instances) throw new Error("Instances not found!");
         tempMatrix.fromArray(transformArray);
         for (const instance of instances) {
           fragment.mesh.setMatrixAt(instance, tempMatrix);
+          fragment.mesh.instanceMatrix.needsUpdate = true;
         }
-        fragment.mesh.instanceMatrix.needsUpdate = true;
-
         if (updateGeometry) {
+          BVH.dispose(fragment.mesh.geometry);
           fragment.mesh.geometry.dispose();
+          (fragment.mesh.geometry as any) = null;
           const data = this.model.ifcAPI.GetGeometry(modelID, geomID);
           fragment.mesh.geometry = this.ifcToThreeGeometry(data);
           const size = fragment.mesh.geometry.index.count;
           fragment.mesh.geometry.clearGroups();
           fragment.mesh.geometry.addGroup(0, size);
+          BVH.apply(fragment.mesh.geometry);
+          fragment.mesh.frustumCulled = false;
         }
       }
     });

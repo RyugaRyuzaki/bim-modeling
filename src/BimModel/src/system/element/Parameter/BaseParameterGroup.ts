@@ -8,9 +8,9 @@ export abstract class BaseParameterGroup {
   abstract uuid: string;
   abstract name: string;
   abstract HasProperties: {[uuid: string]: BaseParameter};
+  abstract element: IElement;
+  abstract toIfc: () => IFC.IfcPropertySet;
   /**
    *
    */
-  constructor(public element: IElement) {}
-  abstract toIfc: () => IFC.IfcPropertySet;
 }

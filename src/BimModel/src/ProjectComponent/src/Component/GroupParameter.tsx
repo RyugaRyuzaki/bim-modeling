@@ -1,5 +1,5 @@
 import React, {FC, useState} from "react";
-import {BaseParameterGroup} from "../Parameter";
+import {BaseParameterGroup} from "../../../system/element/Parameter";
 import GroupParameterTitle from "./GroupParameterTitle";
 import Parameter from "./Parameter";
 

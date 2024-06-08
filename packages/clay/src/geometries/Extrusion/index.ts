@@ -45,12 +45,7 @@ export class Extrusion<T extends Profile> extends ClayGeometry {
 
     this.update();
   }
-  updateBeam(length: number, direction: THREE.Vector3) {
-    const rotationY = Math.atan2(direction.y, direction.x) + Math.PI / 2;
-    this.rotation.y = rotationY;
-    this.depth = length;
-    this.update();
-  }
+
   update() {
     const placement = this.model.get(this.core.Position);
 

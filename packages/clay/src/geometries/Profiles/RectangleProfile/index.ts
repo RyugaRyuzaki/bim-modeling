@@ -4,6 +4,12 @@ import {Profile} from "../Profile";
 import {Model} from "../../../base";
 import {IfcUtils} from "../../../utils/ifc-utils";
 
+export interface IRectangleConfig {
+  width: number;
+  height: number;
+  offsetY?: number;
+}
+
 export class RectangleProfile extends Profile {
   attributes: IFC.IfcRectangleProfileDef;
 
@@ -32,7 +38,7 @@ export class RectangleProfile extends Profile {
 
     this.model.set(this.attributes);
   }
-  updateProfile = (update: any) => {
+  updateProfile = (update: IRectangleConfig) => {
     const {width, height, offsetY} = update;
     if (width) this.dimension.x = width;
     if (height) this.dimension.y = height;

@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import {Components} from "@BimModel/src/Components";
 import {BaseDraw} from "./BaseDraw";
-import {LocationArc} from "@system/geometry";
+import {LocationArc, LocationLine, LocationPoint} from "@system/geometry";
 import {getDirection} from "@BimModel/src";
 import {IDrawType} from "@ModelingComponent/types";
 
@@ -103,4 +103,7 @@ export class DrawCircle extends BaseDraw {
     this.drawingDimension.visible = false;
     this.count = 0;
   };
+  addElement = () => {};
+  createElement = () => {};
+  updateElement = (_location: LocationPoint | LocationArc | LocationLine) => {};
 }

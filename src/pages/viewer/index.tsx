@@ -3,7 +3,6 @@ import {BimModel} from "@BimModel/index";
 import SwitchTheme from "@components/SwitchTheme/SwitchTheme";
 import {disposeSignal} from "@signals/disposeSignal";
 import "./Viewer.css";
-import Spinner from "@components/Spinner/Spinner";
 
 const Viewer = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);

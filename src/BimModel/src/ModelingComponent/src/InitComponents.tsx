@@ -1,24 +1,32 @@
-import React from "react";
+import React, {lazy} from "react";
 import ReactDOM from "react-dom/client";
 import {ModelingComponent} from "..";
-import ModelingTabs from "./Modeling/ModelingTabs";
-import ProjectInfo from "./Project/ProjectInfo";
-import ModelingOption from "./ModelingOption/ModelingOption";
-import Units from "./Units/Units";
-import NewProject from "./Project/NewProject";
-import VisibilityOption from "./VisibilityOption/VisibilityOption";
-import LineOption from "./LineOption/LineOption";
-import WorkPlaneOption from "./WorkPlaneOption/WorkPlaneOption";
-import ElementType from "./ModelingOption/ElementType/ElementType";
+const ModelingTabs = lazy(() => import("./Modeling/ModelingTabs"));
+const NewProject = lazy(() => import("./Project/NewProject"));
+const ProjectInfo = lazy(() => import("./Project/ProjectInfo"));
+const ModelingOption = lazy(() => import("./ModelingOption/ModelingOption"));
+const Units = lazy(() => import("./Units/Units"));
+const LineOption = lazy(() => import("./LineOption/LineOption"));
+const WorkPlaneOption = lazy(() => import("./WorkPlaneOption/WorkPlaneOption"));
+const VisibilityOption = lazy(
+  () => import("./VisibilityOption/VisibilityOption")
+);
+const VisibilityPanel = lazy(
+  () => import("./VisibilityOption/VisibilityPanel")
+);
+const ElementType = lazy(
+  () => import("./ModelingOption/ElementType/ElementType")
+);
 
 export function createModelingContainer(modeling: ModelingComponent) {
   const div = document.createElement("div");
   div.className = "h-full w-full relative";
   ReactDOM.createRoot(div).render(
     <>
-      <ModelingTabs></ModelingTabs>
+      <ModelingTabs />
       <ProjectInfo modeling={modeling}></ProjectInfo>
       <NewProject modeling={modeling}></NewProject>
+      <VisibilityPanel />
       <ElementType />
     </>
   );
@@ -30,6 +38,7 @@ export function createOptionContainer(_modeling: ModelingComponent) {
   ReactDOM.createRoot(div).render(
     <>
       <ModelingOption />
+
       <div className="relative h-full flex justify-end">
         <VisibilityOption />
         <WorkPlaneOption />

@@ -9,12 +9,19 @@ export abstract class ElementType<
   T extends Element = Element
 > extends ClayObject {
   abstract attributes: IFC.IfcElementType;
-
   geometries = new Map<number, ClayGeometry>();
 
   elements = new Map<number, T>();
 
   fragments = new Map<number, Fragment>();
+  clones = new Map<number, Fragment>();
+
+  get typeUuid() {
+    return this.attributes!.GlobalId.value;
+  }
+  get typeName() {
+    return this.attributes!.Name!.value || "";
+  }
 
   abstract addInstance(): T;
 
@@ -26,5 +33,10 @@ export abstract class ElementType<
     const fragment = new Fragment(geometry, material, 0);
     fragment.mesh.frustumCulled = false;
     return fragment;
+  }
+  dispose() {
+    for (const [id, _element] of this.elements) {
+      this.deleteInstance(id);
+    }
   }
 }

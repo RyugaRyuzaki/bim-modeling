@@ -3,12 +3,14 @@ import {ILevel} from "@BimModel/src/LevelSystem/types";
 import {BaseParameter, IParameterType} from "./BaseParameter";
 import {IElement} from "clay";
 import {IFC4X3 as IFC} from "web-ifc";
-import {listLevelSignal} from "@BimModel/src/Signals";
+import {currentLevelSignal, listLevelSignal} from "@BimModel/src/Signals";
 /**
  *
  */
 export class LevelParameter extends BaseParameter {
-  list: any[] | ILevel[] = listLevelSignal.value;
+  list: string[] | number[] | BaseParameter[] | ILevel[] =
+    listLevelSignal.value;
+  element!: IElement;
   uuid = uuid4();
   name = "Reference Level";
   type: IParameterType = "List";
@@ -16,12 +18,24 @@ export class LevelParameter extends BaseParameter {
   /**
    *
    */
-  constructor(element: IElement, level: ILevel) {
-    super(element);
+  constructor(level: ILevel) {
+    super();
     this.value = level;
   }
   toIfc!: () => IFC.IfcPropertySingleValue | IFC.IfcPropertyReferenceValue;
   onValueChange!: (
     value: string | number | boolean | ILevel | BaseParameter
   ) => void;
+  onValueListChange = (
+    value: string | number | boolean | ILevel | BaseParameter
+  ) => {
+    const level = listLevelSignal.value[+value];
+    if (!level) return;
+    this.value = level;
+    if (!this.element) {
+      currentLevelSignal.value = level;
+    }
+    if (this.onChangeLevel) this.onChangeLevel(level);
+  };
+  onChangeLevel!: (level: ILevel) => void;
 }

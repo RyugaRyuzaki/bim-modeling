@@ -22,14 +22,17 @@ const ModelStructure = ({project}: {project: ProjectComponent}) => {
     for (const tool of ModelingTools) {
       const {discipline, types} = tool;
       if (discipline === "Modify") continue;
-      if (!childrenModelStructure[discipline])
+      if (!childrenModelStructure[discipline]) {
+        const uuid = THREE.MathUtils.generateUUID();
         childrenModelStructure[discipline] = {
           name: discipline,
-          uuid: THREE.MathUtils.generateUUID(),
+          uuid: uuid,
           visible: true,
           children: {},
           onVisibility: project.onVisibility,
         } as IStructure;
+        expanded.value = [...expanded.value, uuid];
+      }
       const children = childrenModelStructure[discipline].children;
       for (const {type} of types) {
         if (!children[type])

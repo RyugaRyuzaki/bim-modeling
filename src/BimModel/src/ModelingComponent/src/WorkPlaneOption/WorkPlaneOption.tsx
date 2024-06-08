@@ -37,7 +37,7 @@ const WorkPlaneOption = () => {
               )}
             </Button>
           </TooltipTrigger>
-          <TooltipContent side="bottom">
+          <TooltipContent side="top">
             <p>{tooltip}</p>
           </TooltipContent>
         </Tooltip>
