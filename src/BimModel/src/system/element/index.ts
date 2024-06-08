@@ -1,3 +1,4 @@
 export * from "./types";
-export * from "./BaseElement";
-export * from "./WallElement";
+export * from "./Parameter";
+export * from "./ElementLocation";
+export * from "./ElementUtils";

@@ -6,13 +6,15 @@ import {LevelParameter} from "../LevelParameter";
 import {IFC4X3 as IFC} from "web-ifc";
 import {BottomLevelParameter, TopLevelParameter} from "../OffsetLevelParameter";
 import {ILevel} from "@BimModel/src/LevelSystem/types";
+import {currentLevelSignal, listLevelSignal} from "@BimModel/src/Signals";
 
 /**
  *
  */
-export class PsetWallCommon extends BaseParameterGroup {
+export class PsetBeamLevelCommon extends BaseParameterGroup {
+  element!: IElement;
   uuid = uuid4();
-  name = "PsetWallCommon" as const;
+  name = "PsetBeamCommon" as const;
   HasProperties: {[uuid: string]: BaseParameter} = {};
   levelParameter!: LevelParameter;
   topLevelParameter!: TopLevelParameter;
@@ -20,20 +22,34 @@ export class PsetWallCommon extends BaseParameterGroup {
   /**
    *
    */
-  constructor(element: IElement, level: ILevel) {
-    super(element);
-    this.levelParameter = new LevelParameter(element, level);
-    this.levelParameter.onValueChange = this.onChangeLevel;
-    this.topLevelParameter = new TopLevelParameter(element);
-    this.bottomLevelParameter = new BottomLevelParameter(element);
+  constructor(level: ILevel) {
+    super();
+    this.levelParameter = new LevelParameter(level);
+    this.levelParameter.onChangeLevel = this.onChangeLevel;
+    this.topLevelParameter = new TopLevelParameter(level);
+    this.topLevelParameter.onValueChange = this.onChangeTopLevel;
+    this.bottomLevelParameter = new BottomLevelParameter(level);
+    this.bottomLevelParameter.onValueChange = this.onChangeBottomLevel;
     this.HasProperties[this.levelParameter.uuid] = this.levelParameter;
     this.HasProperties[this.topLevelParameter.uuid] = this.topLevelParameter;
     this.HasProperties[this.bottomLevelParameter.uuid] =
       this.bottomLevelParameter;
   }
-  onChangeLevel = (
+  onChangeLevel = (_value: ILevel) => {
+    // const {} = value as ILevel;
+  };
+  onChangeTopLevel = (
     _value: string | number | boolean | ILevel | BaseParameter
   ) => {
+    console.log(_value);
+    if (!this.element) return;
+    // const {} = value as ILevel;
+  };
+  onChangeBottomLevel = (
+    _value: string | number | boolean | ILevel | BaseParameter
+  ) => {
+    console.log(_value);
+    if (!this.element) return;
     // const {} = value as ILevel;
   };
   toIfc!: () => IFC.IfcPropertySet;

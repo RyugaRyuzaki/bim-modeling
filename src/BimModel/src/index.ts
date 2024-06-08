@@ -5,6 +5,7 @@ export * from "./MaterialComponent";
 export * from "./ModelingComponent";
 export * from "./CubeMapComponent";
 export * from "./ProjectComponent";
+export * from "./SelectionComponent";
 export * from "./Signals";
 export * from "./system";
 export * from "./WorkPlane";

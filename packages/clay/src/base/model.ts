@@ -62,7 +62,9 @@ export class Model {
     } else {
       foundItem = item;
     }
-
+    if (!foundItem) {
+      return;
+    }
     if (recursive) {
       for (const key in foundItem) {
         // @ts-ignore
@@ -72,7 +74,6 @@ export class Model {
         }
       }
     }
-
     this.ifcAPI.DeleteLine(this.modelID, foundItem.expressID);
   }
 

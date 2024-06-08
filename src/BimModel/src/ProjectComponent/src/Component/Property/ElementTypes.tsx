@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Button} from "@/components/ui/button";
 import {
   Tooltip,
@@ -13,35 +13,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/ui/select";
-import {openElementTypeSignal} from "@BimModel/src/Signals";
-import {WallElement} from "..";
-import {SimpleWallType} from "clay";
+import {drawingTypeSignal, openElementTypeSignal} from "@BimModel/src/Signals";
+import {IElementType} from "clay";
 import {useSignal} from "@preact/signals-react";
+import {IBimElementType} from "@ProjectComponent/types";
 
-const WallTypes = ({wall}: {wall: WallElement}) => {
-  const wallTypes = useSignal<SimpleWallType[]>(wall.types as SimpleWallType[]);
-  const wallTypeIndex = useSignal<number>(wall.types.length > 0 ? 0 : -1);
+const ElementTypes = ({
+  selectType,
+}: {
+  selectType: IBimElementType<IElementType>;
+}) => {
+  const elementTypes = useSignal<IElementType[]>(
+    selectType.types as IElementType[]
+  );
+  const elementTypeIndex = useSignal<number>(
+    selectType.types.length > 0 ? 0 : -1
+  );
   const onOpenType = () => {
-    if (!wallTypes.value[wallTypeIndex.value]) return;
+    if (!elementTypes.value[elementTypeIndex.value]) return;
     openElementTypeSignal.value = true;
   };
   const onChangeType = (value: string) => {
-    wallTypeIndex.value = +value;
-    wall.onChangeType(wallTypes.value[+value]);
+    elementTypeIndex.value = +value;
+    selectType.selectType = selectType.types[+value];
   };
   return (
     <div className="relative w-full flex justify-start items-center border-1 rounded-md p-1 mb-1">
       <Select
-        value={wallTypeIndex.value.toString()}
+        value={elementTypeIndex.value.toString()}
         onValueChange={onChangeType}
+        disabled={drawingTypeSignal.value !== "None"}
       >
         <SelectTrigger className="w-[80%]  m-1">
           <SelectValue placeholder="" />
         </SelectTrigger>
         <SelectContent>
-          {wallTypes.value.map((type: SimpleWallType, index: number) => (
-            <SelectItem key={`${type.name}`} value={index.toString()}>
-              {type.name}
+          {elementTypes.value.map((type: IElementType, index: number) => (
+            <SelectItem key={`${type.typeUuid}`} value={index.toString()}>
+              {type.typeName}
             </SelectItem>
           ))}
         </SelectContent>
@@ -64,4 +73,4 @@ const WallTypes = ({wall}: {wall: WallElement}) => {
   );
 };
 
-export default WallTypes;
+export default ElementTypes;

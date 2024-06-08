@@ -15,6 +15,7 @@ const {
 } = Modelings;
 export const CategoryTool: Record<ICategory, IModeling[]> = {
   Wall: [Line, Rectangular, Arc],
+  CurtainWall: [Line, Rectangular, Arc],
   Floor: [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel],
   Ceiling: [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel],
   Roof: [Finish, Line, Rectangular, Arc, PolyLines, PickLine, Cancel],

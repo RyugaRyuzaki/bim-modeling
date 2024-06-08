@@ -246,8 +246,9 @@ export class CubeMapComponent
    * event when click and navigate view
    */
   private onPick() {
-    this.canvas.addEventListener("pointerdown", async (e: any) => {
+    this.canvas.addEventListener("click", (e: MouseEvent) => {
       e.preventDefault();
+      e.stopPropagation();
       if (!this.found) return;
       const name = this.found.object.name;
       if (!name) return;

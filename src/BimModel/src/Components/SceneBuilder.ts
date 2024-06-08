@@ -8,6 +8,7 @@ export class SceneBuilder extends THREE.Scene implements Disposable {
   get meshes() {
     return this.children;
   }
+
   /**
    *
    */

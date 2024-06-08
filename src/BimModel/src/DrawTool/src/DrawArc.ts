@@ -4,7 +4,7 @@
 import * as THREE from "three";
 import {Components} from "@BimModel/src/Components";
 import {BaseDraw} from "./BaseDraw";
-import {LocationArc} from "@system/geometry";
+import {LocationArc, LocationLine, LocationPoint} from "@system/geometry";
 import {getDirection} from "@BimModel/src/utils";
 import {IDrawType} from "@ModelingComponent/types";
 
@@ -99,5 +99,18 @@ export class DrawArc extends BaseDraw {
     this.locationArc?.dispose();
     (this.locationArc as any) = null;
     this.count = 0;
+  };
+  addElement = () => {};
+  createElement = () => {};
+  updateElement = (_location: LocationPoint | LocationArc | LocationLine) => {};
+  onVisibility = (visible: boolean) => {
+    if (!this.tempElement) return;
+    if (visible) {
+      this.components.modelScene.add(...this.tempElement.meshes);
+    } else {
+      for (const mesh of this.tempElement.meshes) {
+        mesh.removeFromParent();
+      }
+    }
   };
 }

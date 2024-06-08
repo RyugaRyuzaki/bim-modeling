@@ -1,4 +1,4 @@
-import { BufferGeometry, Mesh } from "three";
+import {BufferGeometry, Mesh} from "three";
 import {
   computeBoundsTree,
   disposeBoundsTree,

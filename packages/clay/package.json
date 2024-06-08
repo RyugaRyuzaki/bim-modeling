@@ -10,6 +10,7 @@
         "three-stdlib": "^2.29.6",
         "earcut": "^2.2.4",
         "uuid": "^9.0.1",
+        "bim-fragment": "^1.4.2",
         "web-ifc": "^0.0.54"
     },
     "devDependencies": {

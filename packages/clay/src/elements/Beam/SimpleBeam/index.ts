@@ -10,8 +10,6 @@ export * from "./src";
 
 export class SimpleBeamType extends DynamicElementType<SimpleBeam> {
   attributes: IFC4X3.IfcBeamType;
-  width = 0.2;
-  height = 0.4;
   constructor(model: Model, config: IIfcBaseConfig, public profile: Profile) {
     super(model);
     const {Name, Description, ObjectType} = config;
@@ -27,14 +25,6 @@ export class SimpleBeamType extends DynamicElementType<SimpleBeam> {
       null,
       IFC.IfcBeamTypeEnum.BEAM
     );
-  }
-  updateProfile() {
-    const update = {
-      width: this.width,
-      height: this.height,
-      offsetY: -this.height / 2,
-    };
-    this.profile.updateProfile(update);
   }
   protected createElement() {
     return new SimpleBeam(this.model, this);

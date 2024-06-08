@@ -9,6 +9,7 @@ import {
   LocationArc,
   LocationLine,
   RaycasterComponent,
+  SelectionComponent,
 } from "@BimModel/src";
 import {ToolComponent} from "@BimModel/src/Tool";
 import {Component, Disposable, UUID} from "@BimModel/src/types";
@@ -23,7 +24,7 @@ import {
   DrawCircle,
 } from "./src";
 import {effect} from "@preact/signals-react";
-import {drawingTypeSignal} from "@BimModel/src/Signals";
+import {currentLevelSignal, drawingTypeSignal} from "@BimModel/src/Signals";
 import {ILevel} from "../LevelSystem/types";
 export class DrawTool extends Component<string> implements Disposable {
   static readonly uuid = UUID.DrawTool;
@@ -38,11 +39,19 @@ export class DrawTool extends Component<string> implements Disposable {
   private draws: {[name: string]: BaseDraw} = {};
   set workPlaneLevel(level: ILevel) {
     const {elevation} = level;
-    this.workPlane.setFromNormalAndCoplanarPoint(
+    this.workPlane = new THREE.Plane().setFromNormalAndCoplanarPoint(
       DrawTool.upDirection,
       new THREE.Vector3(0, elevation, 0)
     );
   }
+
+  get RaycasterComponent() {
+    return this.components.tools.get(RaycasterComponent);
+  }
+  get SelectionComponent() {
+    return this.components.tools.get(SelectionComponent);
+  }
+
   /**
    *
    */
@@ -62,8 +71,12 @@ export class DrawTool extends Component<string> implements Disposable {
           draw.setupEvent = drawingTypeSignal.value === name;
         }
       }
-      this.components.tools.get(RaycasterComponent)!.visibleInfo =
-        drawingTypeSignal.value !== "None";
+      this.RaycasterComponent!.visibleInfo = drawingTypeSignal.value !== "None";
+      this.SelectionComponent.setupEvent = drawingTypeSignal.value === "None";
+    });
+    effect(() => {
+      if (!currentLevelSignal.value) return;
+      this.workPlaneLevel = currentLevelSignal.value;
     });
   }
   async dispose() {

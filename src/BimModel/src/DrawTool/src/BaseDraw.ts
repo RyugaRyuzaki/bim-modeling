@@ -9,9 +9,18 @@ import {
   Dimension,
   DrawTool,
   getLocalVectorOnFace,
+  LocationPoint,
+  LocationArc,
+  LocationLine,
   ProjectComponent,
+  modelStructureSignal,
+  modelingSignal,
+  SelectionComponent,
+  Snapper,
 } from "@BimModel/src";
 import {IDrawType} from "@ModelingComponent/types";
+import {IElement} from "clay";
+import {MaterialComponent} from "@BimModel/src/MaterialComponent";
 
 export abstract class BaseDraw {
   abstract onClick: (_e: MouseEvent) => void;
@@ -21,10 +30,13 @@ export abstract class BaseDraw {
   abstract onFinished: () => void;
   abstract onCallBack: (_value?: number) => void;
   abstract dispose: () => void;
+  abstract addElement: () => void;
+  abstract createElement: () => void;
+  abstract updateElement: (
+    location: LocationPoint | LocationArc | LocationLine
+  ) => void;
   abstract drawType: IDrawType;
-  get elements() {
-    return this.components.tools.get(ProjectComponent).elements;
-  }
+  public tempElement: IElement | null = null;
   get modelScene() {
     return this.components.modelScene;
   }
@@ -34,18 +46,31 @@ export abstract class BaseDraw {
   get RaycasterComponent() {
     return this.components.tools.get(RaycasterComponent);
   }
+  get MaterialComponent() {
+    return this.components.tools.get(MaterialComponent);
+  }
+  get ProjectComponent() {
+    return this.components.tools.get(ProjectComponent);
+  }
+  get SelectionComponent() {
+    return this.components.tools.get(SelectionComponent);
+  }
+  get Snapper() {
+    return this.components.tools.get(Snapper);
+  }
   get camera() {
     return this.RaycasterComponent.currentCamera;
   }
   get container() {
     return this.components.container;
   }
+
   private _setupEvent = false;
   set setupEvent(enabled: boolean) {
     if (!this.container) return;
-
     if (this._setupEvent === enabled) return;
     this._setupEvent = enabled;
+    this.Snapper.workPlane = enabled ? this.workPlane : null;
     if (enabled) {
       this.container.addEventListener("click", this.onClick);
       this.container.addEventListener("mousemove", this.onMouseMove);
@@ -88,6 +113,15 @@ export abstract class BaseDraw {
     return this._inputKey;
   }
   mousedown = false;
+
+  get CurrentElementIndex(): number {
+    if (!modelStructureSignal.value || !modelingSignal.value) return -1;
+    const {type, discipline} = modelingSignal.value;
+    const children =
+      modelStructureSignal.value.children[discipline].children[type].children;
+    return Object.keys(children).length;
+  }
+
   /**
    *
    */
@@ -112,7 +146,6 @@ export abstract class BaseDraw {
       const dis = dis0 * Math.cos(angle);
       this.orthoDir = new THREE.Vector3(dis >= 0 ? 1 : -1, 0, 0);
       return start.clone().add(x.clone().multiplyScalar(dis));
-      23;
     } else {
       angle = dir.angleTo(z);
       const dis = dis0 * Math.cos(angle);

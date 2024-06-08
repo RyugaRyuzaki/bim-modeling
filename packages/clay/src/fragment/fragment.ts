@@ -40,7 +40,6 @@ export class Fragment {
     this.mesh = new FragmentMesh(geometry, material, count, this);
     this.id = this.mesh.uuid;
     this.capacity = count;
-    this.mesh.count = 0;
 
     if (this.mesh.geometry.index.count) {
       BVH.apply(this.mesh.geometry);
@@ -435,5 +434,27 @@ export class Fragment {
       this.mesh.setColorAt(instanceID, color2);
       this.mesh.setColorAt(instanceID2, color1);
     }
+  }
+  static clone(fragment: Fragment) {
+    const {mesh, instanceToItem, itemToInstances, capacity, ids} = fragment;
+    const geometry = mesh.geometry.clone();
+    BVH.apply(geometry);
+    const clone = new Fragment(geometry, mesh.material, mesh.count);
+    clone.instanceToItem = instanceToItem;
+    clone.itemToInstances = itemToInstances;
+    clone.ids = ids;
+    clone.capacity = capacity;
+    const matrix = new THREE.Matrix4();
+    const color = new THREE.Color();
+    for (let i = 0; i < mesh.count; i++) {
+      mesh.getMatrixAt(i, matrix);
+      clone.mesh.setMatrixAt(i, matrix);
+      if (mesh.instanceColor) {
+        mesh.getColorAt(i, color);
+        clone.mesh.setColorAt(i, color);
+      }
+      clone.update();
+    }
+    return clone;
   }
 }

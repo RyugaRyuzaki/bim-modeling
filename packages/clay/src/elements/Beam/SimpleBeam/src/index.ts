@@ -44,6 +44,8 @@ export class SimpleBeam extends Element {
   constructor(model: Model, type: SimpleBeamType) {
     super(model, type);
     this.type = type;
+    this.rotation.x = Math.PI / 2;
+    this.position = this.startPoint;
     this.body = new Extrusion(model, this.type.profile);
     const id = this.body.attributes.expressID;
     this.type.geometries.set(id, this.body);
@@ -54,7 +56,7 @@ export class SimpleBeam extends Element {
       this.body.attributes,
     ]);
 
-    this.attributes = new IFC.IfcWall(
+    this.attributes = new IFC.IfcBeam(
       new IFC.IfcGloballyUniqueId(uuidv4()),
       this.model.IfcOwnerHistory,
       null,
@@ -65,13 +67,16 @@ export class SimpleBeam extends Element {
       null,
       null
     );
-    this.rotation.x = Math.PI / 2;
-    this.position = this.startPoint;
+
     this.model.set(this.attributes);
   }
-
+  updateProfile() {}
   update(updateGeometry = false) {
-    this.body.updateBeam(this.length, this.direction);
+    const rotationY =
+      Math.atan2(this.direction.y, this.direction.x) + Math.PI / 2;
+    this.rotation.y = rotationY;
+    this.body.depth = this.length;
+    this.body.update();
     const shape = this.model.get(this.attributes.Representation);
     const reps = this.model.get(shape.Representations[0]);
     reps.Items = [this.body.attributes];

@@ -97,6 +97,23 @@ export default defineConfig(() => {
     base: "./",
     build: {
       outDir: "./build",
+      chunkSizeWarningLimit: false,
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            // creating a chunk to @open-ish deps. Reducing the vendor chunk size
+            if (id.includes("clay")) {
+              return "clay.min";
+            }
+            if (id.includes("three")) {
+              return "three.min";
+            }
+            if (id.includes("web-ifc")) {
+              return "web-ifc.min";
+            }
+          },
+        },
+      },
     },
     test: {
       global: true,
