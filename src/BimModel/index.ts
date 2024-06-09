@@ -59,7 +59,9 @@ export class BimModel {
     /* =====WorkPlane===== */
     const workPlane = this.components.tools.get(WorkPlane);
     workPlane.enabled = true;
-
+    /* =====Snapper===== */
+    const snapper = this.components.tools.get(Snapper);
+    snapper.enabled = true;
     /* =====DrawTool===== */
     const drawTool = this.components.tools.get(DrawTool);
     drawTool.enabled = true;
@@ -75,13 +77,11 @@ export class BimModel {
     /* =====SelectionComponent===== */
     const selectionComponent = this.components.tools.get(SelectionComponent);
     selectionComponent.enabled = true;
-    /* =====Snapper===== */
-    const snapper = this.components.tools.get(Snapper);
-    snapper.enabled = true;
     this.components.ifcModel.init().then(() => {
-      projectComponent.init(this.structure, this.property);
+      projectComponent.init(this.property);
       projectComponent.initElement();
       modelingComponent.init(this.modeling, this.option);
+      levelSystem.initView(this.structure);
     });
     this.components.gameLoop();
   }

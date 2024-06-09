@@ -100,7 +100,6 @@ export class LocationArc
     this.initSegment();
     const position = [start.x, start.y, start.z, end.x, end.y, end.z];
     LocationUtils.updateLineSegmentPosition(position, this.segment);
-    if (this.onChange) this.onChange(this.location);
   }
   update3PointsArc(
     start: THREE.Vector3,
@@ -183,7 +182,6 @@ export class LocationArc
       true
     );
     LocationUtils.updateLineSegmentPosition(position, this.segment);
-    if (this.onChange) this.onChange(this.location);
   }
   private initLocation(center: THREE.Vector3, radius: number) {
     if (!this.location)

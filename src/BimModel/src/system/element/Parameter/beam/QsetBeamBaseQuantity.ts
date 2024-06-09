@@ -1,7 +1,7 @@
 import {v4 as uuid4} from "uuid";
 import {BaseParameter} from "../BaseParameter";
 import {BaseParameterGroup} from "../BaseParameterGroup";
-import {IElement} from "clay";
+import {IElement, RectangleProfile, SimpleBeam, SimpleBeamType} from "clay";
 import {IFC4X3 as IFC} from "web-ifc";
 import {LengthParameter} from "../LengthParameter";
 import {AreaParameter} from "../AreaParameter";
@@ -51,4 +51,17 @@ export class QsetBeamBaseQuantity extends BaseParameterGroup {
       this.HasProperties[key].enable = false;
     }
   }
+  updateElement = (element: IElement) => {
+    this.element = element;
+    if (!this.element.type) return;
+    const {length} = this.element as SimpleBeam;
+    const {x, y} = (
+      (this.element.type as SimpleBeamType).profile as RectangleProfile
+    ).dimension;
+    this.Length.value = length;
+    this.CrossSectionArea.value = x * y;
+    this.OuterSurfaceArea.value = x * y;
+    this.GrossVolume.value = x * y * length;
+    this.NetVolume.value = x * y * length;
+  };
 }

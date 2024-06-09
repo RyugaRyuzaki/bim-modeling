@@ -1,14 +1,17 @@
+import * as THREE from "three";
+
 import React, {memo} from "react";
 import {
   Table,
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {Input} from "@/components/ui/input";
+
 import {Checkbox} from "@/components/ui/checkbox";
 import {IStructure} from "@ProjectComponent/types";
 const isTreeGroupActive = (structure: IStructure): boolean => {
@@ -29,6 +32,9 @@ const TabTable = ({
   structure: IStructure;
   handleCheck: (structure: IStructure) => void;
 }) => {
+  const getColor = (mat: THREE.MeshLambertMaterial) => {
+    return "#" + mat.color.getHexString();
+  };
   return (
     <Table className="relative min-h-[400px] max-h-[100vh] overflow-x-hidden overflow-y-auto ">
       <TableCaption>
@@ -36,7 +42,7 @@ const TabTable = ({
       </TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className="w-[50px]">
+          <TableHead className="w-[50px] h-[30px]">
             <Checkbox
               className="mr-3"
               checked={isTreeGroupActive(structure)}
@@ -48,24 +54,40 @@ const TabTable = ({
             />
           </TableHead>
           <TableHead className="text-left max-w-[200px]">All</TableHead>
+          <TableHead className="text-right max-w-[200px]">Color</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {Object.keys(structure.children).map((key: string, index: number) => (
           <TableRow key={`${key}-${index}-${structure.uuid}`}>
-            <TableCell className="font-medium">
+            <TableCell className="font-medium h-[30px]">
               <Checkbox
                 className="mr-3"
-                checked={isTreeGroupActive(structure)}
+                checked={isTreeGroupActive(structure.children[key])}
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  handleCheck(structure);
+                  handleCheck(structure.children[key]);
                 }}
               />
             </TableCell>
-            <TableCell className="text-left max-w-[200px]">
+            <TableCell className="text-left h-[30px] max-w-[200px]">
               {structure.children[key].name}
+            </TableCell>
+            <TableCell className="text-right h-[30px] w-[50px] p-0 pr-2">
+              {structure.children[key].material && (
+                <Input
+                  type="color"
+                  className="p-1"
+                  defaultValue={getColor(structure.children[key].material!)}
+                  onChange={(e) =>
+                    structure.children[key].onChangeColor!(
+                      e.target.value,
+                      structure.children[key].material
+                    )
+                  }
+                />
+              )}
             </TableCell>
           </TableRow>
         ))}

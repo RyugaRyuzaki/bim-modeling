@@ -13,6 +13,7 @@ import {ISnapper, ISnapTriangle} from "./types";
 import {SnapUtils} from "../utils";
 import {FragmentMesh} from "clay";
 import {GeometryCSS} from "../system";
+import {SelectionComponent} from "../SelectionComponent";
 /**
  *
  */
@@ -39,7 +40,9 @@ export class Snapper extends Component<string> implements Disposable {
   }
 
   includes: ISnapper[] = [];
-
+  get SelectionComponent() {
+    return this.components.tools.get(SelectionComponent);
+  }
   get container() {
     return this.components.container;
   }
@@ -66,17 +69,16 @@ export class Snapper extends Component<string> implements Disposable {
   private _found: THREE.Intersection | null = null;
   set find(event: MouseEvent) {
     this.snapper = null;
-
     this.components.tools.get(RaycasterComponent)!.mouseMove = event;
     this._found = this.RaycasterComponent.castRay();
-
+    this.SelectionComponent.cursor = this._found ? 4 : 0;
     if (!this._found || !this._found.face) {
       this.tab = true;
       return;
     }
     const {face, instanceId, object, point} = this._found;
     if (instanceId === undefined) return;
-    console.log(instanceId);
+
     // check instance and face
     if (!object || !(object instanceof FragmentMesh)) return;
     if (!object.geometry.index || !object.geometry.attributes.position) return;
@@ -111,7 +113,6 @@ export class Snapper extends Component<string> implements Disposable {
       trianglePoints,
       currentPoint
     );
-
     const pointTypes = [
       ...trianglePoints.map((p: THREE.Vector3) => {
         return {
@@ -144,7 +145,7 @@ export class Snapper extends Component<string> implements Disposable {
       if (currentPoint.distanceTo(snap.point) <= Snapper.tolerance) {
         this.visible = true;
         this._snap = snap.point;
-        this.update(snap.point, snap.css);
+        this.updatePoint(snap.point, snap.css);
         break;
       }
     }
@@ -156,7 +157,6 @@ export class Snapper extends Component<string> implements Disposable {
     super(components);
     this.components.tools.add(Snapper.uuid, this);
     this.init();
-
     this.setupEvent = true;
   }
   async dispose() {
@@ -182,11 +182,10 @@ export class Snapper extends Component<string> implements Disposable {
    */
   private init() {
     this.domElement = document.createElement("div");
-    this.domElement.classList.add(GeometryCSS.snap.endLine);
+    this.domElement.className = GeometryCSS.snap.endpoint;
     this.label = new CSS2DObject(this.domElement);
-    this.visible = true;
   }
-  private update(p: THREE.Vector3, css: string) {
+  private updatePoint(p: THREE.Vector3, css: string) {
     this.label.position.copy(p);
     this.domElement.className = css;
   }

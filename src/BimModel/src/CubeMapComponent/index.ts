@@ -12,6 +12,7 @@ import {
 import {CubeMapMaterial, BoxCube} from "./src";
 import {RendererComponent} from "../RendererComponent";
 import {defaultBox, defaultSphere, switchPick} from "../utils";
+import {IView} from "../LevelSystem/types";
 
 const near = 1,
   far = 10000;
@@ -30,8 +31,8 @@ export class CubeMapComponent
   static readonly uuid = UUID.CubeMapComponent;
   enabled = false;
   private materials = new CubeMapMaterial();
-  private box: THREE.Box3 = defaultBox;
-  private sphere: THREE.Sphere = defaultSphere();
+  box: THREE.Box3 = defaultBox;
+  sphere: THREE.Sphere = defaultSphere();
   private container!: HTMLDivElement;
   private canvas!: HTMLCanvasElement;
   set align(position: ICubeMapPosition) {
@@ -293,6 +294,30 @@ export class CubeMapComponent
       this.components.tools.get(RendererComponent).camera.cameraControls;
     const {center} = this.sphere;
     const pos = switchPick(name, this.sphere, this.box);
+    controls.setLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z);
+    controls.fitToSphere(this.sphere, true);
+  }
+  onNavigationElevation(view: IView) {
+    if (view.viewType !== "Elevation" || !view.elevationType) return;
+    const controls =
+      this.components.tools.get(RendererComponent).camera.cameraControls;
+    const {center} = this.sphere;
+    const {max, min} = this.box;
+    const pos = center.clone();
+    switch (view.elevationType) {
+      case "South":
+        pos.set(0, center.y, max.z);
+        break;
+      case "West":
+        pos.set(min.x, center.y, 0);
+        break;
+      case "East":
+        pos.set(max.x, center.y, 0);
+        break;
+      case "North":
+        pos.set(0, center.y, min.z);
+        break;
+    }
     controls.setLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z);
     controls.fitToSphere(this.sphere, true);
   }

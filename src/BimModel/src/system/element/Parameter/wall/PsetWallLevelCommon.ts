@@ -34,6 +34,9 @@ export class PsetWallLevelCommon extends BaseParameterGroup {
     this.HasProperties[this.bottomLevelParameter.uuid] =
       this.bottomLevelParameter;
   }
+  updateElement = (element: IElement) => {
+    this.element = element;
+  };
   onChangeLevel = (_value: ILevel) => {
     // const {} = value as ILevel;
   };

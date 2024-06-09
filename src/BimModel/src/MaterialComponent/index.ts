@@ -4,6 +4,7 @@ import {ToolComponent} from "../Tool";
 import {Component, Disposable, Updateable, UUID} from "../types";
 import {effect} from "@preact/signals-react";
 import {clippingPlanesSignal, lineTypeSignal} from "../Signals";
+import {ICategory} from "../system";
 
 export class MaterialComponent
   extends Component<string>
@@ -11,12 +12,7 @@ export class MaterialComponent
 {
   static readonly uuid = UUID.MaterialComponent;
   static readonly exclude = ["LocationMaterial", "DimensionMaterial"];
-  static readonly elements = {
-    BeamMaterial: 0xfff705,
-    ColumnMaterial: 0xfa051d,
-    WallMaterial: 0xf7f8fa,
-    SlabMaterial: 0xa19598,
-  };
+
   enabled = false;
   listMaterial: Map<
     string,
@@ -30,19 +26,50 @@ export class MaterialComponent
       "DimensionMaterial"
     ) as THREE.MeshBasicMaterial;
   }
-  get BeamMaterial(): THREE.MeshLambertMaterial {
-    return this.listMaterial.get("BeamMaterial") as THREE.MeshLambertMaterial;
-  }
-  get ColumnMaterial(): THREE.MeshLambertMaterial {
-    return this.listMaterial.get("ColumnMaterial") as THREE.MeshLambertMaterial;
-  }
-  get WallMaterial(): THREE.MeshLambertMaterial {
-    return this.listMaterial.get("WallMaterial") as THREE.MeshLambertMaterial;
-  }
-  get SlabMaterial(): THREE.MeshLambertMaterial {
-    return this.listMaterial.get("SlabMaterial") as THREE.MeshLambertMaterial;
-  }
 
+  materialCategories: Record<
+    ICategory,
+    THREE.MeshLambertMaterial | null | undefined
+  > = {
+    Wall: new THREE.MeshLambertMaterial({
+      color: 0xf7f8fa,
+      depthTest: false,
+    }),
+    Floor: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
+    Ceiling: null,
+    Roof: null,
+    Column: new THREE.MeshLambertMaterial({
+      color: 0xfa051d,
+      depthTest: false,
+    }),
+    Door: null,
+    Window: null,
+    CurtainWall: null,
+    "Structure Beam": new THREE.MeshLambertMaterial({
+      color: 0xfff705,
+      depthTest: false,
+    }),
+    "Structure Column": new THREE.MeshLambertMaterial({
+      color: 0xfa051d,
+      depthTest: false,
+    }),
+    "Structure Wall": new THREE.MeshLambertMaterial({
+      color: 0xf7f8fa,
+      depthTest: false,
+    }),
+    "Structure Slab": new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
+    "Structure Foundation": null,
+    ReinForcement: null,
+    Duct: null,
+    Pipe: null,
+    AirTerminal: null,
+  };
   /**
    *
    */
@@ -63,14 +90,7 @@ export class MaterialComponent
         depthTest: false,
       })
     );
-    for (const key in MaterialComponent.elements) {
-      this.addMaterial(
-        key,
-        new THREE.MeshLambertMaterial({
-          color: MaterialComponent.elements[key],
-        })
-      );
-    }
+
     effect(() => {
       for (const [name, mat] of this.listMaterial) {
         if (MaterialComponent.exclude.includes(name)) continue;
@@ -88,6 +108,12 @@ export class MaterialComponent
       mat.dispose();
     }
     this.listMaterial.clear();
+    for (const category in this.materialCategories) {
+      (this.materialCategories[
+        category
+      ] as THREE.MeshLambertMaterial)!.dispose();
+    }
+    (this.materialCategories as any) = {};
   }
   get() {
     return MaterialComponent.uuid;

@@ -10,7 +10,6 @@ import {
   lengthUnitSignal,
 } from "@BimModel/src";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
-import {Line2} from "three/examples/jsm/lines/Line2";
 import {dimStyle, GeometryCSS} from "../types";
 import {LocationUtils} from "./LocationUtils";
 import {BaseLocation} from "./BaseLocation";
@@ -113,6 +112,16 @@ export class Dimension extends BaseLocation implements Disposable {
     LocationUtils.updateLineSegmentPosition(position, this.segment);
   }
 
+  static createInputLabel(css: string): CSS2DObject {
+    const div = document.createElement("input");
+    div.className = css;
+    div.onchange = (e: any) => {
+      console.log(e);
+    };
+    const label = new CSS2DObject(div);
+    label.userData.content = div;
+    return label;
+  }
   static createLabel(css: string): CSS2DObject {
     const div = document.createElement("div");
     div.className = css;

@@ -16,3 +16,8 @@ export type ICategory =
   | "Duct"
   | "Pipe"
   | "AirTerminal";
+
+export interface IAttribute {
+  name: string;
+  globalId: string;
+}

@@ -10,6 +10,7 @@ export abstract class BaseParameterGroup {
   abstract HasProperties: {[uuid: string]: BaseParameter};
   abstract element: IElement;
   abstract toIfc: () => IFC.IfcPropertySet;
+  abstract updateElement: (element: IElement) => void;
   /**
    *
    */

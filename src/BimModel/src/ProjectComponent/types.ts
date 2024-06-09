@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 export type IUnitSymbol = "m" | "cm" | "mm";
 export type IUnitLength = "m" | "cm" | "mm";
 export type IUnitArea = "m²" | "cm²" | "mm²";
@@ -26,4 +28,9 @@ export interface IStructure {
   visible: boolean;
   onVisibility: (visible: boolean, structure: IStructure) => void;
   children: {[name: string]: IStructure};
+  material?: THREE.MeshLambertMaterial | null | undefined;
+  onChangeColor?: (
+    color: string,
+    material: THREE.MeshLambertMaterial | null | undefined
+  ) => void;
 }

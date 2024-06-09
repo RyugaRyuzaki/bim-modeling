@@ -60,7 +60,6 @@ export class DrawTool extends Component<string> implements Disposable {
     this.components.tools.add(DrawTool.uuid, this);
     this.drawingDimension = new Dimension(components);
     this.initDraws();
-
     effect(() => {
       for (const name in this.draws) {
         const draw = this.draws[name];

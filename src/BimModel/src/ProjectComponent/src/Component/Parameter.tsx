@@ -73,9 +73,10 @@ const Parameter = ({parameter}: {parameter: BaseParameter}) => {
     parameter.onValueChange(e.target.value);
   };
   const onChangeNumber = (e: ChangeEvent<HTMLInputElement>) => {
+    if (isNaN(parseFloat(e.target.value))) return;
     setValue(e.target.value);
-    parameter.value = e.target.value;
-    parameter.onValueChange(e.target.value);
+    parameter.value = +e.target.value;
+    parameter.onValueChange(+e.target.value);
   };
   const onChangeValue = (value: string) => {
     setValueIndex(+value);
