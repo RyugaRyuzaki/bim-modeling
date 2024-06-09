@@ -37,6 +37,7 @@ export class DrawLine extends BaseDraw {
     } else {
       this.start = this.foundPoint.clone();
     }
+    if (this.Snapper.snap) this.start.copy(this.Snapper.snap);
     this.points.push(this.start);
     // if the first time user click
     // if another time
@@ -65,7 +66,7 @@ export class DrawLine extends BaseDraw {
       this.end = this.foundPoint.clone();
       this.orthoDir = null;
     }
-
+    if (this.Snapper.snap) this.end = this.Snapper.snap.clone();
     // if measureControl.tempDim is  null then create a dimensionLine
     const start = this.points[this.points.length - 1];
     if (!this.locationLine)
@@ -141,13 +142,9 @@ export class DrawLine extends BaseDraw {
       case "Structure Beam":
         element.addQsetBeamCommon();
         break;
+      case "Wall":
       case "Structure Wall":
         element.addQsetWallCommon();
-        break;
-      case "Structure Column":
-      case "Structure Slab":
-      case "Structure Foundation":
-      case "ReinForcement":
         break;
       default:
         break;
@@ -164,27 +161,22 @@ export class DrawLine extends BaseDraw {
       case "Structure Beam":
         if (!this.tempElement)
           this.tempElement = selectType.addInstance(
-            this.MaterialComponent.BeamMaterial
+            this.MaterialComponent.materialCategories[type]!
           ) as SimpleBeam;
         this.tempElement.attributes.Name = new IFC.IfcLabel(
           `${type} ${this.CurrentElementIndex + 1}`
         );
         break;
+      case "Wall":
       case "Structure Wall":
         if (!this.tempElement)
           this.tempElement = selectType.addInstance(
-            this.MaterialComponent.WallMaterial
+            this.MaterialComponent.materialCategories[type]!
           ) as SimpleWall;
 
         this.tempElement.attributes.Name = new IFC.IfcLabel(
           `${type} ${this.CurrentElementIndex + 1}`
         );
-
-        break;
-      case "Structure Column":
-      case "Structure Slab":
-      case "Structure Foundation":
-      case "ReinForcement":
         break;
       default:
         break;
@@ -212,6 +204,7 @@ export class DrawLine extends BaseDraw {
         (this.tempElement as SimpleBeam).endPoint.z = end.y;
         (this.tempElement as SimpleBeam).update(true);
         break;
+      case "Wall":
       case "Structure Wall":
         (this.tempElement as SimpleWall).startPoint.x = start.x;
         (this.tempElement as SimpleWall).startPoint.y = -start.z;
@@ -221,21 +214,8 @@ export class DrawLine extends BaseDraw {
         (this.tempElement as SimpleWall).endPoint.z = end.y;
         (this.tempElement as SimpleWall).update(true, true);
         break;
-      case "Structure Column":
-      case "Structure Slab":
-      case "Structure Foundation":
-      case "ReinForcement":
-        break;
       default:
         break;
     }
   };
-  disposeElement() {
-    if (!this.tempElement) return;
-    for (const mesh of this.tempElement.meshes) {
-      mesh.removeFromParent();
-    }
-    this.tempElement.type.deleteInstance(this.tempElement.attributes.expressID);
-    (this.tempElement as any) = null;
-  }
 }

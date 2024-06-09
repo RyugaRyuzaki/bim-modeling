@@ -14,7 +14,7 @@ import {currentLevelSignal, listLevelSignal} from "@BimModel/src/Signals";
 export class PsetBeamLevelCommon extends BaseParameterGroup {
   element!: IElement;
   uuid = uuid4();
-  name = "PsetBeamCommon" as const;
+  name = "Beam Level Common" as const;
   HasProperties: {[uuid: string]: BaseParameter} = {};
   levelParameter!: LevelParameter;
   topLevelParameter!: TopLevelParameter;
@@ -35,6 +35,9 @@ export class PsetBeamLevelCommon extends BaseParameterGroup {
     this.HasProperties[this.bottomLevelParameter.uuid] =
       this.bottomLevelParameter;
   }
+  updateElement = (element: IElement) => {
+    this.element = element;
+  };
   onChangeLevel = (_value: ILevel) => {
     // const {} = value as ILevel;
   };

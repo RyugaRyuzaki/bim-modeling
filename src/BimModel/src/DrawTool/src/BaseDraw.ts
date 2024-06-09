@@ -167,4 +167,13 @@ export abstract class BaseDraw {
     ).normalize();
     return start.clone().add(dir.multiplyScalar(distance));
   }
+  disposeElement() {
+    this.Snapper.snapper = null;
+    if (!this.tempElement) return;
+    for (const mesh of this.tempElement.meshes) {
+      mesh.removeFromParent();
+    }
+    this.tempElement.type.deleteInstance(this.tempElement.attributes.expressID);
+    (this.tempElement as any) = null;
+  }
 }

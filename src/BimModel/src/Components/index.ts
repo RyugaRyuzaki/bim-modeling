@@ -13,7 +13,7 @@ import {
   isModelingSignal,
   isOrthoSignal,
   keyboardSignal,
-  visibilityStateSignal,
+  selectViewSignal,
 } from "../Signals";
 import {RendererComponent} from "../RendererComponent";
 import {SceneBuilder} from "./SceneBuilder";
@@ -50,7 +50,12 @@ export class Components implements Disposable {
     const mouseButtons =
       this.tools.get(RendererComponent)!.camera.cameraControls.mouseButtons;
     if (!mouseButtons) return;
-    mouseButtons.left = visibilityStateSignal.value === "3D" && enabled ? 1 : 0;
+    mouseButtons.left =
+      selectViewSignal.value &&
+      selectViewSignal.value.viewType === "3D" &&
+      enabled
+        ? 1
+        : 0;
   }
   set setupEvent(enabled: boolean) {
     if (enabled) {

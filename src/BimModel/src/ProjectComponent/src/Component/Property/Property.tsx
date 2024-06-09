@@ -16,6 +16,7 @@ const Property = () => {
         <ElementProperty
           bimElementTypes={selectElementSignal.value.bimElementTypes}
           groupParameter={selectElementSignal.value.groupParameter}
+          attributes={selectElementSignal.value.attributes}
         />
       );
     return <></>;

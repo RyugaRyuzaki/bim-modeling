@@ -80,6 +80,5 @@ export class LocationLine
     this.endPoint.position.copy(end);
     const position = LocationUtils.getPositionLocationFromPoints([start, end]);
     LocationUtils.updateLineSegmentPosition(position, this.segment);
-    if (this.onChange) this.onChange(this.location);
   }
 }

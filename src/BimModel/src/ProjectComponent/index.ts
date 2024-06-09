@@ -4,17 +4,13 @@ import {Components} from "../Components";
 import {ToolComponent} from "../Tool";
 import {Component, Disposable, UUID} from "../types";
 import {
-  clippingPlanesSignal,
-  currentLevelSignal,
   modelingSignal,
   modelStructureSignal,
   tempElementSignal,
-  visibilityStateSignal,
 } from "../Signals";
-import {LevelSystem} from "../LevelSystem";
 import {RendererComponent} from "../RendererComponent";
 import {IBimElementType, IStructure} from "./types";
-import {createElementContainer, createStructureContainer} from "./src";
+import {createElementContainer} from "./src";
 import {Fragment, IElement, IElementType} from "clay";
 import {
   ElementLocation,
@@ -25,18 +21,21 @@ import {
   LocationPoint,
 } from "../system";
 import {ModelingTools} from "../ModelingComponent";
+import {MaterialComponent} from "../MaterialComponent";
 /**
  *
  */
 export class ProjectComponent extends Component<string> implements Disposable {
   static readonly uuid = UUID.ProjectComponent;
   enabled = false;
-  private structureContainer!: HTMLDivElement;
   private propertyContainer!: HTMLDivElement;
   readonly modelStructure = "Model Tree";
 
   get camera() {
     return this.components.tools.get(RendererComponent)?.camera;
+  }
+  get materialCategories() {
+    return this.components.tools.get(MaterialComponent)?.materialCategories;
   }
   tempElements!: Record<ICategory, ElementLocation | null>;
 
@@ -55,14 +54,10 @@ export class ProjectComponent extends Component<string> implements Disposable {
     });
   }
   async dispose() {
-    this.structureContainer?.remove();
-    (this.structureContainer as any) = null;
     this.propertyContainer?.remove();
     (this.propertyContainer as any) = null;
     for (const id in this.elements) {
-      const {element, location} = this.elements[id];
-      location.dispose();
-      element.type.dispose();
+      this.elements[id].dispose();
     }
     this.elements = {};
     (this.tempElements as any) = {};
@@ -70,11 +65,9 @@ export class ProjectComponent extends Component<string> implements Disposable {
   get() {
     return ProjectComponent.uuid;
   }
-  init(_structure: HTMLDivElement, _property: HTMLDivElement) {
-    this.structureContainer = createStructureContainer(this);
-    _structure.appendChild(this.structureContainer);
+  init(property: HTMLDivElement) {
     this.propertyContainer = createElementContainer();
-    _property.appendChild(this.propertyContainer);
+    property.appendChild(this.propertyContainer);
   }
   initElement() {
     this.tempElements = ElementUtils.createTempElementInstances(
@@ -134,11 +127,20 @@ export class ProjectComponent extends Component<string> implements Disposable {
             visible: true,
             children: {},
             onVisibility: this.onVisibility,
+            material: this.materialCategories[type],
+            onChangeColor: this.onChangeColor,
           } as IStructure;
       }
     }
     return modelStructure;
   };
   onVisibility = (_visible: boolean, _structure: IStructure) => {};
+  onChangeColor = (
+    color: string,
+    material: THREE.MeshBasicMaterial | null | undefined
+  ) => {
+    console.log(color);
+    material!.color.set(color);
+  };
 }
 ToolComponent.libraryUUIDs.add(ProjectComponent.uuid);
