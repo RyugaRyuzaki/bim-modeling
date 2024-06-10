@@ -5,9 +5,6 @@
 import * as THREE from "three";
 import {
   Components,
-  Dimension,
-  LocationArc,
-  LocationLine,
   RaycasterComponent,
   SelectionComponent,
 } from "@BimModel/src";
@@ -32,7 +29,6 @@ export class DrawTool extends Component<string> implements Disposable {
   enabled = false;
 
   /** @TempDraw */
-  drawingDimension!: Dimension;
   workPlane = new THREE.Plane(DrawTool.upDirection, 0);
 
   /** @draws  */
@@ -58,7 +54,6 @@ export class DrawTool extends Component<string> implements Disposable {
   constructor(components: Components) {
     super(components);
     this.components.tools.add(DrawTool.uuid, this);
-    this.drawingDimension = new Dimension(components);
     this.initDraws();
     effect(() => {
       for (const name in this.draws) {
@@ -79,7 +74,6 @@ export class DrawTool extends Component<string> implements Disposable {
     });
   }
   async dispose() {
-    this.drawingDimension?.dispose();
     for (const name in this.draws) {
       this.draws[name]?.dispose();
     }

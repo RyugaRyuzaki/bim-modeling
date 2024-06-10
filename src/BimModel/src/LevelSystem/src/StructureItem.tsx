@@ -36,7 +36,6 @@ const StructureItem = ({
           view={view}
           hasChildren={Object.keys(view.children).length > 0}
           show={expanded.includes(view.uuid)}
-          visible={isTreeGroupActive(view)}
           onToggle={onToggle}
           handleCheck={handleCheck}
         />

@@ -24,7 +24,7 @@ const Viewer = () => {
     };
   }, []);
   return (
-    <div className="h-full w-full relative flex flex-col ">
+    <div className="h-full w-full relative flex flex-col  ">
       <div className="w-full relative h-[100px] " ref={modelingRef}>
         <SwitchTheme />
       </div>

@@ -3,11 +3,11 @@ import {IFC4X3 as IFC} from "web-ifc";
 import {Profile} from "../Profile";
 import {Model} from "../../../base";
 import {IfcUtils} from "../../../utils/ifc-utils";
+import {IIfcBaseConfig} from "../../../elements";
 
 export interface IRectangleConfig {
   width: number;
   height: number;
-  offsetY?: number;
 }
 
 export class RectangleProfile extends Profile {
@@ -20,7 +20,12 @@ export class RectangleProfile extends Profile {
   position = new THREE.Vector3(0, 0, 0);
 
   depth = 1;
-
+  get height() {
+    return this.dimension.y;
+  }
+  get width() {
+    return this.dimension.x;
+  }
   constructor(model: Model) {
     super(model);
     const placement = new IFC.IfcAxis2Placement2D(
@@ -39,10 +44,9 @@ export class RectangleProfile extends Profile {
     this.model.set(this.attributes);
   }
   updateProfile = (update: IRectangleConfig) => {
-    const {width, height, offsetY} = update;
+    const {width, height} = update;
     if (width) this.dimension.x = width;
     if (height) this.dimension.y = height;
-    if (offsetY) this.position.y = offsetY;
     this.update();
   };
   update = () => {
@@ -64,5 +68,12 @@ export class RectangleProfile extends Profile {
     );
 
     this.model.set(this.attributes);
+  };
+  getInfo = () => {
+    return {
+      Name: `R${this.width}x${this.height}`,
+      Description: "",
+      ObjectType: `R${this.width}x${this.height}`,
+    } as IIfcBaseConfig;
   };
 }

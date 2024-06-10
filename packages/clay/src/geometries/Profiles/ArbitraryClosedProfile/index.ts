@@ -3,6 +3,7 @@ import {Handle, IFC4X3 as IFC} from "web-ifc";
 import {Profile} from "../Profile";
 import {Model} from "../../../base";
 import {IfcUtils} from "../../../utils";
+import {IIfcBaseConfig} from "../../../elements";
 
 export class ArbitraryClosedProfile extends Profile {
   attributes: IFC.IfcArbitraryClosedProfileDef;
@@ -24,9 +25,13 @@ export class ArbitraryClosedProfile extends Profile {
     );
     this.model.set(this.attributes);
   }
-  updateProfile = (_update: any) => {};
-  addPoint(x: number, y: number, z: number) {
-    const point = new THREE.Vector3(x, y, z);
+  updateProfile = (update: THREE.Vector3[]) => {
+    for (let i = 0; i < update.length; i++) {
+      this.addPoint(update[i]);
+    }
+  };
+
+  addPoint(point: THREE.Vector3) {
     const ifcPoint = IfcUtils.point(point);
 
     const polyLine = this.model.get(
@@ -71,5 +76,8 @@ export class ArbitraryClosedProfile extends Profile {
       point.Coordinates[2].value = z;
       this.model.set(point);
     }
+  };
+  getInfo = () => {
+    return {} as IIfcBaseConfig;
   };
 }

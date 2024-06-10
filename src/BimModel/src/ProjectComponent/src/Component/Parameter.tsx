@@ -89,7 +89,7 @@ const Parameter = ({parameter}: {parameter: BaseParameter}) => {
         className="mx-2 capitalize 
           my-auto select-none 
           whitespace-nowrap overflow-hidden 
-          overflow-ellipsis max-w-[200px] w-[200px]
+          overflow-ellipsis max-w-[200px] w-[50%]
           "
       >
         {name}

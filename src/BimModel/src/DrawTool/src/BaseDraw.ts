@@ -6,7 +6,6 @@ import {
   Components,
   RaycasterComponent,
   lengthUnitSignal,
-  Dimension,
   DrawTool,
   getLocalVectorOnFace,
   LocationPoint,
@@ -40,9 +39,7 @@ export abstract class BaseDraw {
   get modelScene() {
     return this.components.modelScene;
   }
-  get drawingDimension(): Dimension {
-    return this.components.tools.get(DrawTool)?.drawingDimension;
-  }
+
   get RaycasterComponent() {
     return this.components.tools.get(RaycasterComponent);
   }

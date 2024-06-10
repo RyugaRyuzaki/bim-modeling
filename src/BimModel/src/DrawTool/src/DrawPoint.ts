@@ -62,13 +62,11 @@ export class DrawPoint extends BaseDraw {
   };
 
   onFinished = () => {
-    this.drawingDimension.visible = false;
     this.addElement();
   };
   onCallBack = (_value?: number) => {};
   dispose = () => {
     this.disposeElement();
-    this.drawingDimension.visible = false;
     this.locationPoint?.dispose();
     (this.locationPoint as any) = null;
   };
@@ -97,6 +95,7 @@ export class DrawPoint extends BaseDraw {
       case "ReinForcement":
         break;
       case "Structure Column":
+        element.addQsetColumnCommon();
         break;
       default:
         break;
@@ -117,13 +116,14 @@ export class DrawPoint extends BaseDraw {
       case "ReinForcement":
         break;
       case "Structure Column":
-        if (!this.tempElement)
+        if (!this.tempElement) {
           this.tempElement = selectType.addInstance(
             this.MaterialComponent.materialCategories[type]!
           ) as SimpleColumn;
-        this.tempElement.attributes.Name = new IFC.IfcLabel(
-          `${type} ${this.CurrentElementIndex + 1}`
-        );
+          this.tempElement.attributes.Name = new IFC.IfcLabel(
+            `${type} ${this.CurrentElementIndex + 1}`
+          );
+        }
         break;
       default:
         break;

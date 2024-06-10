@@ -39,6 +39,7 @@ const ElementTypes = ({
   };
   return (
     <div className="relative w-full flex justify-start items-center border-1 rounded-md p-1 mb-1">
+      <p className="mx-2 w-[60px] ">Type</p>
       <Select
         value={elementTypeIndex.value.toString()}
         onValueChange={onChangeType}

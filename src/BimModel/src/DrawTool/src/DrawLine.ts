@@ -70,11 +70,12 @@ export class DrawLine extends BaseDraw {
     // if measureControl.tempDim is  null then create a dimensionLine
     const start = this.points[this.points.length - 1];
     if (!this.locationLine)
-      this.locationLine = new LocationLine(this.components);
+      this.locationLine = new LocationLine(
+        this.components,
+        this.workPlane.clone()
+      );
     this.locationLine.update(start, this.end);
     this.locationLine.visible = true;
-    this.drawingDimension.updateLine(start, this.end, this.workPlane);
-    this.drawingDimension.visible = true;
     this.createElement();
     this.updateElement(this.locationLine);
   };
@@ -107,7 +108,6 @@ export class DrawLine extends BaseDraw {
   };
   onFinished = () => {
     if (this.locationLine) this.locationLine.visible = false;
-    this.drawingDimension.visible = false;
     this.inputKey = "";
     this.count = 0;
     this.points = [];
@@ -115,7 +115,6 @@ export class DrawLine extends BaseDraw {
   onCallBack = (_value?: number) => {};
   dispose = () => {
     this.disposeElement();
-    this.drawingDimension.visible = false;
     this.locationLine?.dispose();
     (this.locationLine as any) = null;
     this.count = 0;
@@ -159,24 +158,27 @@ export class DrawLine extends BaseDraw {
     const {type} = modelingSignal.value;
     switch (type) {
       case "Structure Beam":
-        if (!this.tempElement)
+        if (!this.tempElement) {
           this.tempElement = selectType.addInstance(
             this.MaterialComponent.materialCategories[type]!
           ) as SimpleBeam;
-        this.tempElement.attributes.Name = new IFC.IfcLabel(
-          `${type} ${this.CurrentElementIndex + 1}`
-        );
+          this.tempElement.attributes.Name = new IFC.IfcLabel(
+            `${type} ${this.CurrentElementIndex + 1}`
+          );
+          (this.tempElement as SimpleBeam).updateOffsetLevel();
+        }
         break;
       case "Wall":
       case "Structure Wall":
-        if (!this.tempElement)
+        if (!this.tempElement) {
           this.tempElement = selectType.addInstance(
             this.MaterialComponent.materialCategories[type]!
           ) as SimpleWall;
 
-        this.tempElement.attributes.Name = new IFC.IfcLabel(
-          `${type} ${this.CurrentElementIndex + 1}`
-        );
+          this.tempElement.attributes.Name = new IFC.IfcLabel(
+            `${type} ${this.CurrentElementIndex + 1}`
+          );
+        }
         break;
       default:
         break;
@@ -196,13 +198,7 @@ export class DrawLine extends BaseDraw {
     const {start, end} = location.location;
     switch (type) {
       case "Structure Beam":
-        (this.tempElement as SimpleBeam).startPoint.x = start.x;
-        (this.tempElement as SimpleBeam).startPoint.y = -start.z;
-        (this.tempElement as SimpleBeam).startPoint.z = start.y;
-        (this.tempElement as SimpleBeam).endPoint.x = end.x;
-        (this.tempElement as SimpleBeam).endPoint.y = -end.z;
-        (this.tempElement as SimpleBeam).endPoint.z = end.y;
-        (this.tempElement as SimpleBeam).update(true);
+        (this.tempElement as SimpleBeam).updateDrawLine(start, end);
         break;
       case "Wall":
       case "Structure Wall":

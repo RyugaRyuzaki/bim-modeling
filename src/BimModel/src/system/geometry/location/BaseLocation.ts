@@ -2,7 +2,7 @@
  * @module GeometrySystem
  */
 
-import {Components} from "@BimModel/src";
+import {Components, MaterialComponent} from "@BimModel/src";
 
 export abstract class BaseLocation {
   private _select = false;
@@ -24,7 +24,15 @@ export abstract class BaseLocation {
   abstract onSelect: (select: boolean) => void;
   abstract onHover: (hover: boolean) => void;
   abstract onVisibility: (visible: boolean) => void;
-
+  get LocationMaterial() {
+    return this.components.tools.get(MaterialComponent)?.LocationMaterial;
+  }
+  get DimensionMaterial() {
+    return this.components.tools.get(MaterialComponent)?.DimensionMaterial;
+  }
+  get AngleMaterial() {
+    return this.components.tools.get(MaterialComponent)?.AngleMaterial;
+  }
   /**
    *
    */

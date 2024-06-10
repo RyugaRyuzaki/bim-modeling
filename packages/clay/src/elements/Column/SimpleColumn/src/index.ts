@@ -4,12 +4,7 @@ import {IFC4X3 as IFC} from "web-ifc";
 import {Model} from "../../../../base";
 import {IfcUtils} from "../../../../utils";
 import {Element} from "../../../Elements";
-import {
-  Extrusion,
-  RectangleProfile,
-  ClayGeometry,
-  Profile,
-} from "../../../../geometries";
+import {Extrusion, ClayGeometry, Profile} from "../../../../geometries";
 import {SimpleColumnType} from "../index";
 import {Fragment} from "../../../../fragment";
 
@@ -25,8 +20,6 @@ export class SimpleColumn extends Element {
   constructor(model: Model, type: SimpleColumnType) {
     super(model, type);
     this.type = type;
-    this.type.profile = new RectangleProfile(model);
-    this.type.updateProfile();
     this.body = new Extrusion(model, this.type.profile);
     const id = this.body.attributes.expressID;
     this.type.geometries.set(id, this.body);
@@ -51,7 +44,7 @@ export class SimpleColumn extends Element {
 
     this.model.set(this.attributes);
   }
-
+  updateLocation!: (update: any) => void;
   update(updateGeometry = false) {
     this.body.depth = this.height;
     this.body.update();

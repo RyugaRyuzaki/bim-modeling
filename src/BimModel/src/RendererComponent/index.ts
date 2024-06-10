@@ -154,7 +154,7 @@ export class RendererComponent
     this.labelRenderer.domElement.style.top = "0";
     this.labelRenderer.domElement.style.outline = "none";
     this.labelRenderer.domElement.style.border = "none";
-    this.labelRenderer.domElement.style.zIndex = "10";
+    this.labelRenderer.domElement.style.zIndex = "100";
     this.labelRenderer.domElement.style.pointerEvents = "none";
     this.labelRenderer.setSize(width, height);
     this.components.container.appendChild(this.labelRenderer.domElement);

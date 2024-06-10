@@ -28,27 +28,27 @@ export class LocationUtils {
     return colors;
   }
   static createLocationLine(
-    material: THREE.MeshBasicMaterial,
+    material: THREE.LineBasicMaterial,
     location: ILocationLine
-  ): THREE.LineSegments {
+  ): THREE.Line {
     const {start, end} = location;
     const position = this.getPositionLocationFromPoints([start, end]);
     return this.createSegment(material, position, 2);
   }
   static createLocationArc(
-    material: THREE.MeshBasicMaterial,
+    material: THREE.LineBasicMaterial,
     location: ILocationArc
-  ): THREE.LineSegments {
+  ): THREE.Line {
     const {start, end, numberSegment} = location;
     if (!start || !end) throw new Error("Missing params");
     const position = this.getPositionLocationFromPoints([start, end]);
     return this.createSegment(material, position, numberSegment);
   }
   static createLocationCircle(
-    material: THREE.MeshBasicMaterial,
+    material: THREE.LineBasicMaterial,
     location: ILocationArc,
     workPlane: THREE.Plane
-  ): THREE.LineSegments {
+  ): THREE.Line {
     const {radius, center, numberSegment} = location;
     const {x, z} = getLocalVectorOnFace(workPlane.normal);
     const angle0 = (2 * Math.PI) / numberSegment;
@@ -73,10 +73,10 @@ export class LocationUtils {
     return position;
   }
   static createSegment(
-    material: THREE.MeshBasicMaterial,
+    material: THREE.LineBasicMaterial,
     position: number[],
     numberSegment: number
-  ): THREE.LineSegments {
+  ): THREE.Line {
     // define a LineGeometry
     const positions = new Float32Array(MAX_POINTS * 3);
     positions.fill(0);
@@ -128,7 +128,8 @@ export class LocationUtils {
     angle: number,
     numberSegment: number
   ) {
-    const position: number[] = [];
+    const points: THREE.Vector3[] = [];
+
     for (let i = 0; i <= numberSegment; i++) {
       const cos = minRadius * Math.cos(i * angle);
       const sin = minRadius * Math.sin(i * angle);
@@ -136,9 +137,14 @@ export class LocationUtils {
         .clone()
         .add(uVector.clone().multiplyScalar(cos))
         .add(vVector.clone().multiplyScalar(sin));
-      position.push(p.x);
-      position.push(p.y);
-      position.push(p.z);
+      points.push(p);
+    }
+    const position: number[] = [];
+    for (let i = 0; i < points.length; i++) {
+      position.push(points[i].x, points[i].y, points[i].z);
+      if (i < points.length - 1) {
+        position.push(points[i + 1].x, points[i + 1].y, points[i + 1].z);
+      }
     }
     return position;
   }
@@ -152,10 +158,9 @@ export class LocationUtils {
   ) {
     const dir = getDirection(p0, p);
     const per = new THREE.Vector3().crossVectors(normal, dir).normalize();
-    const position: number[] = [];
-    position.push(p.x);
-    position.push(p.y);
-    position.push(p.z);
+    const points: THREE.Vector3[] = [];
+    points.push(p);
+
     const angle0 = angleArc / numberSegment;
     for (let i = 0; i < numberSegment; i++) {
       const angle = (i + 1) * angle0;
@@ -165,16 +170,18 @@ export class LocationUtils {
         .clone()
         .add(dir.clone().multiplyScalar(cos * radius))
         .add(per.clone().multiplyScalar(sin * radius));
-      position.push(pTemp.x);
-      position.push(pTemp.y);
-      position.push(pTemp.z);
+      points.push(pTemp);
+    }
+    const position: number[] = [];
+    for (let i = 0; i < points.length; i++) {
+      position.push(points[i].x, points[i].y, points[i].z);
+      if (i < points.length - 1) {
+        position.push(points[i + 1].x, points[i + 1].y, points[i + 1].z);
+      }
     }
     return position;
   }
-  static updateLineSegmentPosition(
-    position: number[],
-    segment: THREE.LineSegments
-  ) {
+  static updateLineSegmentPosition(position: number[], segment: THREE.Line) {
     if (!segment) return;
     segment.geometry.setDrawRange(0, position.length / 3);
     const corePositions = segment.geometry.attributes.position.array;

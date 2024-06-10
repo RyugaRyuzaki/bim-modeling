@@ -1,6 +1,6 @@
 import React, {FC, memo} from "react";
 import {MdArrowForwardIos} from "react-icons/md";
-import {FaEye, FaEyeSlash} from "react-icons/fa";
+import {IoDocumentTextOutline} from "react-icons/io5";
 import {IView} from "../types";
 import {selectViewSignal} from "@BimModel/src/Signals";
 const iconClassName = "h-[16px] w-[16px]";
@@ -8,7 +8,6 @@ const StructureTitle: FC<IStructureTitle> = ({
   view,
   show,
   hasChildren,
-  visible,
   handleCheck,
   onToggle,
 }) => {
@@ -56,13 +55,7 @@ const StructureTitle: FC<IStructureTitle> = ({
           onClick={() => handleCheck!(view)}
         >
           {view.viewType !== "Browsers" && (
-            <>
-              {visible ? (
-                <FaEye className={iconClassName} />
-              ) : (
-                <FaEyeSlash className={iconClassName} />
-              )}
-            </>
+            <IoDocumentTextOutline className={iconClassName} />
           )}
         </button>
       </div>
@@ -73,7 +66,6 @@ type IStructureTitle = {
   view: IView;
   show?: boolean;
   hasChildren: boolean;
-  visible: boolean;
   handleCheck: (view: IView) => void;
   onToggle?: () => void;
 };

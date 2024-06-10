@@ -53,9 +53,6 @@ export class DrawCircle extends BaseDraw {
     //update tempRightLocation
     this.rightLocationArc.updateCircle(this.start, this.getMirror());
     this.rightLocationArc.visible = true;
-    //update drawingDimension
-    this.drawingDimension.updateRadius(this.start, this.end);
-    this.drawingDimension.visible = true;
   };
   onMousedown = (_e: MouseEvent) => {
     if (_e.button === 0) this.mousedown = true;
@@ -89,7 +86,6 @@ export class DrawCircle extends BaseDraw {
   onFinished = () => {
     if (this.leftLocationArc) this.leftLocationArc.visible = false;
     if (this.rightLocationArc) this.rightLocationArc.visible = false;
-    this.drawingDimension.visible = false;
 
     this.inputKey = "";
     this.count = 0;
@@ -100,7 +96,6 @@ export class DrawCircle extends BaseDraw {
     (this.leftLocationArc as any) = null;
     this.rightLocationArc?.dispose();
     (this.rightLocationArc as any) = null;
-    this.drawingDimension.visible = false;
     this.count = 0;
   };
   addElement = () => {};

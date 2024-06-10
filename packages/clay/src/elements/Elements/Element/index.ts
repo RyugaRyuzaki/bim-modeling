@@ -51,6 +51,8 @@ export abstract class Element extends ClayObject {
     }
     return meshes;
   }
+  abstract updateLocation: (update: any) => void;
+
   protected constructor(model: Model, type: ElementType) {
     super(model);
     this.type = type;
@@ -166,5 +168,30 @@ export abstract class Element extends ClayObject {
     geometry.setAttribute("normal", new THREE.BufferAttribute(normal, 3));
     geometry.setIndex(Array.from(index));
     return geometry as IndexedGeometry;
+  }
+  updateFragment() {
+    if (!this.geometries || !this.type) return;
+    for (const id of this.geometries) {
+      const fragment0 = this.type.fragments.get(id);
+      const fragment = this.type.clones.get(id);
+      if (!fragment || !fragment0) continue;
+      BVH.dispose(fragment.mesh.geometry);
+      fragment.mesh.geometry.dispose();
+      (fragment.mesh.geometry as any) = null;
+      const geometry = fragment0.mesh.geometry.clone();
+      BVH.apply(geometry);
+      fragment.mesh.geometry = geometry;
+      const matrix = new THREE.Matrix4();
+      const color = new THREE.Color();
+      for (let i = 0; i < fragment0.mesh.count; i++) {
+        fragment0.mesh.getMatrixAt(i, matrix);
+        fragment.mesh.setMatrixAt(i, matrix);
+        if (fragment0.mesh.instanceColor) {
+          fragment0.mesh.getColorAt(i, color);
+          fragment0.mesh.setColorAt(i, color);
+        }
+        fragment.update();
+      }
+    }
   }
 }
