@@ -19,7 +19,7 @@ import {SelectionComponent} from "../SelectionComponent";
  */
 export class Snapper extends Component<string> implements Disposable {
   static readonly uuid = UUID.Snapper;
-  static readonly tolerance = 0.1;
+  static readonly tolerance = 0.05;
   static readonly tempMatrix = new THREE.Matrix4();
   enabled = false;
   workPlane!: THREE.Plane | null;

@@ -59,7 +59,10 @@ const TabTable = ({
       </TableHeader>
       <TableBody>
         {Object.keys(structure.children).map((key: string, index: number) => (
-          <TableRow key={`${key}-${index}-${structure.uuid}`}>
+          <TableRow
+            key={`${key}-${index}-${structure.uuid}`}
+            className="h-[30px]"
+          >
             <TableCell className="font-medium h-[30px]">
               <Checkbox
                 className="mr-3"

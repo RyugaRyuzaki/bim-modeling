@@ -38,4 +38,5 @@ export class SimpleWindow extends Element {
 
     this.model.set(this.attributes);
   }
+  updateLocation!: (update: any) => void;
 }

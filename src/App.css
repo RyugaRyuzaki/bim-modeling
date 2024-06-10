@@ -9,50 +9,6 @@ body,
     position: relative;
 }
 
-table {
-    width: 100%;
-}
-
-.pointer-cursor {
-    cursor: pointer;
-}
-
-.pan-cursor {
-    cursor: move;
-}
-
-.canvas-cursor {
-    cursor: url('./icons/canvas-cursor.svg'), auto;
-}
-
-.comment-cursor {
-    cursor: url('./icons/comment-cursor.svg'), auto;
-}
-
-.extrude-cursor {
-    cursor: url('./icons/.extrude-cursor.svg'), auto;
-}
-
-.highlighter-cursor {
-    cursor: url('./icons/highlighter-cursor.svg'), auto;
-}
-
-.marker-cursor {
-    cursor: url('./icons/marker-cursor.svg'), auto;
-}
-
-.orbit-cursor {
-    cursor: url('./icons/orbit-cursor.svg'), auto;
-}
-
-.pen-cursor {
-    cursor: url('./icons/pen-cursor.svg'), auto;
-}
-
-.pencil-cursor {
-    cursor: url('./icons/pencil-cursor.svg'), auto;
-}
-
 .react-pdf__Document {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
@@ -60,4 +16,8 @@ table {
 input,
 input:focus {
     outline: none;
+}
+
+* {
+    font-size: 12px;
 }

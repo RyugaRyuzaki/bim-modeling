@@ -46,22 +46,11 @@ export class DrawArc extends BaseDraw {
       this.locationArc = new LocationArc(this.components, this.workPlane);
     if (this.count === 1) {
       this.locationArc.update2PointsArc(this.start, this.movingPoint);
-      this.drawingDimension.updateLine(
-        this.start,
-        this.movingPoint,
-        this.workPlane
-      );
     } else if (this.count === 2) {
       this.locationArc.update3PointsArc(this.start, this.end, this.movingPoint);
-      if (this.locationArc.location) {
-        const {center, radius} = this.locationArc.location;
-        const dir = getDirection(center, this.movingPoint);
-        const newMoving = center.clone().add(dir.multiplyScalar(radius));
-        this.drawingDimension.updateRadius(center, newMoving);
-      }
+      this.locationArc.visibleAngle = true;
     }
     this.locationArc.visible = true;
-    this.drawingDimension.visible = true;
   };
   onMousedown = (_e: MouseEvent) => {
     if (_e.button === 0) this.mousedown = true;
@@ -88,14 +77,16 @@ export class DrawArc extends BaseDraw {
     }
   };
   onFinished = () => {
-    this.drawingDimension.visible = false;
-    if (this.locationArc) this.locationArc.visible = false;
+    if (this.locationArc) {
+      this.locationArc.visible = false;
+      this.locationArc.visibleAngle = false;
+    }
+
     this.inputKey = "";
     this.count = 0;
   };
   onCallBack = (_value?: number) => {};
   dispose = () => {
-    this.drawingDimension.visible = false;
     this.locationArc?.dispose();
     (this.locationArc as any) = null;
     this.count = 0;

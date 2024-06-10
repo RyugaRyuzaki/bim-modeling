@@ -11,7 +11,7 @@ import {ToolComponent} from "../Tool";
 import {Component, Disposable, UUID} from "../types";
 import {FragmentMesh} from "clay";
 import {ElementLocation} from "../system";
-import {selectElementSignal} from "../Signals";
+import {changeInputSignal, selectElementSignal} from "../Signals";
 
 /**
  *
@@ -55,7 +55,7 @@ export class SelectionComponent extends Component<any> implements Disposable {
     return this.RaycasterComponent.currentCamera;
   }
   get container() {
-    return this.components.container;
+    return this.components.canvas;
   }
   private _setupEvent = false;
   set setupEvent(enabled: boolean) {
@@ -96,8 +96,8 @@ export class SelectionComponent extends Component<any> implements Disposable {
   }
   private _select: ElementLocation | null = null;
   set select(found: THREE.Intersection | null) {
-    if (this._select && this._select.location) {
-      this._select.location.visible = false;
+    if (this._select) {
+      this._select.select = false;
       this._select = null;
     }
     if (
@@ -112,7 +112,7 @@ export class SelectionComponent extends Component<any> implements Disposable {
       this._select = this.getElement(ids);
     }
     if (this._select) {
-      this._select.location.visible = true;
+      this._select.select = true;
     }
     selectElementSignal.value = this._select;
   }
@@ -139,7 +139,9 @@ export class SelectionComponent extends Component<any> implements Disposable {
     return null;
   }
   onClick = (_e: MouseEvent) => {
-    if (this.mousedown) return;
+    _e.preventDefault();
+    _e.stopPropagation();
+    if (this.mousedown || changeInputSignal.value) return;
     this.select = this.found;
   };
   onMouseMove = (_e: MouseEvent) => {

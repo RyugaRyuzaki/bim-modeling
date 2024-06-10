@@ -7,14 +7,14 @@ import {Element} from "../../../Elements";
 import {
   Extrusion,
   Profile,
-  RectangleProfile,
   ClayGeometry,
+  RectangleProfile,
+  IShapeProfile,
 } from "../../../../geometries";
-import {Fragment} from "../../../../fragment";
+import {BVH, Fragment} from "../../../../fragment";
 import {SimpleBeamType} from "..";
 export class SimpleBeam extends Element {
   attributes: IFC.IfcElement;
-
   type: SimpleBeamType;
   body: Extrusion<Profile>;
 
@@ -70,7 +70,6 @@ export class SimpleBeam extends Element {
 
     this.model.set(this.attributes);
   }
-  updateProfile() {}
   update(updateGeometry = false) {
     const rotationY =
       Math.atan2(this.direction.y, this.direction.x) + Math.PI / 2;
@@ -81,9 +80,44 @@ export class SimpleBeam extends Element {
     const reps = this.model.get(shape.Representations[0]);
     reps.Items = [this.body.attributes];
     this.model.set(reps);
-
     this.updateGeometryID();
     super.update(updateGeometry);
+  }
+  updateLocation = (update: any) => {
+    const {start, end} = update;
+    if (!start || !end) return;
+    this.startPoint.x = start.x;
+    this.startPoint.y = -start.z;
+    this.startPoint.z = start.y;
+    this.endPoint.x = end.x;
+    this.endPoint.y = -end.z;
+    this.endPoint.z = end.y;
+    this.update(true);
+    this.updateFragment();
+  };
+  updateDrawLine(start: THREE.Vector3, end: THREE.Vector3) {
+    this.startPoint.x = start.x;
+    this.startPoint.y = -start.z;
+    this.startPoint.z = start.y;
+    this.endPoint.x = end.x;
+    this.endPoint.y = -end.z;
+    this.endPoint.z = end.y;
+    this.update(true);
+  }
+  updateDrawArc(start: THREE.Vector3, end: THREE.Vector3) {
+    this.startPoint.x = start.x;
+    this.startPoint.y = -start.z;
+    this.startPoint.z = start.y;
+    this.endPoint.x = end.x;
+    this.endPoint.y = -end.z;
+    this.endPoint.z = end.y;
+    this.update(true);
+  }
+  updateOffsetLevel() {
+    //@ts-ignore
+    const {height} = this.type.profile;
+    if (!height) return;
+    this.body.position.y = -height / 2;
   }
   private updateGeometryID() {
     const modelID = this.model.modelID;

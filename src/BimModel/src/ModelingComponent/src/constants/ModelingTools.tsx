@@ -131,6 +131,6 @@ const Modify = [
 export const ModelingTools: IModelingToolTabs[] = [
   {discipline: "Architecture", types: Architecture},
   {discipline: "Structure", types: Structure},
-  {discipline: "Plumbing", types: []},
-  {discipline: "Modify", types: []},
+  {discipline: "Plumbing", types: Plumbing},
+  {discipline: "Modify", types: Modify},
 ];

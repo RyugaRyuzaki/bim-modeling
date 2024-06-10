@@ -3,7 +3,7 @@ import {MdArrowForwardIos} from "react-icons/md";
 
 const GroupParameterTitle: FC<Props> = ({name, show, onToggle}) => {
   return (
-    <div className="group flex justify-start p-2  hover:bg-green-300 hover:text-slate-800 rounded-md border-1 mb-1">
+    <div className="group flex justify-start p-2  bg-green-300 text-slate-800 rounded-md border-1 mb-1">
       <button
         className="border-none outline-none cursor-pointer"
         onClick={onToggle}

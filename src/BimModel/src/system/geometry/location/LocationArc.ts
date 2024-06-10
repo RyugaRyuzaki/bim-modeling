@@ -3,13 +3,13 @@
  */
 import * as THREE from "three";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
+import {Components, Disposable, lengthUnitSignal} from "@BimModel/src";
 import {
-  Components,
-  MaterialComponent,
-  Disposable,
-  Dimension,
-} from "@BimModel/src";
-import {GeometryCSS, IBaseLocation, ILocationArc} from "@system/geometry/types";
+  dimStyle,
+  GeometryCSS,
+  IBaseLocation,
+  ILocationArc,
+} from "@system/geometry/types";
 import {BaseLocation} from "./BaseLocation";
 import {LocationUtils} from "./LocationUtils";
 import {
@@ -18,6 +18,11 @@ import {
   getDirection,
   getProjectPointFrom3Point,
 } from "@BimModel/src/utils";
+import {createLabel, disposeLabel, disposeSegment} from "./utils";
+import {
+  createDimensionAngleContainer,
+  createDimensionRadiusContainer,
+} from "./Components";
 
 export class LocationArc
   extends BaseLocation
@@ -33,52 +38,87 @@ export class LocationArc
   onSelect!: (select: boolean) => void;
   onHover!: (hover: boolean) => void;
   onVisibility = (visible: boolean) => {
-    if (!this.segment) return;
+    if (!this.segment || !this.radiusTag || !this.radiusDimension) return;
     if (visible) {
       this.segment.add(this.startPoint);
       this.segment.add(this.endPoint);
       this.segment.add(this.center);
       this.components.annotationScene.add(this.segment);
+      this.radiusDimension.add(this.radiusTag);
+      this.components.annotationScene.add(this.radiusDimension);
     } else {
       this.startPoint.removeFromParent();
       this.endPoint.removeFromParent();
       this.center.removeFromParent();
       this.segment.removeFromParent();
+      this.radiusTag.removeFromParent();
+      this.radiusDimension.removeFromParent();
     }
   };
+
+  private _visibleAngle = false;
+  set visibleAngle(visibleAngle: boolean) {
+    if (!this.angleDimension || !this.angleTag) return;
+    if (this._visibleAngle === visibleAngle) return;
+    this._visibleAngle = visibleAngle;
+    if (visibleAngle) {
+      this.angleDimension.add(this.angleTag);
+      this.components.annotationScene.add(this.angleDimension);
+    } else {
+      this.angleTag.removeFromParent();
+      this.angleDimension.removeFromParent();
+    }
+  }
   endPoint!: CSS2DObject;
   startPoint!: CSS2DObject;
   center!: CSS2DObject;
-  segment!: THREE.LineSegments;
+  segment!: THREE.Line;
 
-  get material() {
-    return this.components.tools.get(MaterialComponent)?.LocationMaterial;
-  }
+  radiusDomElement!: HTMLDivElement;
+  radiusTag!: CSS2DObject;
+  radiusDimension!: THREE.Line;
+
+  angleDomElement!: HTMLDivElement;
+  angleTag!: CSS2DObject;
+  angleDimension!: THREE.Line;
+
   /**
    *
    */
   constructor(components: Components, private workPlane: THREE.Plane) {
     super(components);
-    this.startPoint = Dimension.createLabel(GeometryCSS.snap.endLine);
-    this.endPoint = Dimension.createLabel(GeometryCSS.snap.endLine);
-    this.center = Dimension.createLabel(GeometryCSS.snap.endLine);
+    this.init();
   }
   /**
    *
    */
   async dispose() {
-    this.segment?.geometry.dispose();
-    (this.segment!.geometry as any) = null;
-    this.segment?.removeFromParent();
-    (this.segment as any) = null;
     (this.location as any) = null;
-    Dimension.disposeLabel(this.startPoint);
-    (this.startPoint as any) = null;
-    Dimension.disposeLabel(this.endPoint);
-    (this.endPoint as any) = null;
-    Dimension.disposeLabel(this.center);
-    (this.center as any) = null;
+    this.radiusDomElement?.remove();
+    (this.radiusDomElement as any) = null;
+    this.angleDomElement?.remove();
+    (this.angleDomElement as any) = null;
+    disposeSegment(this.segment);
+    disposeSegment(this.radiusDimension);
+    disposeSegment(this.angleDimension);
+    disposeLabel(this.startPoint);
+    disposeLabel(this.endPoint);
+    disposeLabel(this.center);
+    disposeLabel(this.radiusTag);
+    disposeLabel(this.angleTag);
   }
+  private init() {
+    this.startPoint = createLabel(GeometryCSS.snap.endLine);
+    this.endPoint = createLabel(GeometryCSS.snap.endLine);
+    this.center = createLabel(GeometryCSS.snap.endLine);
+
+    this.radiusDomElement = createDimensionRadiusContainer(this);
+    this.radiusTag = new CSS2DObject(this.radiusDomElement);
+
+    this.angleDomElement = createDimensionAngleContainer(this);
+    this.angleTag = new CSS2DObject(this.angleDomElement);
+  }
+
   update2PointsArc(start: THREE.Vector3, end: THREE.Vector3) {
     const radius = start.distanceTo(end) / 2;
     const center = LocationArc.tempVector.lerpVectors(end, start, 0.5);
@@ -88,6 +128,7 @@ export class LocationArc
         start: start.clone(),
         end: end.clone(),
         radius,
+        angle: 180,
         numberSegment: LocationArc.defaultSegment,
       };
     this.location.center.copy(center);
@@ -100,7 +141,47 @@ export class LocationArc
     this.initSegment();
     const position = [start.x, start.y, start.z, end.x, end.y, end.z];
     LocationUtils.updateLineSegmentPosition(position, this.segment);
+    this.updateLine2PointsArc();
   }
+  private updateLine2PointsArc() {
+    if (!this.radiusTag || !this.angleTag || !this.location) return;
+    const {start, end, angle} = this.location;
+    if (!start || !end || !angle) return;
+
+    const uVector = getDirection(start, end);
+    const vVector = LocationArc.tempVector
+      .crossVectors(this.workPlane.normal, uVector)
+      .normalize();
+    const newStart = start
+      .clone()
+      .add(vVector.clone().multiplyScalar(dimStyle.extend));
+    const newEnd = end
+      .clone()
+      .add(vVector.clone().multiplyScalar(dimStyle.extend));
+    const mid = new THREE.Vector3().lerpVectors(newStart, newEnd, 0.5);
+    this.radiusTag.position.copy(mid);
+    const position: number[] = LocationUtils.getPositionLocationFromPoints([
+      start,
+      newStart,
+      newStart,
+      newEnd,
+      newEnd,
+      end,
+    ]);
+    if (!this.radiusDimension)
+      this.radiusDimension = LocationUtils.createSegment(
+        this.DimensionMaterial,
+        position,
+        4
+      );
+    LocationUtils.updateLineSegmentPosition(position, this.radiusDimension);
+    const {factor, toFixed} = lengthUnitSignal.value;
+    if (this.onChangeRadiusDomElement)
+      this.onChangeRadiusDomElement(
+        `${(start.distanceTo(end) * factor).toFixed(toFixed)}`
+      );
+  }
+
   update3PointsArc(
     start: THREE.Vector3,
     end: THREE.Vector3,
@@ -149,6 +230,7 @@ export class LocationArc
     this.initLocation(center, radius);
     this.location.center.copy(center);
     this.location.radius = radius;
+    this.location.angle = THREE.MathUtils.radToDeg(angleArc);
     this.location.numberSegment = position.length / 3;
     if (sameSide) {
       this.location.start = end.clone();
@@ -162,6 +244,48 @@ export class LocationArc
     this.center.position.copy(this.location.center);
     this.initSegment();
     LocationUtils.updateLineSegmentPosition(position, this.segment);
+    this.updateLine3PointsArc(movingPoint);
+  }
+  private updateLine3PointsArc(movingPoint: THREE.Vector3) {
+    if (!this.radiusTag || !this.angleTag || !this.location) return;
+    const {start, end, angle, center, radius} = this.location;
+    if (!start || !end || !angle) return;
+
+    const dir = getDirection(center, movingPoint);
+    const newMoving = center.clone().add(dir.multiplyScalar(radius));
+    const mid = new THREE.Vector3().lerpVectors(center, newMoving, 0.5);
+    this.radiusTag.position.copy(mid);
+    const position: number[] = LocationUtils.getPositionLocationFromPoints([
+      center,
+      newMoving,
+    ]);
+    if (!this.radiusDimension)
+      this.radiusDimension = LocationUtils.createSegment(
+        this.DimensionMaterial,
+        position,
+        4
+      );
+    LocationUtils.updateLineSegmentPosition(position, this.radiusDimension);
+    const {factor, toFixed} = lengthUnitSignal.value;
+    if (this.onChangeRadiusDomElement)
+      this.onChangeRadiusDomElement(`${(radius * factor).toFixed(toFixed)}`);
+
+    const midAngle = new THREE.Vector3().lerpVectors(center, newMoving, -0.3);
+    this.angleTag.position.copy(midAngle);
+
+    if (!this.angleDimension) {
+      this.angleDimension = LocationUtils.createLocationCircle(
+        this.AngleMaterial,
+        this.location,
+        this.workPlane
+      );
+    }
+    const positionAngle: number[] = LocationUtils.getPositionLocationFromPoints(
+      [start, center, center, end]
+    );
+    LocationUtils.updateLineSegmentPosition(positionAngle, this.angleDimension);
+    if (this.onChangeAngleDomElement)
+      this.onChangeAngleDomElement(`${angle.toFixed(0)}`);
   }
   updateCircle(center: THREE.Vector3, movingPoint: THREE.Vector3) {
     const radius = center.distanceTo(movingPoint);
@@ -183,6 +307,7 @@ export class LocationArc
     );
     LocationUtils.updateLineSegmentPosition(position, this.segment);
   }
+
   private initLocation(center: THREE.Vector3, radius: number) {
     if (!this.location)
       this.location = {
@@ -194,10 +319,17 @@ export class LocationArc
   private initSegment() {
     if (!this.segment) {
       this.segment = LocationUtils.createLocationCircle(
-        this.material,
+        this.LocationMaterial,
         this.location,
         this.workPlane
       );
     }
   }
+
+  onChangeRadius!: (radius: number) => void;
+  onChangeRadiusDomElement!: (radius: string) => void;
+  updateRadius(_radius: number) {}
+  onChangeAngle!: (angle: number) => void;
+  onChangeAngleDomElement!: (angle: string) => void;
+  updateAngle(_angle: number) {}
 }

@@ -16,15 +16,20 @@ export class MaterialComponent
   enabled = false;
   listMaterial: Map<
     string,
-    THREE.MeshLambertMaterial | THREE.MeshBasicMaterial
+    | THREE.MeshLambertMaterial
+    | THREE.MeshBasicMaterial
+    | THREE.LineBasicMaterial
   > = new Map();
-  get LocationMaterial(): THREE.MeshBasicMaterial {
-    return this.listMaterial.get("LocationMaterial") as THREE.MeshBasicMaterial;
+  get LocationMaterial(): THREE.LineBasicMaterial {
+    return this.listMaterial.get("LocationMaterial") as THREE.LineBasicMaterial;
   }
-  get DimensionMaterial(): THREE.MeshBasicMaterial {
+  get DimensionMaterial(): THREE.LineBasicMaterial {
     return this.listMaterial.get(
       "DimensionMaterial"
-    ) as THREE.MeshBasicMaterial;
+    ) as THREE.LineBasicMaterial;
+  }
+  get AngleMaterial(): THREE.LineBasicMaterial {
+    return this.listMaterial.get("AngleMaterial") as THREE.LineBasicMaterial;
   }
 
   materialCategories: Record<
@@ -39,15 +44,30 @@ export class MaterialComponent
       color: 0xa19598,
       depthTest: false,
     }),
-    Ceiling: null,
-    Roof: null,
+    Ceiling: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
+    Roof: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
     Column: new THREE.MeshLambertMaterial({
       color: 0xfa051d,
       depthTest: false,
     }),
-    Door: null,
-    Window: null,
-    CurtainWall: null,
+    Door: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
+    Window: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
+    CurtainWall: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
     "Structure Beam": new THREE.MeshLambertMaterial({
       color: 0xfff705,
       depthTest: false,
@@ -64,11 +84,26 @@ export class MaterialComponent
       color: 0xa19598,
       depthTest: false,
     }),
-    "Structure Foundation": null,
-    ReinForcement: null,
-    Duct: null,
-    Pipe: null,
-    AirTerminal: null,
+    "Structure Foundation": new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
+    ReinForcement: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
+    Duct: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
+    Pipe: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
+    AirTerminal: new THREE.MeshLambertMaterial({
+      color: 0xa19598,
+      depthTest: false,
+    }),
   };
   /**
    *
@@ -78,15 +113,25 @@ export class MaterialComponent
     this.components.tools.add(MaterialComponent.uuid, this);
     this.addMaterial(
       "LocationMaterial",
-      new THREE.MeshBasicMaterial({
+      new THREE.LineBasicMaterial({
+        linewidth: 10,
         color: 0xeb1405,
         depthTest: false,
       })
     );
     this.addMaterial(
       "DimensionMaterial",
-      new THREE.MeshBasicMaterial({
+      new THREE.LineBasicMaterial({
+        linewidth: 10,
         color: 0x0303fc,
+        depthTest: false,
+      })
+    );
+    this.addMaterial(
+      "AngleMaterial",
+      new THREE.LineBasicMaterial({
+        linewidth: 10,
+        color: 0x34fa07,
         depthTest: false,
       })
     );
@@ -120,7 +165,10 @@ export class MaterialComponent
   }
   addMaterial(
     name: string,
-    mat: THREE.MeshLambertMaterial | THREE.MeshBasicMaterial
+    mat:
+      | THREE.MeshLambertMaterial
+      | THREE.MeshBasicMaterial
+      | THREE.LineBasicMaterial
   ) {
     if (this.listMaterial.has(name))
       throw new Error("Material's name is existed!");

@@ -21,6 +21,7 @@ export interface ILocationLine {
 export interface ILocationArc {
   start?: THREE.Vector3;
   end?: THREE.Vector3;
+  angle?: number;
   center: THREE.Vector3;
   radius: number;
   numberSegment: number;

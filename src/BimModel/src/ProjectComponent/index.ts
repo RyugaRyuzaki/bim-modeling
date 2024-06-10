@@ -87,11 +87,17 @@ export class ProjectComponent extends Component<string> implements Disposable {
       for (const [id, fragment] of fragments) {
         const clone = Fragment.clone(fragment);
         clones.set(id, clone);
+        fragment.mesh.removeFromParent();
       }
       this.components.modelScene.add(...element.clones);
+
       const elementLocation = new ElementLocation(category, bimElementTypes);
       elementLocation.element = element;
       elementLocation.location = location;
+      if (elementLocation.location instanceof LocationLine) {
+        elementLocation.location.onChangeLength =
+          elementLocation.onChangeLength;
+      }
       this.elements[id] = elementLocation;
     }
     return this.elements[id];
@@ -139,8 +145,7 @@ export class ProjectComponent extends Component<string> implements Disposable {
     color: string,
     material: THREE.MeshBasicMaterial | null | undefined
   ) => {
-    console.log(color);
-    material!.color.set(color);
+    material!.color.set(new THREE.Color(color));
   };
 }
 ToolComponent.libraryUUIDs.add(ProjectComponent.uuid);

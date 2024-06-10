@@ -49,4 +49,5 @@ export class SimpleSlab extends Element {
     this.body.update();
     super.update(updateGeometry);
   }
+  updateLocation!: (update: any) => void;
 }

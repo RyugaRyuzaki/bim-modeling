@@ -135,7 +135,3 @@ html[data-theme="dark"] {
 .pencil-cursor {
     cursor: url('./icons/pencil-cursor.svg'), auto;
 }
-
-.react-pdf__Document {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}

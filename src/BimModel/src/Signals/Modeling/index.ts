@@ -5,6 +5,9 @@ export const disciplineSignal = signal<string>("Files");
 export const modelingSignal = signal<IModelingTool | null>(null);
 export const drawingTypeSignal = signal<IDrawType>("None");
 
+// when change input length or angle of location
+export const changeInputSignal = signal<boolean>(false);
+
 //#region
 export const isModelingSignal = signal<boolean>(false);
 export const isOrthoSignal = signal<boolean>(true);
@@ -23,4 +26,5 @@ export function disposeModeling() {
   drawingTypeSignal.value = "None";
   isModelingSignal.value = false;
   isOrthoSignal.value = false;
+  changeInputSignal.value = false;
 }

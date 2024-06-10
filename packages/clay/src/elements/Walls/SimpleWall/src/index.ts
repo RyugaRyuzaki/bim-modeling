@@ -8,7 +8,7 @@ import {Extrusion, HalfSpace, RectangleProfile} from "../../../../geometries";
 import {SimpleWallType} from "../index";
 import {SimpleOpening} from "../../../Openings";
 import {ClayGeometry} from "../../../../geometries/Geometry";
-import {Fragment} from "../../../../fragment";
+import {BVH, Fragment} from "../../../../fragment";
 
 export class SimpleWall extends Element {
   attributes: IFC.IfcWall;
@@ -83,7 +83,18 @@ export class SimpleWall extends Element {
 
     this.model.set(this.attributes);
   }
-
+  updateLocation = (update: any) => {
+    const {start, end} = update;
+    if (!start || !end) return;
+    this.startPoint.x = start.x;
+    this.startPoint.y = -start.z;
+    this.startPoint.z = start.y;
+    this.endPoint.x = end.x;
+    this.endPoint.y = -end.z;
+    this.endPoint.z = end.y;
+    this.update(true, true);
+    this.updateFragment();
+  };
   update(updateGeometry = false, updateCorners = false) {
     this.updateAllOpenings();
 

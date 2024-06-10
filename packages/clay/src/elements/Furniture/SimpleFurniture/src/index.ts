@@ -31,4 +31,5 @@ export class SimpleFurniture extends Element {
 
     this.model.set(this.attributes);
   }
+  updateLocation!: (update: any) => void;
 }

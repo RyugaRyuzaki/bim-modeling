@@ -4,13 +4,14 @@
 import * as THREE from "three";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 
-import {Components, Disposable, Dimension} from "@BimModel/src";
+import {Components, Disposable} from "@BimModel/src";
 import {
   GeometryCSS,
   IBaseLocation,
   ILocationPoint,
 } from "@system/geometry/types";
 import {BaseLocation} from "./BaseLocation";
+import {createLabel, disposeLabel} from "./utils";
 export class LocationPoint
   extends BaseLocation
   implements Disposable, IBaseLocation<ILocationPoint>
@@ -29,10 +30,10 @@ export class LocationPoint
    */
   constructor(components: Components) {
     super(components);
-    this.point = Dimension.createLabel(GeometryCSS.snap.endLine);
+    this.point = createLabel(GeometryCSS.snap.endLine);
   }
   async dispose() {
-    Dimension.disposeLabel(this.point);
+    disposeLabel(this.point);
     (this.point as any) = null;
   }
   update(point: THREE.Vector3) {
