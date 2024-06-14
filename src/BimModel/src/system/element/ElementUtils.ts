@@ -18,7 +18,7 @@ import {
 import {ElementLocation} from "./ElementLocation";
 import {currentLevelSignal} from "@BimModel/src/Signals";
 import {PsetBeamLevelCommon} from "./Parameter/beam";
-import {PsetColumnLevelCommon} from "./Parameter/column";
+import {PsetColumnLevelCommon} from "./Parameter/column/PsetColumnLevelCommon";
 import {Components} from "@BimModel/src/Components";
 import {PsetWallLevelCommon} from "./Parameter/wall";
 

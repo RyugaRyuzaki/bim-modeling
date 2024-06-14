@@ -15,7 +15,7 @@ import {
 } from "@BimModel/src";
 import {QsetWallCommon} from "./Parameter/wall";
 import {QsetBeamBaseQuantity} from "./Parameter/beam";
-import {QsetColumnBaseQuantity} from "./Parameter/column";
+import {QsetColumnBaseQuantity} from "./Parameter/column/QsetColumnBaseQuantity";
 
 export class ElementLocation implements Disposable {
   groupParameter: {[uuid: string]: BaseParameterGroup} = {};
