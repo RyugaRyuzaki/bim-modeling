@@ -3,7 +3,13 @@ import {IFC4X3 as IFC} from "web-ifc";
 
 import {IElement, IElementType} from "clay";
 import {LocationArc, LocationLine, LocationPoint} from "../geometry";
-import {BaseParameterGroup, LevelParameter} from "./Parameter";
+import {
+  BaseParameterGroup,
+  LevelParameter,
+  QsetWallCommon,
+  QsetBeamBaseQuantity,
+  QsetColumnBaseQuantity,
+} from "./Parameter";
 import {IBimElementType} from "@ProjectComponent/types";
 import {ICategory} from "./types";
 import {IAttribute} from "@BimModel/src/system";
@@ -13,9 +19,6 @@ import {
   ProjectComponent,
   MaterialComponent,
 } from "@BimModel/src";
-import {QsetWallCommon} from "./Parameter/wall";
-import {QsetBeamBaseQuantity} from "./Parameter/beam";
-import {QsetColumnBaseQuantity} from "./Parameter/column/QsetColumnBaseQuantity";
 
 export class ElementLocation implements Disposable {
   groupParameter: {[uuid: string]: BaseParameterGroup} = {};
