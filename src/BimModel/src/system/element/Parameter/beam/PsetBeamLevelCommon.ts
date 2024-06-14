@@ -2,7 +2,6 @@ import {BaseParameter} from "../BaseParameter";
 import {BaseParameterGroup} from "../BaseParameterGroup";
 import {IElement} from "clay";
 import {LevelParameter} from "../LevelParameter";
-import {IFC4X3 as IFC} from "web-ifc";
 import {TopLevelParameter} from "../OffsetLevelParameter";
 import {ILevel} from "@BimModel/src/LevelSystem/types";
 
