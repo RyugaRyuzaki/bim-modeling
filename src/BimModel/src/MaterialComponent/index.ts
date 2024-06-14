@@ -129,10 +129,13 @@ export class MaterialComponent
     );
     this.addMaterial(
       "AngleMaterial",
-      new THREE.LineBasicMaterial({
+      new THREE.LineDashedMaterial({
         linewidth: 10,
         color: 0x34fa07,
         depthTest: false,
+        scale: 1,
+        dashSize: 0.2,
+        gapSize: 0.1,
       })
     );
 

@@ -29,6 +29,7 @@ export abstract class BaseParameter {
     | IFC.IfcQuantityArea
     | IFC.IfcQuantityVolume
     | IFC.IfcQuantityWeight
-    | IFC.IfcPropertyReferenceValue;
+    | IFC.IfcPropertyReferenceValue
+    | IFC.IfcProperty;
   enable = true;
 }

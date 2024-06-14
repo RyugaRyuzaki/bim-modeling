@@ -21,7 +21,15 @@ export class VolumeParameter extends BaseParameter {
     super();
     this.name = name;
   }
-  toIfc!: () => IFC.IfcQuantityVolume;
+  toIfc = () => {
+    return new IFC.IfcQuantityVolume(
+      new IFC.IfcIdentifier(this.name || ""),
+      null,
+      null,
+      new IFC.IfcLengthMeasure(this.value),
+      null
+    );
+  };
   onValueChange!: (
     value: string | number | boolean | ILevel | BaseParameter
   ) => void;

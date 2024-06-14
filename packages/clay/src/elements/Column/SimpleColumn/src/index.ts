@@ -32,7 +32,7 @@ export class SimpleColumn extends Element {
 
     this.attributes = new IFC.IfcColumn(
       new IFC.IfcGloballyUniqueId(uuidv4()),
-      this.model.IfcOwnerHistory,
+      null,
       null,
       null,
       null,
@@ -44,7 +44,7 @@ export class SimpleColumn extends Element {
 
     this.model.set(this.attributes);
   }
-  updateLocation!: (update: any) => void;
+
   update(updateGeometry = false) {
     this.body.depth = this.height;
     this.body.update();
@@ -57,7 +57,42 @@ export class SimpleColumn extends Element {
     this.updateGeometryID();
     super.update(updateGeometry);
   }
-
+  updateLocation = (update: any) => {
+    const {point} = update;
+    if (!point) return;
+    this.position.x = point.x;
+    this.position.y = -point.z;
+    this.position.z = point.y;
+    this.update(true);
+    this.updateFragment();
+  };
+  updateDraw = (update: any) => {
+    const {point} = update;
+    if (!point) return;
+    this.position.x = point.x;
+    this.position.y = -point.z;
+    this.position.z = point.y;
+    this.update(true);
+  };
+  updateOffsetLevel = (_update: any) => {
+    //@ts-ignore
+    const {height} = this.type.profile;
+    if (!height) return;
+    this.body.position.y = -height / 2;
+  };
+  updateLevel = (_update: any) => {};
+  onClone = (material: THREE.MeshLambertMaterial) => {
+    const element = this.type.addInstance(material);
+    element.position = this.position.clone();
+    element.update(true);
+    const {fragments, clones} = element.type;
+    for (const [id, fragment] of fragments) {
+      const clone = Fragment.clone(fragment);
+      clones.set(id, clone);
+      fragment.mesh.removeFromParent();
+    }
+    return element;
+  };
   private updateGeometryID() {
     const modelID = this.model.modelID;
     const id = this.attributes.expressID;

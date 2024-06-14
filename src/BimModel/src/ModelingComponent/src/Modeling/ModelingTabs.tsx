@@ -1,26 +1,35 @@
 import React, {memo} from "react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {ModelingTools} from "../constants";
-import {IModelingToolTabs} from "@ModelingComponent/types";
+import {IModelingTab, IModelingToolTabs} from "@ModelingComponent/types";
 import ContentModeling from "./ContentModeling";
 import {
   disciplineSignal,
+  fileTab,
   modelingSignal,
+  modifyTab,
   projectSignal,
+  selectElementSignal,
 } from "@BimModel/src/Signals";
 import FileTabs from "./FileTabs";
+import ModifyTabs from "./ModifyTabs/ModifyTabs";
 
-const file = "Files";
 const ModelingTabs = () => {
   return (
-    <Tabs defaultValue={disciplineSignal.value} className="w-full">
+    <Tabs
+      value={disciplineSignal.value}
+      className="w-full"
+      onValueChange={(value) =>
+        (disciplineSignal.value = value as IModelingTab)
+      }
+    >
       <TabsList className="rounded-none">
         <TabsTrigger
-          value={file}
+          value={fileTab}
           className="mx-1 select-none"
           disabled={modelingSignal.value !== null}
         >
-          {file}
+          {fileTab}
         </TabsTrigger>
         {ModelingTools.map((tab: IModelingToolTabs, index: number) => (
           <TabsTrigger
@@ -28,15 +37,22 @@ const ModelingTabs = () => {
             value={tab.discipline}
             className="mx-1 select-none"
             disabled={
-              modelingSignal.value !== null &&
-              modelingSignal.value.discipline !== tab.discipline
+              modelingSignal.value !== null ||
+              selectElementSignal.value !== null
             }
           >
             {tab.discipline}
           </TabsTrigger>
         ))}
+        <TabsTrigger
+          value={modifyTab}
+          className="mx-1 select-none"
+          disabled={modelingSignal.value !== null}
+        >
+          {modifyTab}
+        </TabsTrigger>
       </TabsList>
-      <TabsContent value={file} className="mt-0 h-[60px]">
+      <TabsContent value={fileTab} className="mt-0 h-[60px]">
         <FileTabs />
       </TabsContent>
       {ModelingTools.map((tab: IModelingToolTabs, index: number) => (
@@ -48,6 +64,9 @@ const ModelingTabs = () => {
           <ContentModeling types={tab.types} discipline={tab.discipline} />
         </TabsContent>
       ))}
+      <TabsContent value={modifyTab} className="mt-0 h-[60px]">
+        <ModifyTabs />
+      </TabsContent>
     </Tabs>
   );
 };

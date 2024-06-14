@@ -78,7 +78,7 @@ export class SimpleWindowType extends StaticElementType<SimpleWindow> {
 
     this.attributes = new IFC.IfcWindowType(
       new IFC.IfcGloballyUniqueId(uuidv4()),
-      this.model.IfcOwnerHistory,
+      null,
       new IFC.IfcLabel(Name),
       new IFC.IfcLabel(Description),
       new IFC.IfcLabel(ObjectType),

@@ -1,12 +1,11 @@
 /**
- * @module BaseDraw
+ * @module BaseModify
  */
 import * as THREE from "three";
 import {
   Components,
   RaycasterComponent,
   lengthUnitSignal,
-  DrawTool,
   getLocalVectorOnFace,
   LocationPoint,
   LocationArc,
@@ -16,58 +15,34 @@ import {
   modelingSignal,
   SelectionComponent,
   Snapper,
+  DrawTool,
 } from "@BimModel/src";
-import {IDrawType} from "@ModelingComponent/types";
-import {IElement} from "clay";
-import {MaterialComponent} from "@BimModel/src/MaterialComponent";
 
-export abstract class BaseDraw {
+export abstract class BaseModify {
   abstract onClick: (_e: MouseEvent) => void;
   abstract onMouseMove: (_e: MouseEvent) => void;
   abstract onMousedown: (_e: MouseEvent) => void;
   abstract onKeyDown: (_e: KeyboardEvent) => void;
   abstract onFinished: () => void;
-  abstract onCallBack: (_value?: number) => void;
   abstract dispose: () => void;
-  abstract addElement: () => void;
-  abstract createElement: () => void;
-  abstract updateElement: (
-    location: LocationPoint | LocationArc | LocationLine
-  ) => void;
-  abstract drawType: IDrawType;
-  public tempElement: IElement | null = null;
-  get modelScene() {
-    return this.components.modelScene;
-  }
-
-  get RaycasterComponent() {
-    return this.components.tools.get(RaycasterComponent);
-  }
-  get MaterialComponent() {
-    return this.components.tools.get(MaterialComponent);
-  }
-  get ProjectComponent() {
-    return this.components.tools.get(ProjectComponent);
-  }
-  get SelectionComponent() {
-    return this.components.tools.get(SelectionComponent);
+  get container() {
+    return this.components.canvas;
   }
   get Snapper() {
     return this.components.tools.get(Snapper);
   }
-  get camera() {
-    return this.RaycasterComponent.currentCamera;
-  }
-  get container() {
-    return this.components.container;
+  get RaycasterComponent() {
+    return this.components.tools.get(RaycasterComponent);
   }
 
+  get movingLine() {
+    return this.components.tools.get(DrawTool)?.movingLine;
+  }
   private _setupEvent = false;
   set setupEvent(enabled: boolean) {
     if (!this.container) return;
     if (this._setupEvent === enabled) return;
     this._setupEvent = enabled;
-    this.Snapper.workPlane = enabled ? this.workPlane : null;
     if (enabled) {
       this.container.addEventListener("click", this.onClick);
       this.container.addEventListener("mousemove", this.onMouseMove);
@@ -86,21 +61,6 @@ export abstract class BaseDraw {
     return this._setupEvent;
   }
 
-  private _foundPoint: THREE.Vector3 | null = null;
-  set findPoint(event: MouseEvent | null) {
-    if (!event) {
-      this._foundPoint = null;
-      return;
-    }
-    const raycast = this.components.tools.get(RaycasterComponent);
-    raycast.mouseMove = event;
-    this._foundPoint = raycast.getPointRayCasPlane(this.workPlane);
-  }
-  get foundPoint() {
-    return this._foundPoint;
-  }
-
-  orthoDir: THREE.Vector3 | null = new THREE.Vector3();
   private _inputKey = "";
   set inputKey(inputKey: string) {
     this._inputKey = inputKey;
@@ -109,25 +69,18 @@ export abstract class BaseDraw {
   get inputKey() {
     return this._inputKey;
   }
+  orthoDir: THREE.Vector3 | null = new THREE.Vector3();
   mousedown = false;
-
-  get CurrentElementIndex(): number {
-    if (!modelStructureSignal.value || !modelingSignal.value) return -1;
-    const {type, discipline} = modelingSignal.value;
-    const children =
-      modelStructureSignal.value.children[discipline].children[type].children;
-    return Object.keys(children).length;
-  }
-
-  /**
-   *
-   */
-  constructor(public components: Components, public workPlane: THREE.Plane) {}
+  constructor(public components: Components) {}
   private onMouseup = () => {
     this.mousedown = false;
   };
-  getOrtho(start: THREE.Vector3, pMove: THREE.Vector3): THREE.Vector3 | null {
-    const {x, z} = getLocalVectorOnFace(this.workPlane.normal);
+  getOrtho(
+    start: THREE.Vector3,
+    pMove: THREE.Vector3,
+    workPlane: THREE.Plane
+  ): THREE.Vector3 | null {
+    const {x, z} = getLocalVectorOnFace(workPlane.normal);
     const dir = new THREE.Vector3(
       pMove.x - start.x,
       pMove.y - start.y,
@@ -155,22 +108,5 @@ export abstract class BaseDraw {
     if (this.inputKey.startsWith("0")) return null;
     if (isNaN(parseFloat(this.inputKey))) return null;
     return parseFloat(this.inputKey);
-  }
-  getDistance(start: THREE.Vector3, end: THREE.Vector3, distance: number) {
-    const dir = new THREE.Vector3(
-      end.x - start.x,
-      end.y - start.y,
-      end.z - start.z
-    ).normalize();
-    return start.clone().add(dir.multiplyScalar(distance));
-  }
-  disposeElement() {
-    this.Snapper.snapper = null;
-    if (!this.tempElement) return;
-    for (const mesh of this.tempElement.meshes) {
-      mesh.removeFromParent();
-    }
-    this.tempElement.type.deleteInstance(this.tempElement.attributes.expressID);
-    (this.tempElement as any) = null;
   }
 }

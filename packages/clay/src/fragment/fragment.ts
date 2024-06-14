@@ -440,9 +440,9 @@ export class Fragment {
     const geometry = mesh.geometry.clone();
     BVH.apply(geometry);
     const clone = new Fragment(geometry, mesh.material, mesh.count);
-    clone.instanceToItem = instanceToItem;
-    clone.itemToInstances = itemToInstances;
-    clone.ids = ids;
+    clone.instanceToItem = new Map(instanceToItem);
+    clone.itemToInstances = new Map(itemToInstances);
+    clone.ids = new Set(Array.from(ids));
     clone.capacity = capacity;
     const matrix = new THREE.Matrix4();
     const color = new THREE.Color();

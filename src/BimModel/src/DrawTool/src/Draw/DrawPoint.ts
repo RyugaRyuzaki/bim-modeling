@@ -32,7 +32,7 @@ export class DrawPoint extends BaseDraw {
     const point = this.foundPoint.clone();
     if (this.Snapper.snap) point.copy(this.Snapper.snap);
     if (!this.locationPoint)
-      this.locationPoint = new LocationPoint(this.components);
+      this.locationPoint = new LocationPoint(this.components, this.workPlane);
     this.locationPoint.update(point);
     this.locationPoint.visible = true;
     this.createElement();
@@ -80,13 +80,16 @@ export class DrawPoint extends BaseDraw {
       return;
     const {type} = modelingSignal.value;
     const bimElementTypes = {...tempElementSignal.value.bimElementTypes};
-    const element = this.ProjectComponent.setElement(
+    const elementLocation = this.ProjectComponent.setElement(
       type,
       bimElementTypes,
       this.tempElement,
       this.locationPoint
     );
-    element.groupParameter = {...tempElementSignal.value.groupParameter};
+    elementLocation.groupParameter = {
+      ...tempElementSignal.value.groupParameter,
+    };
+    this.ProjectComponent.ifcProject.addElementLevel = elementLocation;
     switch (type) {
       case "Structure Beam":
       case "Structure Wall":
@@ -95,11 +98,12 @@ export class DrawPoint extends BaseDraw {
       case "ReinForcement":
         break;
       case "Structure Column":
-        element.addQsetColumnCommon();
+        elementLocation.addQsetColumnCommon();
         break;
       default:
         break;
     }
+    this.locationPoint.visible = false;
     (this.tempElement as any) = null;
     (this.locationPoint as any) = null;
   };
@@ -108,6 +112,9 @@ export class DrawPoint extends BaseDraw {
     const {selectType} = tempElementSignal.value.bimElementTypes;
     if (!selectType) return;
     const {type} = modelingSignal.value;
+    const currentElementIndex = Object.keys(
+      this.ProjectComponent.elements
+    ).length;
     switch (type) {
       case "Structure Beam":
       case "Structure Wall":
@@ -121,7 +128,7 @@ export class DrawPoint extends BaseDraw {
             this.MaterialComponent.materialCategories[type]!
           ) as SimpleColumn;
           this.tempElement.attributes.Name = new IFC.IfcLabel(
-            `${type} ${this.CurrentElementIndex + 1}`
+            `${type} ${currentElementIndex + 1}`
           );
         }
         break;
@@ -147,10 +154,7 @@ export class DrawPoint extends BaseDraw {
       case "ReinForcement":
         break;
       case "Structure Column":
-        this.tempElement.position.x = this.locationPoint.location.point.x;
-        this.tempElement.position.y = -this.locationPoint.location.point.z;
-        this.tempElement.position.z = this.locationPoint.location.point.y;
-        this.tempElement.update(true);
+        this.tempElement.updateDraw(this.locationPoint.location);
         break;
       default:
         break;

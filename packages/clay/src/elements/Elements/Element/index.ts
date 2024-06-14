@@ -6,7 +6,7 @@ import {ClayObject, Model} from "../../../base";
 import {ElementType} from "../ElementType";
 import {IfcUtils} from "../../../utils/ifc-utils";
 import {SimpleOpening} from "../../Openings";
-import {IndexedGeometry, FragmentMesh} from "../../../fragment";
+import {IndexedGeometry, FragmentMesh, Fragment} from "../../../fragment";
 import {BVH} from "../../../fragment/bvh";
 
 export abstract class Element extends ClayObject {
@@ -52,7 +52,10 @@ export abstract class Element extends ClayObject {
     return meshes;
   }
   abstract updateLocation: (update: any) => void;
-
+  abstract updateDraw: (update: any) => void;
+  abstract updateLevel: (update: any) => void;
+  abstract updateOffsetLevel: (update: any) => void;
+  abstract onClone: (material: THREE.MeshLambertMaterial) => Element;
   protected constructor(model: Model, type: ElementType) {
     super(model);
     this.type = type;
@@ -175,23 +178,9 @@ export abstract class Element extends ClayObject {
       const fragment0 = this.type.fragments.get(id);
       const fragment = this.type.clones.get(id);
       if (!fragment || !fragment0) continue;
-      BVH.dispose(fragment.mesh.geometry);
-      fragment.mesh.geometry.dispose();
-      (fragment.mesh.geometry as any) = null;
-      const geometry = fragment0.mesh.geometry.clone();
-      BVH.apply(geometry);
-      fragment.mesh.geometry = geometry;
-      const matrix = new THREE.Matrix4();
-      const color = new THREE.Color();
-      for (let i = 0; i < fragment0.mesh.count; i++) {
-        fragment0.mesh.getMatrixAt(i, matrix);
-        fragment.mesh.setMatrixAt(i, matrix);
-        if (fragment0.mesh.instanceColor) {
-          fragment0.mesh.getColorAt(i, color);
-          fragment0.mesh.setColorAt(i, color);
-        }
-        fragment.update();
-      }
+      fragment.dispose(true);
+      this.type.clones.delete(id);
+      this.type.clones.set(id, Fragment.clone(fragment0));
     }
   }
 }

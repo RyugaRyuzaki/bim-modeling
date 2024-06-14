@@ -12,6 +12,14 @@ export type IDrawType =
   | "Point"
   | "PickLine"
   | "None";
+export type IModify = "Copy" | "Move" | "Trim" | "Extend" | "Align";
+export type IModelingTab =
+  | "Files"
+  | "Architecture"
+  | "Structure"
+  | "Plumbing"
+  | "Modify";
+
 export interface IModeling {
   icon: ReactElement;
   drawType: IDrawType;

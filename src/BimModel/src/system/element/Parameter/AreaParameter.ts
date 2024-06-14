@@ -21,7 +21,15 @@ export class AreaParameter extends BaseParameter {
     super();
     this.name = name;
   }
-  toIfc!: () => IFC.IfcQuantityArea;
+  toIfc = () => {
+    return new IFC.IfcQuantityArea(
+      new IFC.IfcIdentifier(this.name || ""),
+      null,
+      null,
+      new IFC.IfcLengthMeasure(this.value),
+      null
+    );
+  };
   onValueChange!: (
     value: string | number | boolean | ILevel | BaseParameter
   ) => void;

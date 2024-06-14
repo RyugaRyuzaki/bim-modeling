@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 import {v4 as uuidv4} from "uuid";
 import {IFC4X3 as IFC} from "web-ifc";
 import {Model} from "../../../../base";
@@ -31,7 +33,7 @@ export class SimpleSlab extends Element {
 
     this.attributes = new IFC.IfcSlab(
       new IFC.IfcGloballyUniqueId(uuidv4()),
-      this.model.IfcOwnerHistory,
+      null,
       null,
       null,
       null,
@@ -50,4 +52,10 @@ export class SimpleSlab extends Element {
     super.update(updateGeometry);
   }
   updateLocation!: (update: any) => void;
+  updateDraw = (_update: any) => {};
+  updateOffsetLevel = (_update: any) => {};
+  updateLevel = (_update: any) => {};
+  onClone = (_material: THREE.MeshLambertMaterial) => {
+    return this;
+  };
 }

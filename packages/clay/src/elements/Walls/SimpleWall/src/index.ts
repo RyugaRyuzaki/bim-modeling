@@ -71,7 +71,7 @@ export class SimpleWall extends Element {
 
     this.attributes = new IFC.IfcWall(
       new IFC.IfcGloballyUniqueId(uuidv4()),
-      this.model.IfcOwnerHistory,
+      null,
       null,
       null,
       null,
@@ -94,6 +94,27 @@ export class SimpleWall extends Element {
     this.endPoint.z = end.y;
     this.update(true, true);
     this.updateFragment();
+  };
+  updateDraw = (update: any) => {
+    const {start, end} = update;
+    if (!start || !end) return;
+    this.startPoint.x = start.x;
+    this.startPoint.y = -start.z;
+    this.startPoint.z = start.y;
+    this.endPoint.x = end.x;
+    this.endPoint.y = -end.z;
+    this.endPoint.z = end.y;
+    this.update(true);
+  };
+  updateOffsetLevel = (_update: any) => {};
+  updateLevel = (_update: any) => {};
+  onClone = (material: THREE.MeshLambertMaterial) => {
+    const element = this.type.addInstance(material);
+    element.startPoint = this.startPoint.clone();
+    element.endPoint = this.endPoint.clone();
+    element.position = element.startPoint;
+    element.update(true);
+    return element;
   };
   update(updateGeometry = false, updateCorners = false) {
     this.updateAllOpenings();

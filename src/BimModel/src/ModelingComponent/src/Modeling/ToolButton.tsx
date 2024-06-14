@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import {useComputed} from "@preact/signals-react";
 import {drawingTypeSignal} from "@BimModel/src/Signals";
+import {buttonClassName} from "../constants";
 
 const ToolButton: FC<Props> = ({tool}) => {
   const disabled = useComputed(() => {
@@ -29,7 +30,7 @@ const ToolButton: FC<Props> = ({tool}) => {
         <TooltipTrigger asChild>
           <Button
             variant="outline"
-            className={`my-auto mx-1 hover:bg-green-400 disabled:cursor-none p-1 ${
+            className={`${buttonClassName} ${
               active.value ? "bg-blue-400" : ""
             }`}
             onClick={() => tool.onClick!(tool.drawType)}

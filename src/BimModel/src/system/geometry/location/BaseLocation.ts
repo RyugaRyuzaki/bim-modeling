@@ -1,6 +1,7 @@
 /**
  * @module GeometrySystem
  */
+import * as THREE from "three";
 
 import {Components, MaterialComponent} from "@BimModel/src";
 
@@ -21,9 +22,13 @@ export abstract class BaseLocation {
     this._visible = visible;
     if (this.onVisibility) this.onVisibility(visible);
   }
+  get visible() {
+    return this._visible;
+  }
   abstract onSelect: (select: boolean) => void;
   abstract onHover: (hover: boolean) => void;
   abstract onVisibility: (visible: boolean) => void;
+  abstract onClone: () => BaseLocation;
   get LocationMaterial() {
     return this.components.tools.get(MaterialComponent)?.LocationMaterial;
   }
@@ -36,5 +41,5 @@ export abstract class BaseLocation {
   /**
    *
    */
-  constructor(public components: Components) {}
+  constructor(public components: Components, public workPlane: THREE.Plane) {}
 }

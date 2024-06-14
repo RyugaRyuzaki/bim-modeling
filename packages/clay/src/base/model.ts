@@ -4,7 +4,7 @@ import {IfcLineObject} from "web-ifc";
 import {IfcInfo} from "./IfcInfo";
 
 export class Model {
-  ifcInfo = new IfcInfo();
+  ifcInfo = new IfcInfo(this);
   get IfcOwnerHistory() {
     return this.ifcInfo.IfcOwnerHistory;
   }
@@ -17,7 +17,6 @@ export class Model {
 
   ifcAPI = new WEBIFC.IfcAPI();
 
-  private _context?: WEBIFC.IFC4X3.IfcRepresentationContext;
   private _modelID?: number;
 
   get modelID() {
@@ -28,20 +27,13 @@ export class Model {
   }
 
   get context() {
-    if (this._context === undefined) {
-      throw new Error("Model not initialized! Call the init() method.");
-    }
-    return this._context;
+    return this.ifcInfo.ifcUnit.IfcGeometricRepresentationContext;
   }
 
   async init() {
     await this.ifcAPI.Init();
     this.ifcAPI.SetLogLevel(WEBIFC.LogLevel.LOG_LEVEL_OFF);
-    this._modelID = this.ifcAPI.CreateModel({schema: WEBIFC.Schemas.IFC4X3});
-    this._context = new WEBIFC.IFC4X3.IfcRepresentationContext(
-      new WEBIFC.IFC4X3.IfcLabel("Default"),
-      new WEBIFC.IFC4X3.IfcLabel("Model")
-    );
+    this._modelID = this.ifcAPI.CreateModel({schema: "IFC4X3_ADD2"});
   }
 
   set(item: WEBIFC.IfcLineObject) {
@@ -95,5 +87,11 @@ export class Model {
     this.ifcAPI.CloseModel(this._modelID);
     this._modelID++;
     this.ifcAPI.OpenModel(model);
+  }
+  export() {
+    if (this._modelID === undefined) {
+      throw new Error("Malformed model!");
+    }
+    return this.ifcAPI.SaveModel(this._modelID);
   }
 }

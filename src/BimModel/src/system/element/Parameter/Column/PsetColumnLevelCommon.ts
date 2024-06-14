@@ -1,9 +1,7 @@
-import {v4 as uuid4} from "uuid";
 import {BaseParameter} from "../BaseParameter";
 import {BaseParameterGroup} from "../BaseParameterGroup";
 import {IElement} from "clay";
 import {LevelParameter} from "../LevelParameter";
-import {IFC4X3 as IFC} from "web-ifc";
 import {BottomLevelParameter, TopLevelParameter} from "../OffsetLevelParameter";
 import {ILevel} from "@BimModel/src/LevelSystem/types";
 
@@ -12,7 +10,7 @@ import {ILevel} from "@BimModel/src/LevelSystem/types";
  */
 export class PsetColumnLevelCommon extends BaseParameterGroup {
   element!: IElement;
-  uuid = uuid4();
+
   name = "Column Level Common" as const;
   HasProperties: {[uuid: string]: BaseParameter} = {};
   levelParameter!: LevelParameter;
@@ -54,5 +52,4 @@ export class PsetColumnLevelCommon extends BaseParameterGroup {
     if (!this.element) return;
     // const {} = value as ILevel;
   };
-  toIfc!: () => IFC.IfcPropertySet;
 }

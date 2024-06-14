@@ -7,6 +7,8 @@ import {LocationLine} from "../LocationLine";
 const DimensionLocationLine = ({location}: {location: LocationLine}) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   useEffect(() => {
+    const {factor, toFixed} = lengthUnitSignal.value;
+    inputRef.current!.value = `${(location.length * factor).toFixed(toFixed)}`;
     location.onChangeLengthDomElement = (length: string) => {
       inputRef.current!.value = length;
     };

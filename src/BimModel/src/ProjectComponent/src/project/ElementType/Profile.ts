@@ -55,10 +55,39 @@ export class ProfileUtils {
     profile.updateProfile(configProfile);
     return profile;
   };
+  static addRectangleConfig = (
+    configProfile: IRectangleConfig,
+    mat = "Concrete"
+  ) => {
+    const {width, height} = configProfile;
+    const {factor} = lengthUnitSignal.value;
+    return {
+      Name: `R${width * factor}x${height * factor}`,
+      Description: mat,
+      ObjectType: `${mat} ${width * factor}x${height * factor}`,
+    };
+  };
   static addIShapeProfile = (configProfile: IIShapeConfig, model: Model) => {
     return new IShapeProfile(model, configProfile);
   };
+  static addIShapeConfig = (configProfile: IIShapeConfig) => {
+    const {bf, bw, hw} = configProfile;
+    const {factor} = lengthUnitSignal.value;
+    return {
+      Name: `I${hw * factor}x${bf * factor}`,
+      Description: `SS400 I${hw * factor}x${bf * factor}`,
+      ObjectType: `I${hw * factor}x${bf * factor}x${bw * factor}x${
+        hw * factor
+      }`,
+    };
+  };
 
+  static createRectangleProfiles(model: Model): RectangleProfile[] {
+    return defaultRectangleTypes.map((d) => this.addRectangleProfile(d, model));
+  }
+  static createIShapeProfiles(model: Model): IShapeProfile[] {
+    return defaultIShapeTypes.map((d) => this.addIShapeProfile(d, model));
+  }
   static createProfiles(model: Model): {
     config: IIfcBaseConfig;
     profile: RectangleProfile | ArbitraryClosedProfile | IShapeProfile;
@@ -91,24 +120,5 @@ export class ProfileUtils {
         };
       }),
     ];
-  }
-  private static updateIShape(update: IIShapeConfig) {
-    const {bw, hw, bf, hf} = update;
-    const points: THREE.Vector3[] = [];
-    points.push(new THREE.Vector3(bf / 2, hw / 2 + hf, 0));
-    points.push(new THREE.Vector3(bf / 2, hw / 2, 0));
-    points.push(new THREE.Vector3(bw / 2, hw / 2, 0));
-    points.push(new THREE.Vector3(bw / 2, -hw / 2, 0));
-    points.push(new THREE.Vector3(bf / 2, -hw / 2, 0));
-    points.push(new THREE.Vector3(bf / 2, -hw / 2 - hf, 0));
-    points.push(new THREE.Vector3(-bf / 2, -hw / 2 - hf, 0));
-    points.push(new THREE.Vector3(-bf / 2, -hw / 2, 0));
-    points.push(new THREE.Vector3(-bw / 2, -hw / 2, 0));
-    points.push(new THREE.Vector3(-bw / 2, hw / 2, 0));
-    points.push(new THREE.Vector3(-bf / 2, hw / 2, 0));
-    points.push(new THREE.Vector3(-bf / 2, hw / 2 + hf, 0));
-    points.push(new THREE.Vector3(bf / 2, hw / 2 + hf, 0));
-
-    return points;
   }
 }

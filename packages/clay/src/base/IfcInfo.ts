@@ -1,5 +1,6 @@
 import {IFC4X3 as IFC} from "web-ifc";
 import {IfcUnit} from "./IfcUnit";
+import {Model} from "./model";
 const version = "0.0.1";
 const application = "Web application Bim-modeling";
 export class IfcInfo {
@@ -144,4 +145,38 @@ export class IfcInfo {
     this.IfcAxis2PlacementGlobal3D,
     this.IfcDirectionTrueNorth3D
   );
+  get IfcUnitAssignment() {
+    return this.ifcUnit.IfcUnitAssignment;
+  }
+  /**
+   *
+   */
+  constructor(private model: Model) {}
+  export() {
+    this.model.set(this.IfcActorRole);
+    this.model.set(this.IfcAddress);
+    this.model.set(this.IfcOrganization);
+    this.model.set(this.IfcPerson);
+    this.model.set(this.IfcPersonAndOrganization);
+    this.model.set(this.IfcApplication);
+    this.model.set(this.IfcOwnerHistory);
+    this.model.set(this.IfcCartesianPointGlobal2D);
+    this.model.set(this.IfcCartesianPointGlobal3D);
+    this.model.set(this.IfcDirectionGlobal2D);
+    this.model.set(this.IfcDirectionGlobal3D);
+    this.model.set(this.IfcDirectionLocal3D);
+    this.model.set(this.IfcDirectionTrueNorth3D);
+    this.model.set(this.IfcAxisXPositive);
+    this.model.set(this.IfcAxisXNegative);
+    this.model.set(this.IfcAxisYPositive);
+    this.model.set(this.IfcAxisYNegative);
+    this.model.set(this.IfcAxisZPositive);
+    this.model.set(this.IfcAxisZNegative);
+    this.model.set(this.IfcAxis2PlacementGlobal3D);
+    this.model.set(this.IfcAxis2PlacementGlobal);
+    this.model.set(this.IfcBuildingAddress);
+    this.model.set(this.IfcSiteAddress);
+
+    this.ifcUnit.export(this.model);
+  }
 }

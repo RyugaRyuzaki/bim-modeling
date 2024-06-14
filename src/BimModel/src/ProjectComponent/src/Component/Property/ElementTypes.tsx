@@ -63,6 +63,7 @@ const ElementTypes = ({
               variant="outline"
               className={`h-[80%] my-auto mx-2 hover:bg-green-400 disabled:cursor-none`}
               onClick={onOpenType}
+              disabled={drawingTypeSignal.value !== "None"}
             >
               ...
             </Button>

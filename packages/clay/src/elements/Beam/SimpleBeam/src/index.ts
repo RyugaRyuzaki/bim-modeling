@@ -4,14 +4,8 @@ import {IFC4X3 as IFC} from "web-ifc";
 import {Model} from "../../../../base";
 import {IfcUtils} from "../../../../utils/ifc-utils";
 import {Element} from "../../../Elements";
-import {
-  Extrusion,
-  Profile,
-  ClayGeometry,
-  RectangleProfile,
-  IShapeProfile,
-} from "../../../../geometries";
-import {BVH, Fragment} from "../../../../fragment";
+import {Extrusion, Profile, ClayGeometry} from "../../../../geometries";
+import {Fragment} from "../../../../fragment";
 import {SimpleBeamType} from "..";
 export class SimpleBeam extends Element {
   attributes: IFC.IfcElement;
@@ -35,10 +29,9 @@ export class SimpleBeam extends Element {
   }
 
   get direction() {
-    const vector = new THREE.Vector3();
-    vector.subVectors(this.endPoint, this.startPoint);
-    vector.normalize();
-    return vector;
+    return new THREE.Vector3()
+      .subVectors(this.endPoint, this.startPoint)
+      .normalize();
   }
 
   constructor(model: Model, type: SimpleBeamType) {
@@ -52,18 +45,16 @@ export class SimpleBeam extends Element {
     this.geometries.add(id);
 
     const placement = IfcUtils.localPlacement();
-    const shape = IfcUtils.productDefinitionShape(model, [
-      this.body.attributes,
-    ]);
+    const product = IfcUtils.productDefinitionShape(model, []);
 
     this.attributes = new IFC.IfcBeam(
       new IFC.IfcGloballyUniqueId(uuidv4()),
-      this.model.IfcOwnerHistory,
+      null,
       null,
       null,
       null,
       placement,
-      shape,
+      product,
       null,
       null
     );
@@ -76,10 +67,10 @@ export class SimpleBeam extends Element {
     this.rotation.y = rotationY;
     this.body.depth = this.length;
     this.body.update();
-    const shape = this.model.get(this.attributes.Representation);
-    const reps = this.model.get(shape.Representations[0]);
-    reps.Items = [this.body.attributes];
-    this.model.set(reps);
+    const product = this.model.get(this.attributes.Representation);
+    const shape = this.model.get(product.Representations[0]);
+    shape.Items = [this.body.attributes];
+    this.model.set(shape);
     this.updateGeometryID();
     super.update(updateGeometry);
   }
@@ -92,10 +83,13 @@ export class SimpleBeam extends Element {
     this.endPoint.x = end.x;
     this.endPoint.y = -end.z;
     this.endPoint.z = end.y;
+    this.position = this.startPoint;
     this.update(true);
     this.updateFragment();
   };
-  updateDrawLine(start: THREE.Vector3, end: THREE.Vector3) {
+  updateDraw = (update: any) => {
+    const {start, end} = update;
+    if (!start || !end) return;
     this.startPoint.x = start.x;
     this.startPoint.y = -start.z;
     this.startPoint.z = start.y;
@@ -103,22 +97,23 @@ export class SimpleBeam extends Element {
     this.endPoint.y = -end.z;
     this.endPoint.z = end.y;
     this.update(true);
-  }
-  updateDrawArc(start: THREE.Vector3, end: THREE.Vector3) {
-    this.startPoint.x = start.x;
-    this.startPoint.y = -start.z;
-    this.startPoint.z = start.y;
-    this.endPoint.x = end.x;
-    this.endPoint.y = -end.z;
-    this.endPoint.z = end.y;
-    this.update(true);
-  }
-  updateOffsetLevel() {
+  };
+  updateOffsetLevel = (_update: any) => {
     //@ts-ignore
     const {height} = this.type.profile;
     if (!height) return;
     this.body.position.y = -height / 2;
-  }
+  };
+  updateLevel = (_update: any) => {};
+  onClone = (material: THREE.MeshLambertMaterial) => {
+    const element = this.type.addInstance(material);
+    element.startPoint = this.startPoint.clone();
+    element.endPoint = this.endPoint.clone();
+    element.position = element.startPoint;
+    element.body.position = this.body.position.clone();
+    element.update(true);
+    return element;
+  };
   private updateGeometryID() {
     const modelID = this.model.modelID;
     const id = this.attributes.expressID;

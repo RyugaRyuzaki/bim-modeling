@@ -7,6 +7,7 @@ import {IFC4X3 as IFC} from "web-ifc";
 import {
   Components,
   isOrthoSignal,
+  lengthUnitSignal,
   modelingSignal,
   modelStructureSignal,
   tempElementSignal,
@@ -93,9 +94,14 @@ export class DrawLine extends BaseDraw {
         this.inputKey = "";
         return;
       }
+      const {factor} = lengthUnitSignal.value;
       const start = this.points[this.points.length - 1];
-      const end = this.getDistance(start, this.end, distance);
-      if (this.locationLine) this.locationLine.update(start, end);
+      const end = this.getDistance(start, this.end, distance / factor);
+      if (this.locationLine) {
+        this.locationLine.update(start, end);
+        this.updateElement(this.locationLine);
+        this.locationLine.visible = false;
+      }
       this.onFinished();
       this.start = end.clone();
       this.points.push(this.start);
@@ -107,7 +113,7 @@ export class DrawLine extends BaseDraw {
     }
   };
   onFinished = () => {
-    if (this.locationLine) this.locationLine.visible = false;
+    this.addElement();
     this.inputKey = "";
     this.count = 0;
     this.points = [];
@@ -130,20 +136,23 @@ export class DrawLine extends BaseDraw {
       return;
     const {type} = modelingSignal.value;
     const bimElementTypes = {...tempElementSignal.value.bimElementTypes};
-    const element = this.ProjectComponent.setElement(
+    const elementLocation = this.ProjectComponent.setElement(
       type,
       bimElementTypes,
       this.tempElement,
       this.locationLine
     );
-    element.groupParameter = {...tempElementSignal.value.groupParameter};
+    elementLocation.groupParameter = {
+      ...tempElementSignal.value.groupParameter,
+    };
+    this.ProjectComponent.ifcProject.addElementLevel = elementLocation;
     switch (type) {
       case "Structure Beam":
-        element.addQsetBeamCommon();
+        elementLocation.addQsetBeamCommon();
         break;
       case "Wall":
       case "Structure Wall":
-        element.addQsetWallCommon();
+        elementLocation.addQsetWallCommon();
         break;
       default:
         break;
@@ -156,6 +165,9 @@ export class DrawLine extends BaseDraw {
     const {selectType} = tempElementSignal.value.bimElementTypes;
     if (!selectType) return;
     const {type} = modelingSignal.value;
+    const currentElementIndex = Object.keys(
+      this.ProjectComponent.elements
+    ).length;
     switch (type) {
       case "Structure Beam":
         if (!this.tempElement) {
@@ -163,9 +175,9 @@ export class DrawLine extends BaseDraw {
             this.MaterialComponent.materialCategories[type]!
           ) as SimpleBeam;
           this.tempElement.attributes.Name = new IFC.IfcLabel(
-            `${type} ${this.CurrentElementIndex + 1}`
+            `${type} ${currentElementIndex + 1}`
           );
-          (this.tempElement as SimpleBeam).updateOffsetLevel();
+          (this.tempElement as SimpleBeam).updateOffsetLevel({});
         }
         break;
       case "Wall":
@@ -176,7 +188,7 @@ export class DrawLine extends BaseDraw {
           ) as SimpleWall;
 
           this.tempElement.attributes.Name = new IFC.IfcLabel(
-            `${type} ${this.CurrentElementIndex + 1}`
+            `${type} ${currentElementIndex + 1}`
           );
         }
         break;
@@ -198,17 +210,9 @@ export class DrawLine extends BaseDraw {
     const {start, end} = location.location;
     switch (type) {
       case "Structure Beam":
-        (this.tempElement as SimpleBeam).updateDrawLine(start, end);
-        break;
       case "Wall":
       case "Structure Wall":
-        (this.tempElement as SimpleWall).startPoint.x = start.x;
-        (this.tempElement as SimpleWall).startPoint.y = -start.z;
-        (this.tempElement as SimpleWall).startPoint.z = start.y;
-        (this.tempElement as SimpleWall).endPoint.x = end.x;
-        (this.tempElement as SimpleWall).endPoint.y = -end.z;
-        (this.tempElement as SimpleWall).endPoint.z = end.y;
-        (this.tempElement as SimpleWall).update(true, true);
+        this.tempElement.updateDraw({start, end});
         break;
       default:
         break;
