@@ -16,11 +16,11 @@ import {
   WindowTypeUtils,
 } from "@ProjectComponent/src";
 import {ElementLocation} from "./ElementLocation";
-import {PsetWallLevelCommon} from "./Parameter";
 import {currentLevelSignal} from "@BimModel/src/Signals";
 import {PsetBeamLevelCommon} from "./Parameter/beam";
 import {PsetColumnLevelCommon} from "./Parameter/column";
 import {Components} from "@BimModel/src/Components";
+import {PsetWallLevelCommon} from "./Parameter/wall";
 
 export class ElementUtils {
   static createWallInstance(
