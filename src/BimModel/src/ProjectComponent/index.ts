@@ -4,13 +4,14 @@ import {Components} from "../Components";
 import {ToolComponent} from "../Tool";
 import {Component, Disposable, UUID} from "../types";
 import {
+  exportIfcSignal,
   modelingSignal,
   modelStructureSignal,
   tempElementSignal,
 } from "../Signals";
 import {RendererComponent} from "../RendererComponent";
 import {IBimElementType, IStructure} from "./types";
-import {createElementContainer} from "./src";
+import {createElementContainer, IfcProject} from "./src";
 import {Fragment, IElement, IElementType} from "clay";
 import {
   ElementLocation,
@@ -31,6 +32,8 @@ export class ProjectComponent extends Component<string> implements Disposable {
   private propertyContainer!: HTMLDivElement;
   readonly modelStructure = "Model Tree";
 
+  ifcProject!: IfcProject;
+
   get camera() {
     return this.components.tools.get(RendererComponent)?.camera;
   }
@@ -40,6 +43,7 @@ export class ProjectComponent extends Component<string> implements Disposable {
   tempElements!: Record<ICategory, ElementLocation | null>;
 
   elements: {[id: number]: ElementLocation} = {};
+
   /**
    *
    */
@@ -52,6 +56,10 @@ export class ProjectComponent extends Component<string> implements Disposable {
         ? this.tempElements[modelingSignal.value.type]
         : null;
     });
+    effect(() => {
+      if (!exportIfcSignal.value) return;
+      this.export();
+    });
   }
   async dispose() {
     this.propertyContainer?.remove();
@@ -61,6 +69,7 @@ export class ProjectComponent extends Component<string> implements Disposable {
     }
     this.elements = {};
     (this.tempElements as any) = {};
+    (this.ifcProject as any) = null;
   }
   get() {
     return ProjectComponent.uuid;
@@ -71,9 +80,10 @@ export class ProjectComponent extends Component<string> implements Disposable {
   }
   initElement() {
     this.tempElements = ElementUtils.createTempElementInstances(
-      this.components.ifcModel
+      this.components
     );
     modelStructureSignal.value = this.getDefaultStructure();
+    this.ifcProject = new IfcProject(this.components.ifcModel);
   }
   setElement(
     category: ICategory,
@@ -91,7 +101,11 @@ export class ProjectComponent extends Component<string> implements Disposable {
       }
       this.components.modelScene.add(...element.clones);
 
-      const elementLocation = new ElementLocation(category, bimElementTypes);
+      const elementLocation = new ElementLocation(
+        category,
+        this.components,
+        bimElementTypes
+      );
       elementLocation.element = element;
       elementLocation.location = location;
       if (elementLocation.location instanceof LocationLine) {
@@ -113,7 +127,6 @@ export class ProjectComponent extends Component<string> implements Disposable {
     const childrenModelStructure = modelStructure.children;
     for (const tool of ModelingTools) {
       const {discipline, types} = tool;
-      if (discipline === "Modify") continue;
       if (!childrenModelStructure[discipline]) {
         const uuid = THREE.MathUtils.generateUUID();
         childrenModelStructure[discipline] = {
@@ -147,5 +160,31 @@ export class ProjectComponent extends Component<string> implements Disposable {
   ) => {
     material!.color.set(new THREE.Color(color));
   };
+  private export() {
+    const IfcOwnerHistory = this.components.ifcModel.IfcOwnerHistory;
+    for (const id in this.elements) {
+      this.elements[id].export();
+    }
+    for (const key in this.tempElements) {
+      if (!this.tempElements[key]) continue;
+      const {bimElementTypes} = this.tempElements[key] as ElementLocation;
+      const {types} = bimElementTypes;
+      for (const type of types) {
+        type.attributes.OwnerHistory = IfcOwnerHistory;
+      }
+    }
+    this.ifcProject.export();
+    const model = this.components.ifcModel.export();
+    const file = new File([model], "model.ifc", {
+      type: "application/octet-stream",
+    });
+    const link = document.createElement("a");
+    document.body.appendChild(link);
+    link.href = URL.createObjectURL(file);
+    link.download = file.name;
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+  }
 }
 ToolComponent.libraryUUIDs.add(ProjectComponent.uuid);

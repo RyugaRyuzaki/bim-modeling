@@ -20,7 +20,7 @@ export class ArbitraryClosedProfile extends Profile {
 
     this.attributes = new IFC.IfcArbitraryClosedProfileDef(
       IFC.IfcProfileTypeEnum.CURVE,
-      null,
+      new IFC.IfcLabel(""),
       new IFC.IfcPolyline([])
     );
     this.model.set(this.attributes);

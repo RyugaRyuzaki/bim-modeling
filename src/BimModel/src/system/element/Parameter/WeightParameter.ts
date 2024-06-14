@@ -21,7 +21,15 @@ export class WeightParameter extends BaseParameter {
     super();
     this.name = name;
   }
-  toIfc!: () => IFC.IfcQuantityWeight;
+  toIfc = () => {
+    return new IFC.IfcQuantityWeight(
+      new IFC.IfcIdentifier(this.name || ""),
+      null,
+      null,
+      new IFC.IfcLengthMeasure(this.value),
+      null
+    );
+  };
   onValueChange!: (
     value: string | number | boolean | ILevel | BaseParameter
   ) => void;

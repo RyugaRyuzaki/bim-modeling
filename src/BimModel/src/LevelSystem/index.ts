@@ -19,18 +19,8 @@ import {createStructureContainer, Elevation} from "./src";
 import {effect} from "@preact/signals-react";
 import {CubeMapComponent} from "../CubeMapComponent";
 import {TransformControls} from "three/examples/jsm/controls/TransformControls";
-const defaultLevels: ILevel[] = [
-  {
-    name: "Level 1",
-    index: 0,
-    elevation: 0.0,
-  },
-  {
-    name: "Level 2",
-    index: 1,
-    elevation: 4.0,
-  },
-];
+import {defaultLevels} from "./constants";
+
 const upVector = new THREE.Vector3(0, 1, 0);
 const downVector = new THREE.Vector3(0, -1, 0);
 const upPosition = new THREE.Vector3(0, 0, 0);

@@ -5,6 +5,7 @@
 import * as THREE from "three";
 import {
   Components,
+  MovingLine,
   RaycasterComponent,
   SelectionComponent,
 } from "@BimModel/src";
@@ -19,9 +20,16 @@ import {
   DrawPolyLines,
   DrawRectangular,
   DrawCircle,
+  BaseModify,
+  ModifyCopy,
+  ModifyMove,
 } from "./src";
 import {effect} from "@preact/signals-react";
-import {currentLevelSignal, drawingTypeSignal} from "@BimModel/src/Signals";
+import {
+  currentLevelSignal,
+  drawingTypeSignal,
+  modifySignal,
+} from "@BimModel/src/Signals";
 import {ILevel} from "../LevelSystem/types";
 export class DrawTool extends Component<string> implements Disposable {
   static readonly uuid = UUID.DrawTool;
@@ -33,14 +41,15 @@ export class DrawTool extends Component<string> implements Disposable {
 
   /** @draws  */
   private draws: {[name: string]: BaseDraw} = {};
+  private modifies: {[name: string]: BaseModify} = {};
   set workPlaneLevel(level: ILevel) {
     const {elevation} = level;
-    this.workPlane = new THREE.Plane().setFromNormalAndCoplanarPoint(
+    this.workPlane.setFromNormalAndCoplanarPoint(
       DrawTool.upDirection,
       new THREE.Vector3(0, elevation, 0)
     );
   }
-
+  movingLine = new MovingLine(this.components);
   get RaycasterComponent() {
     return this.components.tools.get(RaycasterComponent);
   }
@@ -55,6 +64,7 @@ export class DrawTool extends Component<string> implements Disposable {
     super(components);
     this.components.tools.add(DrawTool.uuid, this);
     this.initDraws();
+    this.initModify();
     effect(() => {
       for (const name in this.draws) {
         const draw = this.draws[name];
@@ -69,6 +79,19 @@ export class DrawTool extends Component<string> implements Disposable {
       this.SelectionComponent.setupEvent = drawingTypeSignal.value === "None";
     });
     effect(() => {
+      for (const name in this.modifies) {
+        const modify = this.modifies[name];
+        if (modifySignal.value === null) {
+          modify.setupEvent = false;
+          modify.dispose();
+        } else {
+          modify.setupEvent = modifySignal.value === name;
+        }
+      }
+      this.RaycasterComponent!.visibleInfo = modifySignal.value !== null;
+      this.SelectionComponent.setupEvent = modifySignal.value === null;
+    });
+    effect(() => {
       if (!currentLevelSignal.value) return;
       this.workPlaneLevel = currentLevelSignal.value;
     });
@@ -78,6 +101,12 @@ export class DrawTool extends Component<string> implements Disposable {
       this.draws[name]?.dispose();
     }
     this.draws = {};
+    for (const name in this.modifies) {
+      this.modifies[name]?.dispose();
+    }
+    this.modifies = {};
+    this.movingLine?.dispose();
+    (this.movingLine as any) = null;
   }
 
   get() {
@@ -97,6 +126,10 @@ export class DrawTool extends Component<string> implements Disposable {
     this.draws["Circle"] = new DrawCircle(this.components, this.workPlane);
     this.draws["Point"] = new DrawPoint(this.components, this.workPlane);
     this.draws["PickLine"] = new DrawPickLine(this.components, this.workPlane);
+  }
+  private initModify() {
+    this.modifies["Copy"] = new ModifyCopy(this.components);
+    this.modifies["Move"] = new ModifyMove(this.components);
   }
 }
 ToolComponent.libraryUUIDs.add(DrawTool.uuid);

@@ -26,7 +26,7 @@ export class SimplePlateType extends DynamicElementType<SimplePlate> {
 
     this.attributes = new IFC.IfcPlateType(
       new IFC.IfcGloballyUniqueId(uuidv4()),
-      this.model.IfcOwnerHistory,
+      null,
       new IFC.IfcLabel(Name),
       new IFC.IfcLabel(Description),
       new IFC.IfcLabel(ObjectType),

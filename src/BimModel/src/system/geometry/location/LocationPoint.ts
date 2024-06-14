@@ -23,13 +23,20 @@ export class LocationPoint
   /** abstract @BaseLocation */
   onSelect!: (select: boolean) => void;
   onHover!: (hover: boolean) => void;
-  onVisibility = (_visible: boolean) => {};
+  onVisibility = (visible: boolean) => {
+    if (!this.point) return;
+    if (visible) {
+      this.components.annotationScene.add(this.point);
+    } else {
+      this.point.removeFromParent();
+    }
+  };
   point!: CSS2DObject;
   /**
    *
    */
-  constructor(components: Components) {
-    super(components);
+  constructor(components: Components, workPlane: THREE.Plane) {
+    super(components, workPlane);
     this.point = createLabel(GeometryCSS.snap.endLine);
   }
   async dispose() {
@@ -41,4 +48,7 @@ export class LocationPoint
     this.location.point.copy(point);
     this.point.position.copy(point);
   }
+  onClone = () => {
+    return this;
+  };
 }

@@ -22,7 +22,15 @@ export class LevelParameter extends BaseParameter {
     super();
     this.value = level;
   }
-  toIfc!: () => IFC.IfcPropertySingleValue | IFC.IfcPropertyReferenceValue;
+  toIfc = () => {
+    return new IFC.IfcPropertySingleValue(
+      new IFC.IfcIdentifier(this.name),
+      null,
+      new IFC.IfcLabel(this.value?.name),
+      null
+    );
+  };
+
   onValueChange!: (
     value: string | number | boolean | ILevel | BaseParameter
   ) => void;

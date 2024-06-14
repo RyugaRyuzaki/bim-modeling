@@ -2,6 +2,7 @@ export interface ILevel {
   name: string;
   index: number;
   elevation: number;
+  uuid: string;
 }
 export type IViewType = "3D" | "Plan" | "Elevation" | "Section" | "Browsers";
 export type IElevation = "South" | "West" | "East" | "North";

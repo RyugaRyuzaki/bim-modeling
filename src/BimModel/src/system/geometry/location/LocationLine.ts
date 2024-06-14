@@ -83,8 +83,8 @@ export class LocationLine
   /**
    *
    */
-  constructor(components: Components, private workPlane: THREE.Plane) {
-    super(components);
+  constructor(components: Components, workPlane: THREE.Plane) {
+    super(components, workPlane);
     this.init();
     effect(() => {
       const {factor, toFixed} = lengthUnitSignal.value;
@@ -161,6 +161,15 @@ export class LocationLine
   }
   onChangeLength!: (length: number) => void;
   onChangeLengthDomElement!: (length: string) => void;
+  updateMove(origin: THREE.Vector3, movingPoint: THREE.Vector3) {
+    const dir = getDirection(origin, movingPoint);
+    const dis = origin.distanceTo(movingPoint);
+    const start = this.location.start
+      .clone()
+      .add(dir.clone().multiplyScalar(dis));
+    const end = this.location.end.clone().add(dir.clone().multiplyScalar(dis));
+    this.update(start, end);
+  }
   updateLength(length: number) {
     if (!this.location) return;
     const {factor} = lengthUnitSignal.value;
@@ -169,4 +178,9 @@ export class LocationLine
     const end = this.location.start.clone().add(dir.multiplyScalar(value));
     this.update(this.location.start, end);
   }
+  onClone = () => {
+    const location = new LocationLine(this.components, this.workPlane);
+    location.update(this.location.start, this.location.end);
+    return location;
+  };
 }

@@ -30,8 +30,7 @@ import {GiTeePipe as Pipe} from "react-icons/gi";
 import {FaCrosshairs as AirTerminal} from "react-icons/fa";
 //#endregion
 //#region Modify
-import {BiCopy as Copy} from "react-icons/bi";
-import {IoMdMove as Move} from "react-icons/io";
+
 import {ReactComponent as Trim} from "@assets/icon/Trim.svg";
 import {ReactComponent as Extend} from "@assets/icon/Extend.svg";
 import {MdAlignHorizontalLeft as Align} from "react-icons/md";
@@ -105,15 +104,7 @@ const Plumbing = [
     icon: <AirTerminal className={iConClassName} />,
   },
 ] as ITool[];
-const Modify = [
-  {
-    type: "Copy",
-    icon: <Copy className={iConClassName} />,
-  },
-  {
-    type: "Move",
-    icon: <Move className={iConClassName} />,
-  },
+export const Modify = [
   {
     type: "Trim",
     icon: <Trim className={iConClassName} />,
@@ -132,5 +123,4 @@ export const ModelingTools: IModelingToolTabs[] = [
   {discipline: "Architecture", types: Architecture},
   {discipline: "Structure", types: Structure},
   {discipline: "Plumbing", types: Plumbing},
-  {discipline: "Modify", types: Modify},
 ];

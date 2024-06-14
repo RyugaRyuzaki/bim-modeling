@@ -12,6 +12,7 @@ import {Component, Disposable, UUID} from "../types";
 import {FragmentMesh} from "clay";
 import {ElementLocation} from "../system";
 import {changeInputSignal, selectElementSignal} from "../Signals";
+import {createContextMenu} from "./src";
 
 /**
  *
@@ -19,6 +20,7 @@ import {changeInputSignal, selectElementSignal} from "../Signals";
 export class SelectionComponent extends Component<any> implements Disposable {
   static readonly uuid = UUID.SelectionComponent;
   enabled = false;
+  private readonly hoverColor = new THREE.Color("#6528D7");
   private readonly cursorTypes = [
     "default",
     "pointer",
@@ -67,11 +69,13 @@ export class SelectionComponent extends Component<any> implements Disposable {
       this.container.addEventListener("mousemove", this.onMouseMove);
       this.container.addEventListener("mousedown", this.onMousedown);
       this.container.addEventListener("mouseup", this.onMouseup);
+      this.container.addEventListener("contextmenu", this.onContextMenu);
     } else {
       this.container.removeEventListener("click", this.onClick);
       this.container.removeEventListener("mousemove", this.onMouseMove);
       this.container.removeEventListener("mousedown", this.onMousedown);
       this.container.removeEventListener("mouseup", this.onMouseup);
+      this.container.removeEventListener("contextmenu", this.onContextMenu);
     }
   }
   get setupEvent() {
@@ -113,10 +117,52 @@ export class SelectionComponent extends Component<any> implements Disposable {
     }
     if (this._select) {
       this._select.select = true;
+      this.clear();
+    } else {
+      this.showContextMenu = false;
     }
     selectElementSignal.value = this._select;
   }
+  private _hover: {[id: string]: number} = {};
+  set hover(found: THREE.Intersection | null) {
+    if (this._select) return;
+    this.clear();
+    if (
+      !found ||
+      !found.object ||
+      !(found.object instanceof FragmentMesh) ||
+      !found.object.fragment ||
+      found.instanceId === undefined
+    )
+      return;
+    const itemID = found.object.fragment.getItemID(found.instanceId);
+    if (!itemID) return;
+    const {ids} = found.object.fragment;
+    for (const id of ids) {
+      if (!this.elements[+id]) continue;
+      if (!this.elements[+id].element) continue;
+      const clones = this.elements[+id].element.type.clones;
+      for (const [_id, clone] of clones) {
+        clone.setColor(this.hoverColor, [itemID]);
+      }
+      if (!this._hover[id]) this._hover[id] = itemID;
+    }
+  }
 
+  private contextMenu!: HTMLDivElement;
+  private _showContextMenu = false;
+  set showContextMenu(show: boolean) {
+    this._showContextMenu = show;
+    if (!this.contextMenu) this.contextMenu = createContextMenu(this);
+    if (show) {
+      this.components.container.appendChild(this.contextMenu);
+    } else {
+      this.contextMenu?.remove();
+    }
+  }
+  get showContextMenu() {
+    return this._showContextMenu;
+  }
   /**
    *
    */
@@ -126,7 +172,12 @@ export class SelectionComponent extends Component<any> implements Disposable {
     this.setupEvent = true;
   }
   async dispose() {
+    this.enabled = false;
     this.setupEvent = false;
+    this._hover = {};
+    this._select = null;
+    this.contextMenu?.remove();
+    (this.contextMenu as any) = null;
   }
 
   get() {
@@ -138,21 +189,43 @@ export class SelectionComponent extends Component<any> implements Disposable {
     }
     return null;
   }
-  onClick = (_e: MouseEvent) => {
+  private clear() {
+    for (const id in this._hover) {
+      if (!this.elements[+id]) continue;
+      if (!this.elements[+id].element) continue;
+      const itemId = this._hover[id];
+      const clones = this.elements[+id].element.type.clones;
+      for (const [_id, clone] of clones) {
+        clone.resetColor([itemId]);
+      }
+    }
+    this._hover = {};
+  }
+  private onClick = (_e: MouseEvent) => {
     _e.preventDefault();
     _e.stopPropagation();
     if (this.mousedown || changeInputSignal.value) return;
     this.select = this.found;
   };
-  onMouseMove = (_e: MouseEvent) => {
+  private onMouseMove = (_e: MouseEvent) => {
     if (this.mousedown) return;
     this.find = _e;
+    // this.hover = this.found;
   };
-  onMousedown = (_e: MouseEvent) => {
+  private onMousedown = (_e: MouseEvent) => {
     if (_e.button === 0) this.mousedown = true;
   };
   private onMouseup = () => {
     this.mousedown = false;
+  };
+  private onContextMenu = (_e: MouseEvent) => {
+    _e.preventDefault();
+    _e.stopPropagation();
+    this.showContextMenu = this._select !== null && this._select !== undefined;
+    const {clientX, clientY} = _e;
+    const bounds = this.components.rect;
+    this.contextMenu.style.top = `${clientY - bounds.top}px`;
+    this.contextMenu.style.left = `${clientX - bounds.left + 10}px`;
   };
 }
 //

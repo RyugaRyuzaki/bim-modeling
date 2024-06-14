@@ -106,8 +106,6 @@ export class Camera implements Disposable, Resizeable, Updateable {
   }
   resetState() {
     if (!this.cameraControls) return;
-    const {position, target} = this.state;
-    this.setLookAt(position, target);
     this.currentCamera.far = defaultCameraFar;
     this.currentCamera.near = -defaultCameraFar;
   }

@@ -7,6 +7,7 @@ export abstract class DynamicElementType<
   T extends Element
 > extends ElementType {
   abstract attributes: IFC.IfcElementType;
+
   get name() {
     return this.attributes.Name?.value;
   }

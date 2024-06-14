@@ -1,8 +1,12 @@
-import {v4 as uuid4} from "uuid";
 import {BaseParameter} from "../BaseParameter";
 import {BaseParameterGroup} from "../BaseParameterGroup";
-import {IElement, RectangleProfile, SimpleBeam, SimpleBeamType} from "clay";
-import {IFC4X3 as IFC} from "web-ifc";
+import {
+  IElement,
+  IShapeProfile,
+  RectangleProfile,
+  SimpleBeam,
+  SimpleBeamType,
+} from "clay";
 import {LengthParameter} from "../LengthParameter";
 import {AreaParameter} from "../AreaParameter";
 import {VolumeParameter} from "../VolumeParameter";
@@ -13,7 +17,6 @@ import {WeightParameter} from "../WeightParameter";
  */
 export class QsetBeamBaseQuantity extends BaseParameterGroup {
   element!: IElement;
-  uuid = uuid4();
   name = "QsetBeamBaseQuantity" as const;
   HasProperties: {[uuid: string]: BaseParameter} = {};
   Length!: LengthParameter;
@@ -45,7 +48,6 @@ export class QsetBeamBaseQuantity extends BaseParameterGroup {
     this.disabled();
   }
 
-  toIfc!: () => IFC.IfcPropertySet;
   private disabled() {
     for (const key in this.HasProperties) {
       this.HasProperties[key].enable = false;
@@ -55,13 +57,17 @@ export class QsetBeamBaseQuantity extends BaseParameterGroup {
     this.element = element;
     if (!this.element.type) return;
     const {length} = this.element as SimpleBeam;
-    const {x, y} = (
-      (this.element.type as SimpleBeamType).profile as RectangleProfile
-    ).dimension;
     this.Length.value = length;
-    this.CrossSectionArea.value = x * y;
-    this.OuterSurfaceArea.value = x * y;
-    this.GrossVolume.value = x * y * length;
-    this.NetVolume.value = x * y * length;
+    let area = 0;
+    const profile = (this.element.type as SimpleBeamType).profile;
+    if (profile instanceof RectangleProfile) {
+      area = profile.dimension.x * profile.dimension.y;
+    } else if (profile instanceof IShapeProfile) {
+      area = profile.width * profile.height;
+    }
+    this.CrossSectionArea.value = area;
+    this.OuterSurfaceArea.value = area;
+    this.GrossVolume.value = area * length;
+    this.NetVolume.value = area * length;
   };
 }

@@ -85,8 +85,8 @@ export class LocationArc
   /**
    *
    */
-  constructor(components: Components, private workPlane: THREE.Plane) {
-    super(components);
+  constructor(components: Components, workPlane: THREE.Plane) {
+    super(components, workPlane);
     this.init();
   }
   /**
@@ -332,4 +332,7 @@ export class LocationArc
   onChangeAngle!: (angle: number) => void;
   onChangeAngleDomElement!: (angle: string) => void;
   updateAngle(_angle: number) {}
+  onClone = () => {
+    return this;
+  };
 }

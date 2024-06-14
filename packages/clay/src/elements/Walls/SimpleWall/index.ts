@@ -17,7 +17,7 @@ export class SimpleWallType extends DynamicElementType<SimpleWall> {
 
     this.attributes = new IFC.IfcWallType(
       new IFC.IfcGloballyUniqueId(uuidv4()),
-      this.model.IfcOwnerHistory,
+      null,
       new IFC.IfcLabel(Name),
       new IFC.IfcLabel(Description),
       new IFC.IfcLabel(ObjectType),

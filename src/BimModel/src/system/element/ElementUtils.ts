@@ -1,6 +1,7 @@
 import {
   ArbitraryClosedProfile,
   IIfcBaseConfig,
+  IShapeProfile,
   Model,
   RectangleProfile,
 } from "clay";
@@ -18,82 +19,112 @@ import {ElementLocation} from "./ElementLocation";
 import {PsetWallLevelCommon} from "./Parameter";
 import {currentLevelSignal} from "@BimModel/src/Signals";
 import {PsetBeamLevelCommon} from "./Parameter/beam";
-import {PsetColumnLevelCommon} from "./Parameter/Column";
+import {PsetColumnLevelCommon} from "./Parameter/column";
+import {Components} from "@BimModel/src/Components";
 
 export class ElementUtils {
-  static createWallInstance(category: ICategory, model: Model) {
+  static createWallInstance(
+    category: ICategory,
+    components: Components,
+    model: Model
+  ) {
     const types = WallTypeUtils.getDefaultWallTypes(model);
-    const wall = new ElementLocation(category, types);
+    const wall = new ElementLocation(category, components, types);
     const pset = new PsetWallLevelCommon(currentLevelSignal.value!);
     wall.groupParameter[pset.uuid] = pset;
     return wall;
   }
-  static createSlabInstance(category: ICategory, model: Model) {
+  static createSlabInstance(
+    category: ICategory,
+    components: Components,
+    model: Model
+  ) {
     const slabs = SlabTypeUtils.getDefaultSlabTypes(model);
-    return new ElementLocation(category, slabs);
+    return new ElementLocation(category, components, slabs);
   }
 
-  static createWindowInstance(category: ICategory, model: Model) {
+  static createWindowInstance(
+    category: ICategory,
+    components: Components,
+    model: Model
+  ) {
     const windows = WindowTypeUtils.getDefaultWindowTypes(model);
-    return new ElementLocation(category, windows);
+    return new ElementLocation(category, components, windows);
   }
-  static createCurtainWallInstance(category: ICategory, model: Model) {
+  static createCurtainWallInstance(
+    category: ICategory,
+    components: Components,
+    model: Model
+  ) {
     const curtainWalls = CurtainWallTypeUtils.getDefaultCurtainWallTypes(model);
-    return new ElementLocation(category, curtainWalls);
+    return new ElementLocation(category, components, curtainWalls);
   }
   static createColumnInstance(
     category: ICategory,
+    components: Components,
     model: Model,
     configs: {
       config: IIfcBaseConfig;
-      profile: RectangleProfile | ArbitraryClosedProfile;
+      profile: RectangleProfile | ArbitraryClosedProfile | IShapeProfile;
     }[]
   ) {
     const columns = ColumnTypeUtils.getDefaultColumnTypes(model, configs);
-    const column = new ElementLocation(category, columns);
+    const column = new ElementLocation(category, components, columns);
     const pset = new PsetColumnLevelCommon(currentLevelSignal.value!);
     column.groupParameter[pset.uuid] = pset;
     return column;
   }
   static createBeamInstance(
     category: ICategory,
+    components: Components,
     model: Model,
     configs: {
       config: IIfcBaseConfig;
-      profile: RectangleProfile | ArbitraryClosedProfile;
+      profile: RectangleProfile | ArbitraryClosedProfile | IShapeProfile;
     }[]
   ) {
     const types = BeamTypeUtils.getDefaultBeamTypes(model, configs);
-    const beam = new ElementLocation(category, types);
+    const beam = new ElementLocation(category, components, types);
     const pset = new PsetBeamLevelCommon(currentLevelSignal.value!);
     beam.groupParameter[pset.uuid] = pset;
     return beam;
   }
   static createTempElementInstances(
-    model: Model
+    components: Components
   ): Record<ICategory, ElementLocation | null> {
+    const model = components.ifcModel;
     const profiles = ProfileUtils.createProfiles(model);
     return {
-      Wall: this.createWallInstance("Wall", model),
-      Floor: this.createSlabInstance("Floor", model),
+      Wall: this.createWallInstance("Wall", components, model),
+      Floor: this.createSlabInstance("Floor", components, model),
       Ceiling: null,
       Roof: null,
-      Column: this.createColumnInstance("Column", model, profiles),
+      Column: this.createColumnInstance("Column", components, model, profiles),
       Door: null,
-      Window: this.createWindowInstance("Window", model),
-      CurtainWall: this.createCurtainWallInstance("CurtainWall", model),
+      Window: this.createWindowInstance("Window", components, model),
+      CurtainWall: null,
       "Structure Beam": this.createBeamInstance(
         "Structure Beam",
+        components,
         model,
         profiles
       ),
       "Structure Column": this.createColumnInstance(
         "Structure Column",
+        components,
         model,
         profiles
       ),
-      "Structure Wall": this.createWallInstance("Structure Wall", model),
-      "Structure Slab": this.createSlabInstance("Structure Slab", model),
+      "Structure Wall": this.createWallInstance(
+        "Structure Wall",
+        components,
+        model
+      ),
+      "Structure Slab": this.createSlabInstance(
+        "Structure Slab",
+        components,
+        model
+      ),
       "Structure Foundation": null,
       ReinForcement: null,
       Duct: null,

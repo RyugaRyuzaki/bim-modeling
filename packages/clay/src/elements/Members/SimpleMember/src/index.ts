@@ -49,4 +49,10 @@ export class SimpleMember extends Element {
     this.model.set(this.attributes);
   }
   updateLocation!: (update: any) => void;
+  updateDraw = (_update: any) => {};
+  updateOffsetLevel = (_update: any) => {};
+  updateLevel = (_update: any) => {};
+  onClone = (_material: THREE.MeshLambertMaterial) => {
+    return this;
+  };
 }

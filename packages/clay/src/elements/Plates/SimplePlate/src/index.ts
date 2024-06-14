@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 import {IFC4X3 as IFC} from "web-ifc";
 import {Element} from "../../../Elements";
 import {Model} from "../../../../base";
@@ -5,7 +7,6 @@ import {SimplePlateType} from "..";
 import {v4 as uuidv4} from "uuid";
 import {IfcUtils} from "../../../../utils/ifc-utils";
 import {Extrusion, RectangleProfile} from "../../../../geometries";
-import * as THREE from "three";
 
 export class SimplePlate extends Element {
   attributes: IFC.IfcPlate;
@@ -34,7 +35,7 @@ export class SimplePlate extends Element {
 
     this.attributes = new IFC.IfcPlate(
       new IFC.IfcGloballyUniqueId(uuidv4()),
-      this.model.IfcOwnerHistory,
+      null,
       null,
       null,
       null,
@@ -47,4 +48,10 @@ export class SimplePlate extends Element {
     this.model.set(this.attributes);
   }
   updateLocation!: (update: any) => void;
+  updateDraw = (_update: any) => {};
+  updateOffsetLevel = (_update: any) => {};
+  updateLevel = (_update: any) => {};
+  onClone = (_material: THREE.MeshLambertMaterial) => {
+    return this;
+  };
 }

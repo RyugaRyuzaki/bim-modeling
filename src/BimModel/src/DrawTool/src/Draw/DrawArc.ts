@@ -5,8 +5,8 @@ import * as THREE from "three";
 import {Components} from "@BimModel/src/Components";
 import {BaseDraw} from "./BaseDraw";
 import {LocationArc, LocationLine, LocationPoint} from "@system/geometry";
-import {getDirection} from "@BimModel/src/utils";
 import {IDrawType} from "@ModelingComponent/types";
+import {isOrthoSignal, lengthUnitSignal} from "@BimModel/src/Signals";
 
 export class DrawArc extends BaseDraw {
   drawType: IDrawType = "Arc";
@@ -41,6 +41,17 @@ export class DrawArc extends BaseDraw {
     this.RaycasterComponent!.updateInfo(this.foundPoint);
     if (this.count === 0) return;
     this.movingPoint = this.foundPoint.clone();
+    if (this.count === 1) {
+      if (isOrthoSignal.value) {
+        this.movingPoint = this.getOrtho(
+          this.start,
+          this.foundPoint.clone()
+        ) as THREE.Vector3;
+      } else {
+        this.movingPoint = this.foundPoint.clone();
+        this.orthoDir = null;
+      }
+    }
     // toggle visibility to true
     if (!this.locationArc)
       this.locationArc = new LocationArc(this.components, this.workPlane);
@@ -59,20 +70,28 @@ export class DrawArc extends BaseDraw {
   };
   onKeyDown = (_e: KeyboardEvent) => {
     if (_e.key === "Enter") {
-      if (this.count === 0 || this.count % 2 === 0) {
+      if (this.count === 0) {
         this.inputKey = "";
         return;
       }
+      if (!this.locationArc) return;
       const distance = this.getInputKey();
       if (!distance) {
         this.inputKey = "";
         return;
       }
-      // if (this.tempLocation) {
-
-      // }
+      const {factor} = lengthUnitSignal.value;
+      if (this.count === 1) {
+        this.end = this.getDistance(
+          this.start.clone(),
+          this.movingPoint,
+          distance / factor
+        );
+        this.locationArc.update2PointsArc(this.start, this.end);
+        this.count = 2;
+      }
     }
-    if (_e.key >= "0" && _e.key <= "9") {
+    if ((_e.key >= "0" && _e.key <= "9") || _e.key === ".") {
       this.inputKey += _e.key;
     }
   };

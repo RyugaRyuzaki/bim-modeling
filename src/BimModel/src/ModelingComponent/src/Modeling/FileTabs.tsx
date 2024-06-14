@@ -1,5 +1,5 @@
-import React, {FC} from "react";
-import {iConClassName} from "../constants";
+import React from "react";
+import {buttonClassName, iConClassName} from "../constants";
 //#region File
 import {MdOutlineCreateNewFolder as NewProject} from "react-icons/md";
 import {GoFileDirectory as Open} from "react-icons/go";
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import {Button} from "@/components/ui/button";
 import {
+  exportIfcSignal,
   newProjectInfoSignal,
   openProjectInfoSignal,
   projectSignal,
@@ -36,7 +37,7 @@ const FileButton = ({
         <TooltipTrigger asChild>
           <Button
             variant="outline"
-            className={`my-auto mx-1 hover:bg-green-400 disabled:cursor-none `}
+            className={`${buttonClassName}`}
             onClick={onClick}
           >
             {tool.icon}
@@ -88,18 +89,20 @@ const FileTabs = () => {
     openProjectInfoSignal.value = true;
   };
   const handleSaveProject = (_e: any) => {};
-  const handleExportIfc = (_e: any) => {};
+  const handleExportIfc = (_e: any) => {
+    exportIfcSignal.value = true;
+  };
   const handleExportDotBim = (_e: any) => {};
   const handleExportGlb = (_e: any) => {};
   return (
     <div className="relative h-full w-full flex justify-start items-center">
       <FileButton tool={New} onClick={handleNewProject} />
       <FileButton tool={OpenProject} onClick={handleOpenProject} />
+      <FileButton tool={ExportIfc} onClick={handleExportIfc} />
       {projectSignal.value && (
         <>
           <FileButton tool={ProjectInfo} onClick={handleOpenProjectInfo} />
           <FileButton tool={SaveProject} onClick={handleSaveProject} />
-          <FileButton tool={ExportIfc} onClick={handleExportIfc} />
           <FileButton tool={ExportDotBim} onClick={handleExportDotBim} />
           <FileButton tool={ExportGlb} onClick={handleExportGlb} />
         </>

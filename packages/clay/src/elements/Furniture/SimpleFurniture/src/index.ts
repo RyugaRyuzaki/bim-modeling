@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 import {IFC4X3 as IFC} from "web-ifc";
 import {v4 as uuidv4} from "uuid";
 import {Model} from "../../../../base";
@@ -20,7 +22,7 @@ export class SimpleFurniture extends Element {
 
     this.attributes = new IFC.IfcFurnishingElement(
       new IFC.IfcGloballyUniqueId(uuidv4()),
-      this.model.IfcOwnerHistory,
+      null,
       null,
       null,
       null,
@@ -32,4 +34,10 @@ export class SimpleFurniture extends Element {
     this.model.set(this.attributes);
   }
   updateLocation!: (update: any) => void;
+  updateDraw = (_update: any) => {};
+  updateOffsetLevel = (_update: any) => {};
+  updateLevel = (_update: any) => {};
+  onClone = (_material: THREE.MeshLambertMaterial) => {
+    return this;
+  };
 }

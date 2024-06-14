@@ -1,4 +1,3 @@
-import {v4 as uuid4} from "uuid";
 import {BaseParameter} from "../BaseParameter";
 import {BaseParameterGroup} from "../BaseParameterGroup";
 import {IElement} from "clay";
@@ -12,7 +11,6 @@ import {ILevel} from "@BimModel/src/LevelSystem/types";
  */
 export class PsetBeamLevelCommon extends BaseParameterGroup {
   element!: IElement;
-  uuid = uuid4();
   name = "Beam Level Common" as const;
   HasProperties: {[uuid: string]: BaseParameter} = {};
   levelParameter!: LevelParameter;
@@ -42,6 +40,4 @@ export class PsetBeamLevelCommon extends BaseParameterGroup {
     if (!this.element) return;
     // const {} = value as ILevel;
   };
-
-  toIfc!: () => IFC.IfcPropertySet;
 }

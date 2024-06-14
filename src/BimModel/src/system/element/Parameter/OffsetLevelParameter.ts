@@ -20,7 +20,14 @@ export class TopLevelParameter extends BaseParameter {
   constructor(public level: ILevel) {
     super();
   }
-  toIfc!: () => IFC.IfcPropertySingleValue | IFC.IfcPropertyReferenceValue;
+  toIfc = () => {
+    return new IFC.IfcPropertySingleValue(
+      new IFC.IfcIdentifier(this.name),
+      null,
+      new IFC.IfcLengthMeasure(this.value),
+      null
+    );
+  };
   onValueChange!: (
     value: string | number | boolean | ILevel | BaseParameter
   ) => void;
@@ -43,7 +50,14 @@ export class BottomLevelParameter extends BaseParameter {
   constructor(public level: ILevel) {
     super();
   }
-  toIfc!: () => IFC.IfcPropertySingleValue | IFC.IfcPropertyReferenceValue;
+  toIfc = () => {
+    return new IFC.IfcPropertySingleValue(
+      new IFC.IfcIdentifier(this.name),
+      null,
+      new IFC.IfcLengthMeasure(this.value),
+      null
+    );
+  };
   onValueChange!: (
     value: string | number | boolean | ILevel | BaseParameter
   ) => void;

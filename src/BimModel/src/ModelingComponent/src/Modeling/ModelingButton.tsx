@@ -10,6 +10,7 @@ import {
 import {isModelingSignal, modelingSignal} from "@BimModel/src/Signals";
 import {useComputed} from "@preact/signals-react";
 import {ICategory} from "@BimModel/src/system";
+import {buttonClassName} from "../constants";
 
 const ModelingButton: FC<Props> = ({type, discipline}) => {
   const handleModeling = (type: ICategory) => {
@@ -33,7 +34,7 @@ const ModelingButton: FC<Props> = ({type, discipline}) => {
         <TooltipTrigger asChild>
           <Button
             variant="outline"
-            className={`my-auto mx-1 hover:bg-green-400 disabled:cursor-none ${
+            className={`${buttonClassName} ${
               active.value ? "bg-blue-400" : ""
             }`}
             onClick={() => handleModeling(type.type as ICategory)}
