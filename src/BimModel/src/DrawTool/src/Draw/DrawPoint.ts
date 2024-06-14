@@ -4,6 +4,8 @@ import {BaseDraw} from "./BaseDraw";
 import {IDrawType} from "@ModelingComponent/types";
 import {LocationArc, LocationLine, LocationPoint} from "@BimModel/src/system";
 import {
+  currentLevelSignal,
+  listLevelSignal,
   modelingSignal,
   modelStructureSignal,
   tempElementSignal,
@@ -115,6 +117,7 @@ export class DrawPoint extends BaseDraw {
     const currentElementIndex = Object.keys(
       this.ProjectComponent.elements
     ).length;
+
     switch (type) {
       case "Structure Beam":
       case "Structure Wall":
@@ -130,6 +133,15 @@ export class DrawPoint extends BaseDraw {
           this.tempElement.attributes.Name = new IFC.IfcLabel(
             `${type} ${currentElementIndex + 1}`
           );
+          if (currentLevelSignal.value) {
+            const level =
+              listLevelSignal.value[currentLevelSignal.value.index + 1];
+            if (level) {
+              const height =
+                level.elevation - currentLevelSignal.value.elevation;
+              this.tempElement.height = height;
+            }
+          }
         }
         break;
       default:
