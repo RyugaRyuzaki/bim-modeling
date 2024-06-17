@@ -28,8 +28,16 @@ export class MaterialComponent
       "DimensionMaterial"
     ) as THREE.LineBasicMaterial;
   }
-  get AngleMaterial(): THREE.LineBasicMaterial {
-    return this.listMaterial.get("AngleMaterial") as THREE.LineBasicMaterial;
+  get AngleMaterial(): THREE.LineDashedMaterial {
+    return this.listMaterial.get("AngleMaterial") as THREE.LineDashedMaterial;
+  }
+  get GridMaterial(): THREE.LineDashedMaterial {
+    return this.listMaterial.get("GridMaterial") as THREE.LineDashedMaterial;
+  }
+  get GridOutlineMaterial(): THREE.LineDashedMaterial {
+    return this.listMaterial.get(
+      "GridOutlineMaterial"
+    ) as THREE.LineDashedMaterial;
   }
 
   materialCategories: Record<
@@ -138,11 +146,36 @@ export class MaterialComponent
         gapSize: 0.1,
       })
     );
+    this.addMaterial(
+      "GridMaterial",
+      new THREE.LineDashedMaterial({
+        linewidth: 10,
+        color: 0xeb1405,
+        depthTest: false,
+        scale: 1,
+        dashSize: 1,
+        gapSize: 0.2,
+      })
+    );
+    this.addMaterial(
+      "GridOutlineMaterial",
+      new THREE.LineDashedMaterial({
+        linewidth: 10,
+        color: 0xeb1405,
+        depthTest: false,
+        scale: 1,
+        dashSize: 0.4,
+        gapSize: 0.2,
+      })
+    );
 
     effect(() => {
       for (const [name, mat] of this.listMaterial) {
         if (MaterialComponent.exclude.includes(name)) continue;
         mat.clippingPlanes = clippingPlanesSignal.value;
+      }
+      for (const [_name, mat] of Object.entries(this.materialCategories)) {
+        mat!.clippingPlanes = clippingPlanesSignal.value;
       }
     });
   }

@@ -3,26 +3,28 @@
  */
 
 import * as THREE from "three";
-import {Components} from "@BimModel/src/Components";
+import {
+  Components,
+  RendererComponent,
+  CubeMapComponent,
+  WorkPlane,
+  GridSystem,
+} from "@BimModel/src";
 import {ToolComponent} from "@BimModel/src/Tool";
 import {Component, Disposable, UUID} from "@BimModel/src/types";
-import {IElevation, ILevel, IView} from "./types";
+import {ILevel, IView} from "./types";
 import {
   clippingPlanesSignal,
   currentLevelSignal,
   listLevelSignal,
   selectViewSignal,
 } from "@BimModel/src/Signals";
-import {RendererComponent} from "@BimModel/src/RendererComponent";
-import {WorkPlane} from "../WorkPlane";
-import {createStructureContainer, Elevation} from "./src";
+import {createStructureContainer, Elevation, Level} from "./src";
 import {effect} from "@preact/signals-react";
-import {CubeMapComponent} from "../CubeMapComponent";
-import {TransformControls} from "three/examples/jsm/controls/TransformControls";
 import {defaultLevels} from "./constants";
 
-const upVector = new THREE.Vector3(0, 1, 0);
-const downVector = new THREE.Vector3(0, -1, 0);
+const upVector = new THREE.Vector3(0, -1, 0);
+const downVector = new THREE.Vector3(0, 1, 0);
 const upPosition = new THREE.Vector3(0, 0, 0);
 const downPosition = new THREE.Vector3(0, 0, 0);
 const upPlane = new THREE.Plane();
@@ -46,7 +48,71 @@ export class LevelSystem extends Component<string> implements Disposable {
   get camera() {
     return this.RendererComponent?.camera;
   }
-  set level(level: ILevel | null) {
+
+  elevations: {[elevationType: string]: Elevation} = {};
+  levels: {[uuid: string]: Level} = {};
+
+  /**
+   *
+   */
+  constructor(components: Components) {
+    super(components);
+    this.components.tools.add(LevelSystem.uuid, this);
+    this.initDefaultLevel();
+    effect(() => {
+      if (!selectViewSignal.value) return;
+      const {viewType, level, elevationType} = selectViewSignal.value;
+      this.CubeMapComponent.visible = viewType === "3D";
+      this.RendererComponent.postProduction.enabled = viewType === "3D";
+      switch (viewType) {
+        case "3D":
+          this.camera!.resetState();
+          clippingPlanesSignal.value = [];
+          this.CubeMapComponent.onNavigation3D();
+          this.onchangeLevel(null);
+          break;
+        case "Plan":
+          this.onchangeLevel(level!);
+          break;
+        case "Elevation":
+          this.camera!.resetState();
+          this.onchangeLevel(null);
+          this.CubeMapComponent.onNavigationElevation(selectViewSignal.value);
+          break;
+      }
+      this.components.tools
+        .get(GridSystem)
+        .onViewChange(selectViewSignal.value);
+      for (const key in this.levels) {
+        this.levels[key].elevationType = elevationType;
+        this.levels[key].visible = viewType === "Elevation";
+      }
+    });
+    effect(() => {
+      for (const level of listLevelSignal.value) {
+        if (!this.levels[level.uuid])
+          this.levels[level.uuid] = new Level(this.components, level);
+      }
+    });
+  }
+  async dispose() {
+    this.structureContainer?.remove();
+    (this.structureContainer as any) = null;
+    for (const key in this.elevations) {
+      this.elevations[key].dispose();
+    }
+
+    this.elevations = {};
+    for (const key in this.levels) {
+      this.levels[key].dispose();
+    }
+    this.levels = {};
+  }
+
+  get() {
+    return LevelSystem.uuid;
+  }
+  onchangeLevel(level: ILevel | null) {
     for (const key in this.elevations) {
       this.elevations[key].level = level;
     }
@@ -64,67 +130,8 @@ export class LevelSystem extends Component<string> implements Disposable {
     this.camera.setLookAt(upPosition, downPosition);
     upPlane.setFromNormalAndCoplanarPoint(upVector, upPosition);
     downPlane.setFromNormalAndCoplanarPoint(downVector, downPosition);
-    clippingPlanesSignal.value = [upPlane, downPlane];
+    // clippingPlanesSignal.value = [upPlane, downPlane];
     this.workPlane.grid.position.y = elevation;
-  }
-  elevations: {[elevationType: string]: Elevation} = {};
-  transFormControls!: TransformControls;
-  set mode(mode: "translate" | "rotate" | "scale") {
-    if (!this.transFormControls) return;
-    if (this.transFormControls.mode === mode) return;
-    this.transFormControls.setMode(mode);
-    this.transFormControls.showX = mode === "translate";
-    this.transFormControls.showZ = mode === "translate";
-  }
-  get mode() {
-    if (!this.transFormControls) return "translate";
-    return this.transFormControls.getMode();
-  }
-  /**
-   *
-   */
-  constructor(components: Components) {
-    super(components);
-    this.components.tools.add(LevelSystem.uuid, this);
-    this.initDefaultLevel();
-    effect(() => {
-      if (!selectViewSignal.value || !currentLevelSignal.value) return;
-      const {viewType} = selectViewSignal.value;
-      this.CubeMapComponent.visible = viewType === "3D";
-      switch (viewType) {
-        case "3D":
-          this.camera!.resetState();
-          clippingPlanesSignal.value = [];
-          this.level = null;
-          break;
-        case "Plan":
-          this.level = currentLevelSignal.value;
-          break;
-        case "Elevation":
-          this.camera!.resetState();
-          this.level = null;
-          this.CubeMapComponent.onNavigationElevation(selectViewSignal.value);
-          break;
-      }
-    });
-  }
-  async dispose() {
-    this.structureContainer?.remove();
-    (this.structureContainer as any) = null;
-    for (const key in this.elevations) {
-      this.elevations[key].dispose();
-    }
-    this.elevations = {};
-    if (this.transFormControls) {
-      this.transFormControls.detach();
-      this.transFormControls.removeFromParent();
-      this.transFormControls.dispose();
-      (this.transFormControls as any) = null;
-    }
-  }
-
-  get() {
-    return LevelSystem.uuid;
   }
   private initDefaultLevel() {
     listLevelSignal.value = defaultLevels;
@@ -132,23 +139,12 @@ export class LevelSystem extends Component<string> implements Disposable {
     this.RendererComponent.postProduction.customEffects.excludedMeshes.push(
       this.workPlane.grid
     );
-    this.transFormControls = new TransformControls(
-      this.RendererComponent.camera.currentCamera,
-      this.RendererComponent.renderer.domElement
-    );
-    this.transFormControls.size = 0.5;
-    this.mode = "translate";
   }
   initView(structure: HTMLDivElement) {
     this.structureContainer = createStructureContainer(this);
     structure.appendChild(this.structureContainer);
   }
-  private resetTransFormControl() {
-    this.transFormControls.detach();
-    this.transFormControls.removeFromParent();
-    this.transFormControls.reset();
-    this.transFormControls.position.copy(LevelSystem.zero);
-  }
+
   private onActiveView = (_view: IView) => {};
   getDefaultView() {
     const project: IView = {
@@ -197,6 +193,7 @@ export class LevelSystem extends Component<string> implements Disposable {
         uuid: uuid,
         viewType: "Plan",
         checked: true,
+        level,
         onActive: this.onActiveView,
         children: {},
       };
@@ -218,7 +215,6 @@ export class LevelSystem extends Component<string> implements Disposable {
       checked: true,
       onActive: this.onActiveView,
       elevationType: "South",
-
       children: {},
     } as IView;
     this.elevations["South"] = new Elevation(this.components, South);

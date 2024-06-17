@@ -63,8 +63,6 @@ export class Snapper extends Component<string> implements Disposable {
       document.addEventListener("keydown", this.onKeyDown);
     }
   }
-  /** @tab true for snap location */
-  private tab = true;
 
   private _found: THREE.Intersection | null = null;
   set find(event: MouseEvent) {
@@ -72,30 +70,38 @@ export class Snapper extends Component<string> implements Disposable {
     this.components.tools.get(RaycasterComponent)!.mouseMove = event;
     this._found = this.RaycasterComponent.castRay();
     this.SelectionComponent.cursor = this._found ? 4 : 0;
-    if (!this._found || !this._found.face) {
-      this.tab = true;
+    if (!this._found) {
       return;
     }
+    if (!this._found.object) return;
     const {face, instanceId, object, point} = this._found;
-    if (instanceId === undefined) return;
 
-    // check instance and face
-    if (!object || !(object instanceof FragmentMesh)) return;
-    if (!object.geometry.index || !object.geometry.attributes.position) return;
-    const {a, b, c} = face;
-    // update matrix
-    object.updateMatrixWorld(true);
-    // get matrix
-    object.getMatrixAt(instanceId, Snapper.tempMatrix);
-    const posArray = object.geometry.attributes.position;
-    this.snapper = {
-      currentPoint: point.clone(),
-      trianglePoints: [
-        this.getPoint(posArray, a),
-        this.getPoint(posArray, b),
-        this.getPoint(posArray, c),
-      ],
-    } as ISnapTriangle;
+    if (object instanceof FragmentMesh) {
+      if (instanceId === undefined || !face) return;
+
+      // check instance and face
+      if (!object.geometry.index || !object.geometry.attributes.position)
+        return;
+      const {a, b, c} = face;
+      // update matrix
+      object.updateMatrixWorld(true);
+      // get matrix
+      object.getMatrixAt(instanceId, Snapper.tempMatrix);
+      const posArray = object.geometry.attributes.position;
+      this.snapper = {
+        currentPoint: point.clone(),
+        trianglePoints: [
+          this.getPoint(posArray, a),
+          this.getPoint(posArray, b),
+          this.getPoint(posArray, c),
+        ],
+      } as ISnapTriangle;
+    }
+
+    if (object instanceof THREE.Line) {
+      this.getSnapperLineVector(object, point);
+      return;
+    }
   }
   get found() {
     return this._found;
@@ -174,9 +180,24 @@ export class Snapper extends Component<string> implements Disposable {
   get() {
     return Snapper.uuid;
   }
-  private onKeyDown = (_e: KeyboardEvent) => {
-    if (_e.key === "" && this.found) this.tab = !this.tab;
-  };
+  getSnapperLineVector(segment: THREE.Line, point: THREE.Vector3) {
+    if (!this.workPlane || !segment.geometry) return;
+    const position = segment.geometry.attributes.position.array;
+    if (!position) return;
+    const start = this.workPlane.projectPoint(
+      new THREE.Vector3(position[0], position[1], position[2]),
+      new THREE.Vector3()
+    );
+    const end = this.workPlane.projectPoint(
+      new THREE.Vector3(position[3], position[4], position[5]),
+      new THREE.Vector3()
+    );
+    const proStart = SnapUtils.getProjectPointFrom3Point(start, end, point);
+    this.visible = true;
+    this._snap = proStart;
+    this.updatePoint(proStart, GeometryCSS.snap.intersect);
+  }
+  private onKeyDown = (_e: KeyboardEvent) => {};
   /**
    *
    */

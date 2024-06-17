@@ -5,6 +5,7 @@
 import * as THREE from "three";
 import {ILocationArc, ILocationLine} from "@system/geometry/types";
 import {getDirection, getLocalVectorOnFace} from "@BimModel/src/utils";
+import {BVH} from "clay";
 
 const MAX_POINTS = 10000;
 export class LocationUtils {
@@ -89,6 +90,7 @@ export class LocationUtils {
       "position",
       new THREE.BufferAttribute(new Float32Array(positions), 3)
     );
+    // BVH.apply(geometry);
     // set position from p1, p2
     // create a Line2 object 3D in threeJS
     const segment = new THREE.LineSegments(geometry, material);

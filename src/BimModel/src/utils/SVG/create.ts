@@ -106,12 +106,13 @@ export function createTextSVG(
   svg.appendChild(textElement);
   if (isCenter) {
     const textLength = textElement.getComputedTextLength();
-    textElement.setAttributeNS(null, "x", `${left - textLength / 2}`);
+    textElement.setAttributeNS(null, "x", `${left + textLength / 2}`);
     textElement.setAttributeNS(null, "y", `${top + strokeStyle.fontSize / 2}`);
   }
   textElement.classList.add("pointer-events-none");
   return textElement;
 }
+
 export function createTextTimeLineSVG(
   svg: SVGElement,
   left: number,

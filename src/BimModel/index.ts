@@ -11,6 +11,7 @@ import {
   Snapper,
   DrawTool,
   LevelSystem,
+  GridSystem,
   SelectionComponent,
 } from "./src";
 
@@ -69,6 +70,9 @@ export class BimModel {
     /* =====LevelSystem===== */
     const levelSystem = this.components.tools.get(LevelSystem);
     levelSystem.enabled = true;
+    /* =====GridSystem===== */
+    const gridSystem = this.components.tools.get(GridSystem);
+    gridSystem.enabled = true;
 
     /* =====ModelingComponent===== */
     const modelingComponent = this.components.tools.get(ModelingComponent);
@@ -82,6 +86,7 @@ export class BimModel {
       projectComponent.initElement();
       modelingComponent.init(this.modeling, this.option);
       levelSystem.initView(this.structure);
+      gridSystem.init();
     });
     this.components.gameLoop();
   }

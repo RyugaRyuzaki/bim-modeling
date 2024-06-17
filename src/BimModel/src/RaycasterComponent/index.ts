@@ -7,7 +7,13 @@ import {Components} from "@BimModel/src/Components";
 import {ToolComponent} from "@BimModel/src/Tool";
 import {Component, Disposable, UUID} from "@BimModel/src/types";
 import {RendererComponent} from "../RendererComponent";
-import {clippingPlanesSignal, lengthUnitSignal} from "../Signals";
+import {
+  clippingPlanesSignal,
+  gridXSignal,
+  gridYSignal,
+  lengthUnitSignal,
+} from "../Signals";
+import {GridSystem} from "../GridSystem";
 
 const positionInfoClass = {
   positionInfo:
@@ -60,8 +66,12 @@ export class RaycasterComponent
     }
   }
   get meshes() {
-    return this.components.modelScene.children;
+    return [
+      ...this.components.modelScene.children,
+      ...this.components.tools.get(GridSystem).segments,
+    ];
   }
+
   /**
    *
    */

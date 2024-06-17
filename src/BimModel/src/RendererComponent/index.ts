@@ -15,6 +15,9 @@ import {
 import {CSS2DRenderer} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {Camera, PostProduction} from "./src";
 import {WorkPlane} from "../WorkPlane";
+import {effect} from "@preact/signals-react";
+import {clippingPlanesSignal} from "../Signals";
+
 export * from "./src";
 /**
  *
@@ -71,6 +74,9 @@ export class RendererComponent
     this.initPostProduction();
     this.initTool();
     this.setupEvents = true;
+    effect(() => {
+      this.renderer!.clippingPlanes = clippingPlanesSignal.value;
+    });
   }
   async dispose() {
     this.enabled = false;
@@ -154,7 +160,7 @@ export class RendererComponent
     this.labelRenderer.domElement.style.top = "0";
     this.labelRenderer.domElement.style.outline = "none";
     this.labelRenderer.domElement.style.border = "none";
-    this.labelRenderer.domElement.style.zIndex = "100";
+    this.labelRenderer.domElement.style.zIndex = "50";
     this.labelRenderer.domElement.style.pointerEvents = "none";
     this.labelRenderer.setSize(width, height);
     this.components.container.appendChild(this.labelRenderer.domElement);
@@ -209,8 +215,9 @@ export class RendererComponent
   };
 
   private onWheel = (_event: any) => {
-    if (!this.postProduction.enabled) return;
-    this.lastResized = performance.now();
+    if (this.postProduction.enabled) {
+      this.lastResized = performance.now();
+    }
   };
 
   private onSleep = (_event: any) => {

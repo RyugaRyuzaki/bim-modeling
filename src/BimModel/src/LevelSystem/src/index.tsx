@@ -4,6 +4,7 @@ import {LevelSystem} from "..";
 const ModelStructure = lazy(() => import("./ModelStructure"));
 
 export * from "./Elevation";
+export * from "./Level";
 
 export function createStructureContainer(level: LevelSystem) {
   const div = document.createElement("div");
