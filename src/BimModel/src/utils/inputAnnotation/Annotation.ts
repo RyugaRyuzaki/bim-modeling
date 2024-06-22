@@ -5,7 +5,6 @@ import {
   borderColor,
   createInputAnnotationContainer,
   createTextSVG,
-  createRectSVG,
   setUpPath,
   strokeStyle,
   createLineSVG,

@@ -64,6 +64,7 @@ export class LevelSystem extends Component<string> implements Disposable {
       const {viewType, level, elevationType} = selectViewSignal.value;
       this.CubeMapComponent.visible = viewType === "3D";
       this.RendererComponent.postProduction.enabled = viewType === "3D";
+
       switch (viewType) {
         case "3D":
           this.camera!.resetState();
@@ -87,6 +88,8 @@ export class LevelSystem extends Component<string> implements Disposable {
         this.levels[key].elevationType = elevationType;
         this.levels[key].visible = viewType === "Elevation";
       }
+      this.components.tools.get(WorkPlane).clipping.visible =
+        viewType === "Plan";
     });
     effect(() => {
       for (const level of listLevelSignal.value) {
@@ -130,7 +133,7 @@ export class LevelSystem extends Component<string> implements Disposable {
     this.camera.setLookAt(upPosition, downPosition);
     upPlane.setFromNormalAndCoplanarPoint(upVector, upPosition);
     downPlane.setFromNormalAndCoplanarPoint(downVector, downPosition);
-    // clippingPlanesSignal.value = [upPlane, downPlane];
+    clippingPlanesSignal.value = [upPlane, downPlane];
     this.workPlane.grid.position.y = elevation;
   }
   private initDefaultLevel() {

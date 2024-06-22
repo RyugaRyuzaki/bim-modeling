@@ -5,7 +5,7 @@ import GridTab from "./GridTab";
 
 const AnnotationTabs = () => {
   return (
-    <div className="relative h-full w-full ">
+    <div className="relative w-full ">
       <Tabs defaultValue={"Grid"} className="w-full">
         <TabsList className="rounded-none">
           <TabsTrigger value={"Grid"} className="mx-1 select-none">
@@ -17,13 +17,13 @@ const AnnotationTabs = () => {
         </TabsList>
         <TabsContent
           value={"Grid"}
-          className="relative min-h-[400px] max-h-[100vh] overflow-x-hidden overflow-y-auto mt-0 border-1"
+          className="relative h-[400px] max-h-[100vh] overflow-x-hidden overflow-y-auto mt-0 border-1"
         >
           <GridTab />
         </TabsContent>
         <TabsContent
           value={"Level"}
-          className="relative min-h-[400px] max-h-[100vh] overflow-x-hidden overflow-y-auto mt-0 border-1"
+          className="relative h-[400px] max-h-[100vh] overflow-x-hidden overflow-y-auto mt-0 border-1"
         ></TabsContent>
       </Tabs>
     </div>

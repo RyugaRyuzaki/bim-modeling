@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import InputAnnotation from "./InputAnnotation";
+import {InputAnnotation, InputNumberAnnotation} from "./InputAnnotation";
 import {Signal} from "@preact/signals-react";
 
 export * from "./Annotation";
@@ -15,6 +15,23 @@ export function createInputAnnotationContainer(
 
   ReactDOM.createRoot(div).render(
     <InputAnnotation
+      signal={signal}
+      onInputBlur={onInputBlur}
+      widthInput={widthInput}
+    />
+  );
+  return div;
+}
+export function createInputNumberAnnotationContainer(
+  signal: Signal<string | number | null>,
+  onInputBlur: (value: string) => void,
+  widthInput = 50
+) {
+  const div = document.createElement("div");
+  div.style.position = "absolute";
+
+  ReactDOM.createRoot(div).render(
+    <InputNumberAnnotation
       signal={signal}
       onInputBlur={onInputBlur}
       widthInput={widthInput}

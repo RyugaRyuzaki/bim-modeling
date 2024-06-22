@@ -9,7 +9,7 @@ import {ILevel} from "@BimModel/src/LevelSystem/types";
 import {IIfcProjectConfig} from "./types";
 import {defaultLevels} from "@BimModel/src/LevelSystem/constants";
 import {ElementLocation} from "@BimModel/src/system";
-import {areaUnitSignal, lengthUnitSignal} from "@BimModel/src/Signals";
+import {lengthUnitSignal} from "@BimModel/src/Signals";
 import {effect} from "@preact/signals-react";
 const defaultProjectConfig: IIfcProjectConfig = {
   Name: "Bim-modeling",

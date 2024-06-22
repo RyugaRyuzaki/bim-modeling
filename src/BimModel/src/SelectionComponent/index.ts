@@ -213,7 +213,9 @@ export class SelectionComponent extends Component<any> implements Disposable {
     // this.hover = this.found;
   };
   private onMousedown = (_e: MouseEvent) => {
-    if (_e.button === 0) this.mousedown = true;
+    if (_e.button === 0) {
+      this.mousedown = true;
+    }
   };
   private onMouseup = () => {
     this.mousedown = false;

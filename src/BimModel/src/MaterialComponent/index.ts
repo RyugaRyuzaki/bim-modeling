@@ -6,12 +6,18 @@ import {effect} from "@preact/signals-react";
 import {clippingPlanesSignal, lineTypeSignal} from "../Signals";
 import {ICategory} from "../system";
 
+import {LineMaterial} from "three/examples/jsm/lines/LineMaterial.js";
+
 export class MaterialComponent
   extends Component<string>
   implements Disposable, Updateable
 {
   static readonly uuid = UUID.MaterialComponent;
-  static readonly exclude = ["LocationMaterial", "DimensionMaterial"];
+  static readonly exclude = [
+    "LocationMaterial",
+    "DimensionMaterial",
+    "ClippingMaterial",
+  ];
 
   enabled = false;
   listMaterial: Map<
@@ -19,7 +25,11 @@ export class MaterialComponent
     | THREE.MeshLambertMaterial
     | THREE.MeshBasicMaterial
     | THREE.LineBasicMaterial
+    | LineMaterial
   > = new Map();
+  get ClippingMaterial(): LineMaterial {
+    return this.listMaterial.get("ClippingMaterial") as LineMaterial;
+  }
   get LocationMaterial(): THREE.LineBasicMaterial {
     return this.listMaterial.get("LocationMaterial") as THREE.LineBasicMaterial;
   }
@@ -168,6 +178,15 @@ export class MaterialComponent
         gapSize: 0.2,
       })
     );
+    this.addMaterial(
+      "ClippingMaterial",
+      new LineMaterial({
+        linewidth: 2, // in world units with size attenuation, pixels otherwise
+        vertexColors: true,
+        color: 0xfcb603,
+        alphaToCoverage: true,
+      })
+    );
 
     effect(() => {
       for (const [name, mat] of this.listMaterial) {
@@ -178,10 +197,16 @@ export class MaterialComponent
         mat!.clippingPlanes = clippingPlanesSignal.value;
       }
     });
+
+    effect(() => {
+      const type = lineTypeSignal.value;
+      if (!this.ClippingMaterial) return;
+      this.ClippingMaterial.linewidth = type === "thin" ? 2 : 6;
+    });
   }
   update(_delta?: number): void {
     const {width, height} = this.components.rect;
-    // (this.LocationMaterial as LineMaterial)?.resolution.set(width, height);
+    (this.ClippingMaterial as LineMaterial)?.resolution.set(width, height);
     // (this.DimensionMaterial as LineMaterial)?.resolution.set(width, height);
   }
   async dispose() {
@@ -205,6 +230,7 @@ export class MaterialComponent
       | THREE.MeshLambertMaterial
       | THREE.MeshBasicMaterial
       | THREE.LineBasicMaterial
+      | LineMaterial
   ) {
     if (this.listMaterial.has(name))
       throw new Error("Material's name is existed!");

@@ -29,6 +29,7 @@ export class DrawPoint extends BaseDraw {
   onMouseMove = (_e: MouseEvent) => {
     this.findPoint = _e;
     this.Snapper.find = _e;
+    this.Snapper.snapGrid = this.foundPoint;
     if (!this.foundPoint || this.mousedown) return;
     this.RaycasterComponent!.updateInfo(this.foundPoint);
     const point = this.foundPoint.clone();

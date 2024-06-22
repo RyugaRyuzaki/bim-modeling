@@ -3,10 +3,11 @@
  */
 
 import * as THREE from "three";
-import {ILocationArc, ILocationLine} from "@system/geometry/types";
+import {ILocationArc, ILocationLine} from "clay";
 import {getDirection, getLocalVectorOnFace} from "@BimModel/src/utils";
-import {BVH} from "clay";
-
+import {LineGeometry} from "three/examples/jsm/lines/LineGeometry";
+import {Line2} from "three/examples/jsm/lines/Line2";
+import {LineMaterial} from "three/examples/jsm/lines/LineMaterial.js";
 const MAX_POINTS = 10000;
 export class LocationUtils {
   /**
@@ -27,6 +28,31 @@ export class LocationUtils {
       colors.push(b);
     }
     return colors;
+  }
+  static createClippingLine(material: LineMaterial, position: number[]): Line2 {
+    const colors = this.getColorArray(position.length / 3, this.colorBaseLine);
+    // define a LineGeometry
+    const geometry = new LineGeometry();
+    // set position from p1, p2
+    geometry.setPositions(position);
+    // set color
+    geometry.setColors(colors);
+    // create a Line2 object 3D in threeJS
+    const segment = new Line2(geometry, material);
+    // compute line distance that means allow every moment this line change , color and line width change
+    segment.computeLineDistances();
+    // scale this to default
+    segment.scale.set(1, 1, 1);
+    return segment;
+  }
+  static updateClippingLine(position: number[], segment: Line2) {
+    if (!segment.geometry) return;
+    const colors = this.getColorArray(
+      position.length / 3 + 1,
+      this.colorBaseLine
+    );
+    segment.geometry.setPositions(position);
+    segment.geometry.setColors(colors);
   }
   static createLocationLine(
     material: THREE.LineBasicMaterial,
@@ -97,7 +123,7 @@ export class LocationUtils {
     // compute line distance that means allow every moment this line change , color and line width change
     segment.computeLineDistances();
     // scale this to default
-    segment.renderOrder = 10;
+    // segment.renderOrder = 10;
     return segment;
   }
   static getPointsCircle(

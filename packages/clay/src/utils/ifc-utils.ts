@@ -1,7 +1,7 @@
-import { IFC4X3 as IFC } from "web-ifc";
+import {IFC4X3 as IFC} from "web-ifc";
 import * as THREE from "three";
-import { Model } from "../base";
-import { MathUtils } from "./math-utils";
+import {Model} from "../base";
+import {MathUtils} from "./math-utils";
 
 export class IfcUtils {
   static direction(vector: THREE.Vector3) {
@@ -60,7 +60,7 @@ export class IfcUtils {
     location.Coordinates[2].value = position.z;
     model.set(location);
 
-    const { dirX, dirZ } = MathUtils.basisFromEuler(rotation);
+    const {dirX, dirZ} = MathUtils.basisFromEuler(rotation);
 
     if (placement instanceof IFC.IfcAxis2Placement3D) {
       const zDirection = model.get(placement.Axis);

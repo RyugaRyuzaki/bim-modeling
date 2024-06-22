@@ -66,10 +66,7 @@ export class RaycasterComponent
     }
   }
   get meshes() {
-    return [
-      ...this.components.modelScene.children,
-      ...this.components.tools.get(GridSystem).segments,
-    ];
+    return this.components.modelScene.children;
   }
 
   /**

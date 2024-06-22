@@ -55,6 +55,7 @@ export class DrawLine extends BaseDraw {
   onMouseMove = (_e: MouseEvent) => {
     this.findPoint = _e;
     this.Snapper.find = _e;
+    this.Snapper.snapGrid = this.foundPoint;
     if (!this.foundPoint || this.mousedown) return;
     this.RaycasterComponent!.updateInfo(this.foundPoint);
     if (this.count === 0) return;
@@ -207,12 +208,11 @@ export class DrawLine extends BaseDraw {
     const {type} = modelingSignal.value;
     if (!this.tempElement) return;
     if (!(location instanceof LocationLine)) return;
-    const {start, end} = location.location;
     switch (type) {
       case "Structure Beam":
       case "Wall":
       case "Structure Wall":
-        this.tempElement.updateDraw({start, end});
+        this.tempElement.updateDraw(location.location);
         break;
       default:
         break;

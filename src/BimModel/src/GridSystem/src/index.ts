@@ -117,6 +117,7 @@ export class Grid implements Disposable {
     const position = LocationUtils.getPositionLocationFromPoints([start, end]);
     this.segment = LocationUtils.createSegment(this.GridMaterial, position, 2);
   }
+
   onChangeName = (value: string) => {
     this.startPoint.nameSignal.value = value;
     this.endPoint.nameSignal.value = value;
@@ -151,6 +152,7 @@ export class Grid implements Disposable {
         }
       }
     }
+    this.onChangeName(this.gridItem.name);
     this.update(start, end);
   }
   onUpdateLevel(bottom: ILevel, top: ILevel) {

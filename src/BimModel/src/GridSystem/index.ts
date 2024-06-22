@@ -5,11 +5,13 @@ import * as THREE from "three";
 import {
   Components,
   CubeMapComponent,
+  deleteGridSignal,
   Grid,
   gridXSignal,
   gridYSignal,
   LevelSystem,
   listLevelSignal,
+  selectViewSignal,
 } from "@BimModel/src";
 import {ToolComponent} from "@BimModel/src/Tool";
 import {Component, Disposable, UUID} from "@BimModel/src/types";
@@ -63,6 +65,17 @@ export class GridSystem extends Component<string> implements Disposable {
     }
     return lines;
   }
+  get intersects() {
+    const points: THREE.Vector3[] = [];
+    for (const uuid in this.gridX) {
+      const z = this.gridX[uuid].gridItem.coordinate;
+      for (const uuid in this.gridY) {
+        const x = this.gridY[uuid].gridItem.coordinate;
+        points.push(new THREE.Vector3(x, 0, z));
+      }
+    }
+    return points;
+  }
   /**
    *
    * @param components
@@ -71,12 +84,32 @@ export class GridSystem extends Component<string> implements Disposable {
     super(components);
     effect(() => {
       for (const grid of gridXSignal.value) {
-        if (!this.gridX[grid.uuid])
+        if (!this.gridX[grid.uuid]) {
           this.gridX[grid.uuid] = new Grid(components, grid);
+        }
+        this.gridX[grid.uuid].gridItem = grid;
+        this.onViewChangeItem(this.gridX[grid.uuid]);
       }
+    });
+    effect(() => {
       for (const grid of gridYSignal.value) {
-        if (!this.gridY[grid.uuid])
+        if (!this.gridY[grid.uuid]) {
           this.gridY[grid.uuid] = new Grid(components, grid);
+        }
+        this.gridY[grid.uuid].gridItem = grid;
+        this.onViewChangeItem(this.gridY[grid.uuid]);
+      }
+    });
+    effect(() => {
+      if (!deleteGridSignal.value) return;
+      const uuid = deleteGridSignal.value.uuid;
+      if (this.gridX[uuid]) {
+        this.gridX[uuid].dispose();
+        delete this.gridX[uuid];
+      }
+      if (this.gridY[uuid]) {
+        this.gridY[uuid].dispose();
+        delete this.gridY[uuid];
       }
     });
   }
@@ -104,6 +137,12 @@ export class GridSystem extends Component<string> implements Disposable {
     for (const uuid in this.gridY) {
       this.gridY[uuid].onViewChange(view, elevation);
     }
+  }
+  onViewChangeItem(grid: Grid) {
+    if (!selectViewSignal.value) return;
+    const {elevationType} = selectViewSignal.value;
+    const elevation = elevationType ? this.elevations[elevationType] : null;
+    grid.onViewChange(selectViewSignal.value, elevation);
   }
 
   private initGrid(axis: IGridAxis) {

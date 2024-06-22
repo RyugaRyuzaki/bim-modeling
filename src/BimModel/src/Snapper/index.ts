@@ -14,12 +14,13 @@ import {SnapUtils} from "../utils";
 import {FragmentMesh} from "clay";
 import {GeometryCSS} from "../system";
 import {SelectionComponent} from "../SelectionComponent";
+import {GridSystem} from "../GridSystem";
 /**
  *
  */
 export class Snapper extends Component<string> implements Disposable {
   static readonly uuid = UUID.Snapper;
-  static readonly tolerance = 0.05;
+  static readonly tolerance = 0.1;
   static readonly tempMatrix = new THREE.Matrix4();
   enabled = false;
   workPlane!: THREE.Plane | null;
@@ -52,6 +53,18 @@ export class Snapper extends Component<string> implements Disposable {
   get ProjectComponent() {
     return this.components.tools.get(ProjectComponent);
   }
+  get GridSystem() {
+    return this.components.tools.get(GridSystem);
+  }
+  get gridIntersect(): ISnapper[] {
+    if (!this.workPlane) return [];
+    return this.GridSystem.intersects.map((p) => {
+      return {
+        point: this.workPlane!.projectPoint(p, new THREE.Vector3()),
+        css: GeometryCSS.snap.intersect,
+      } as ISnapper;
+    });
+  }
   get elements() {
     return this.ProjectComponent?.elements;
   }
@@ -62,6 +75,13 @@ export class Snapper extends Component<string> implements Disposable {
     } else {
       document.addEventListener("keydown", this.onKeyDown);
     }
+  }
+  set snapGrid(point: THREE.Vector3 | null) {
+    this._snap = null;
+    this.visible = false;
+    if (!point) return;
+
+    this.getSnap(this.gridIntersect, point);
   }
 
   private _found: THREE.Intersection | null = null;
@@ -96,11 +116,6 @@ export class Snapper extends Component<string> implements Disposable {
           this.getPoint(posArray, c),
         ],
       } as ISnapTriangle;
-    }
-
-    if (object instanceof THREE.Line) {
-      this.getSnapperLineVector(object, point);
-      return;
     }
   }
   get found() {
@@ -146,15 +161,7 @@ export class Snapper extends Component<string> implements Disposable {
       }),
       ...this.includes,
     ];
-    for (let i = 0; i < pointTypes.length; i++) {
-      const snap = pointTypes[i];
-      if (currentPoint.distanceTo(snap.point) <= Snapper.tolerance) {
-        this.visible = true;
-        this._snap = snap.point;
-        this.updatePoint(snap.point, snap.css);
-        break;
-      }
-    }
+    this.getSnap(pointTypes, currentPoint);
   }
   /**
    *
@@ -179,6 +186,17 @@ export class Snapper extends Component<string> implements Disposable {
 
   get() {
     return Snapper.uuid;
+  }
+  getSnap(pointTypes: ISnapper[], currentPoint: THREE.Vector3) {
+    for (let i = 0; i < pointTypes.length; i++) {
+      const snap = pointTypes[i];
+      if (currentPoint.distanceTo(snap.point) <= Snapper.tolerance) {
+        this.visible = true;
+        this._snap = snap.point;
+        this.updatePoint(snap.point, snap.css);
+        break;
+      }
+    }
   }
   getSnapperLineVector(segment: THREE.Line, point: THREE.Vector3) {
     if (!this.workPlane || !segment.geometry) return;

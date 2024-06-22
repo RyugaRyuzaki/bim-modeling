@@ -15,6 +15,7 @@ import {
 import {IElevation, ILevel, IView} from "../../types";
 import {disposeSegment} from "@BimModel/src/system/geometry/location/utils";
 import {LocationUtils} from "@BimModel/src/system/geometry/location/LocationUtils";
+import {LevelAnnotation} from "./LevelAnnotation";
 export class Level implements Disposable {
   private static readonly radius = 60;
 
@@ -32,22 +33,18 @@ export class Level implements Disposable {
   }
   private _visible = false;
   set visible(visible: boolean) {
-    if (!this.startPoint || !this.endPoint || !this.segment) return;
+    if (!this.point || !this.segment) return;
     if (this._visible === visible) return;
     this._visible = visible;
     if (visible) {
-      this.segment.add(this.startPoint.label);
-      this.segment.add(this.endPoint.label);
+      this.segment.add(this.point.label);
       this.components.annotationScene.add(this.segment);
     } else {
-      this.startPoint.label.removeFromParent();
-      this.endPoint.label.removeFromParent();
+      this.point.label.removeFromParent();
       this.segment.removeFromParent();
     }
   }
-  set setupEvent(_enabled: boolean) {}
-  endPoint!: Annotation;
-  startPoint!: Annotation;
+  point!: LevelAnnotation;
   segment!: THREE.Line;
   get elevation() {
     const {max, min} = this.boundingBox;
@@ -84,58 +81,33 @@ export class Level implements Disposable {
     }
     if (start && end) this.update(start, end);
   }
-  initialized = false;
+  private initialized = false;
   /**
    *
    */
   constructor(private components: Components, public level: ILevel) {}
   async dispose() {
     this.initialized = false;
-    this.setupEvent = false;
-    this.startPoint?.dispose();
-    (this.startPoint as any) = null;
-    this.endPoint?.dispose();
-    (this.endPoint as any) = null;
+    this.point?.dispose();
+    (this.point as any) = null;
     disposeSegment(this.segment);
   }
-  onChangeName = (value: string) => {
-    this.startPoint.nameSignal.value = value;
-    this.endPoint.nameSignal.value = value;
+  onChangeLevel = (value: number) => {
+    if (!this.segment || !this.segment.geometry.attributes.position) return;
+    const corePositions = this.segment.geometry.attributes.position.array;
+    corePositions[1] = value;
+    corePositions[4] = value;
+    this.segment.computeLineDistances();
+    this.segment.geometry.attributes.position.needsUpdate = true;
+    this.point.point.y = value;
   };
-
   private update(start: THREE.Vector3, end: THREE.Vector3) {
-    const {name} = this.level;
     if (!this.initialized) {
-      this.startPoint = new Annotation(
-        start,
-        Level.radius / 6 + 10,
-        Level.radius / 2,
-        Level.radius,
-        Level.radius
-      );
-      Annotation.initLevelAnnotation(this.startPoint.svg, Level.radius);
-      this.startPoint.container.style.top = `${-Level.radius / 2}px`;
-      this.startPoint.container.style.left = `${Level.radius / 2}px`;
-      this.endPoint = new Annotation(
-        end,
-        10,
-        Level.radius / 2,
-        Level.radius,
-        Level.radius
-      );
-      Annotation.initLevelAnnotation(this.endPoint.svg, Level.radius, false);
-
-      this.endPoint.container.style.top = `${-Level.radius / 2}px`;
-      this.endPoint.container.style.left = `${-Level.radius / 2}px`;
-      this.startPoint.nameSignal.value = name;
-      this.startPoint.onChangeName = this.onChangeName;
-      this.endPoint.nameSignal.value = name;
-      this.endPoint.onChangeName = this.onChangeName;
-      this.setupEvent = true;
+      this.point = new LevelAnnotation(this.level, end);
+      this.point.onChangeLevel = this.onChangeLevel;
       this.initialized = true;
     }
-    this.startPoint.point.copy(start);
-    this.endPoint.point.copy(end);
+    this.point.point.copy(end);
     const position = LocationUtils.getPositionLocationFromPoints([start, end]);
     if (!this.segment)
       this.segment = LocationUtils.createSegment(

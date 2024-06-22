@@ -1,5 +1,5 @@
-import {IFC4X3 as IFC} from "web-ifc";
 import * as THREE from "three";
+import {IFC4X3 as IFC} from "web-ifc";
 import {Model} from "../../base";
 import {Profile} from "../Profiles/Profile";
 import {ClayGeometry} from "../Geometry";
