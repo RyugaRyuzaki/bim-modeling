@@ -8,7 +8,6 @@ import {
   createRectSVG,
   setUpPath,
   strokeStyle,
-  LevelSystem,
   selectViewSignal,
 } from "@BimModel/src";
 import {IElevation, ILevel, IView} from "../../types";
@@ -17,9 +16,7 @@ export class Elevation implements Disposable {
   get CubeMapComponent() {
     return this.components.tools.get(CubeMapComponent);
   }
-  get transFormControls() {
-    return this.components.tools.get(LevelSystem).transFormControls;
-  }
+
   private _visible = false;
   set visible(visible: boolean) {
     if (!this.label) return;
@@ -69,23 +66,23 @@ export class Elevation implements Disposable {
       this.container,
       this.view.elevationType!
     );
-    this.svg.classList.add("cursor-pointer");
-    this.svg.classList.add("pointer-events-auto");
+
     this.label = new CSS2DObject(this.container);
     const {center} = this.CubeMapComponent.sphere;
     const {max, min} = this.CubeMapComponent.box;
+    const factor = 1.2;
     switch (this.view.elevationType!) {
       case "South":
-        this.label.position.set(0, center.y, max.z * Elevation.offsetFactor);
+        this.label.position.set(0, center.y, max.z * factor);
         break;
       case "West":
-        this.label.position.set(min.x * Elevation.offsetFactor, center.y, 0);
+        this.label.position.set(min.x * factor, center.y, 0);
         break;
       case "East":
-        this.label.position.set(max.x * Elevation.offsetFactor, center.y, 0);
+        this.label.position.set(max.x * factor, center.y, 0);
         break;
       case "North":
-        this.label.position.set(0, center.y, min.z * Elevation.offsetFactor);
+        this.label.position.set(0, center.y, min.z * factor);
         break;
     }
     this.label.lookAt(center);
@@ -110,6 +107,9 @@ export class Elevation implements Disposable {
     elevation: IElevation
   ) {
     const svg = createSVG(container, this.square, this.square);
+    svg.classList.add("absolute");
+    svg.classList.add("cursor-pointer");
+    svg.classList.add("pointer-events-auto");
     createRectSVG(
       svg,
       this.square / 4,

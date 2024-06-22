@@ -84,6 +84,7 @@ export default defineConfig(() => {
           __dirname,
           "./src/BimModel/src/LevelSystem"
         ),
+        "@GridSystem": path.resolve(__dirname, "./src/BimModel/src/GridSystem"),
         "@WorkPlane": path.resolve(__dirname, "./src/BimModel/src/WorkPlane"),
         "@DrawTool": path.resolve(__dirname, "./src/BimModel/src/DrawTool"),
         "@system": path.resolve(__dirname, "./src/BimModel/src/system"),

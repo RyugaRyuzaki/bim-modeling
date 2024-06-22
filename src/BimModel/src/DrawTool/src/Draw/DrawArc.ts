@@ -37,6 +37,8 @@ export class DrawArc extends BaseDraw {
   };
   onMouseMove = (_e: MouseEvent) => {
     this.findPoint = _e;
+    this.Snapper.find = _e;
+    this.Snapper.snapGrid = this.foundPoint;
     if (!this.foundPoint || this.mousedown) return;
     this.RaycasterComponent!.updateInfo(this.foundPoint);
     if (this.count === 0) return;
@@ -52,6 +54,7 @@ export class DrawArc extends BaseDraw {
         this.orthoDir = null;
       }
     }
+    if (this.Snapper.snap) this.movingPoint = this.Snapper.snap.clone();
     // toggle visibility to true
     if (!this.locationArc)
       this.locationArc = new LocationArc(this.components, this.workPlane);

@@ -4,12 +4,7 @@
 import * as THREE from "three";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {Components, Disposable, lengthUnitSignal} from "@BimModel/src";
-import {
-  dimStyle,
-  GeometryCSS,
-  IBaseLocation,
-  ILocationArc,
-} from "@system/geometry/types";
+import {dimStyle, GeometryCSS, IBaseLocation} from "@system/geometry/types";
 import {BaseLocation} from "./BaseLocation";
 import {LocationUtils} from "./LocationUtils";
 import {
@@ -23,7 +18,11 @@ import {
   createDimensionAngleContainer,
   createDimensionRadiusContainer,
 } from "./Components";
+import {ILocationArc} from "clay";
 
+/**
+ *
+ */
 export class LocationArc
   extends BaseLocation
   implements Disposable, IBaseLocation<ILocationArc>

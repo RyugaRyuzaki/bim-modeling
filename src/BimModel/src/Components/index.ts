@@ -38,6 +38,7 @@ export class Components implements Disposable {
   public scene = new THREE.Scene();
   public modelScene = new SceneBuilder();
   public annotationScene = new SceneBuilder();
+  public clippingScene = new SceneBuilder();
   public canvas!: HTMLCanvasElement;
   private clock!: THREE.Clock;
 
@@ -83,6 +84,7 @@ export class Components implements Disposable {
     this.scene.add(this.annotationScene);
     this.modelScene.renderOrder = 10;
     this.annotationScene.renderOrder = 10;
+
     // this.modelScene.add(new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2)));
     this.ifcModel.ifcAPI.SetWasmPath("https://unpkg.com/web-ifc@0.0.54/", true);
     effect(() => {
@@ -94,13 +96,15 @@ export class Components implements Disposable {
     this.setupEvent = false;
     this.canvas?.remove();
     (this.canvas as any) = null;
-
     this.modelScene.dispose();
     this.modelScene.removeFromParent();
     (this.modelScene as any) = null;
     this.annotationScene.dispose();
     this.annotationScene.removeFromParent();
     (this.annotationScene as any) = null;
+    this.clippingScene.dispose();
+    this.clippingScene.removeFromParent();
+    (this.clippingScene as any) = null;
     (this.scene as any) = null;
     (this.ifcModel as any) = null;
     this.ifcModel = new Model();

@@ -40,6 +40,7 @@
       "@RendererComponent/*": ["src/BimModel/src/RendererComponent/*"],
       "@ProjectComponent/*": ["src/BimModel/src/ProjectComponent/*"],
       "@LevelSystem/*": ["src/BimModel/src/LevelSystem/*"],
+      "@GridSystem/*": ["src/BimModel/src/GridSystem/*"],
       "@WorkPlane/*": ["src/BimModel/src/WorkPlane/*"],
       "@DrawTool/*": ["src/BimModel/src/DrawTool/*"],
       "@system/*": ["src/BimModel/src/system/*"],

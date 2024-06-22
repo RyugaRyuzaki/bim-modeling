@@ -26,10 +26,10 @@ export function initPerspectiveCamera(aspect: number): THREE.PerspectiveCamera {
 }
 export function initOrthographicCamera(width: number, height: number) {
   const camera = new THREE.OrthographicCamera(
-    width / -100,
-    width / 100,
-    height / 100,
-    height / -100,
+    width / -50,
+    width / 50,
+    height / 50,
+    height / -50,
     -defaultCameraFar,
     defaultCameraFar
   );

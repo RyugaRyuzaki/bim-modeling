@@ -5,13 +5,13 @@ import * as THREE from "three";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 
 import {Components, Disposable} from "@BimModel/src";
-import {
-  GeometryCSS,
-  IBaseLocation,
-  ILocationPoint,
-} from "@system/geometry/types";
+import {GeometryCSS, IBaseLocation} from "@system/geometry/types";
 import {BaseLocation} from "./BaseLocation";
 import {createLabel, disposeLabel} from "./utils";
+import {ILocationPoint} from "clay";
+/**
+ *
+ */
 export class LocationPoint
   extends BaseLocation
   implements Disposable, IBaseLocation<ILocationPoint>

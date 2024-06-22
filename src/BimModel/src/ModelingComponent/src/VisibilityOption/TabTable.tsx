@@ -4,7 +4,6 @@ import React, {memo} from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -36,10 +35,7 @@ const TabTable = ({
     return "#" + mat.color.getHexString();
   };
   return (
-    <Table className="relative min-h-[400px] max-h-[100vh] overflow-x-hidden overflow-y-auto ">
-      <TableCaption>
-        {Object.keys(structure.children).length || "None"} Category
-      </TableCaption>
+    <Table>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[50px] h-[30px]">

@@ -11,8 +11,6 @@ import {ILineType} from "@BimModel/src/ProjectComponent/types";
 const LineOption = () => {
   return (
     <div className="relative h-full flex justify-center items-center">
-      <div className="h-[80%] w-[1px] dark:bg-white bg-black my-auto"></div>
-
       <Select
         value={lineTypeSignal.value}
         onValueChange={(value: ILineType) => (lineTypeSignal.value = value)}

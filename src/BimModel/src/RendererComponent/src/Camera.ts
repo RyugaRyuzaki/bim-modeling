@@ -10,6 +10,7 @@ import {
   initOrthographicCamera,
   initPerspectiveCamera,
 } from "../../utils";
+import {CubeMapComponent} from "@BimModel/src/CubeMapComponent";
 
 CameraControls.install({
   THREE,
@@ -18,7 +19,7 @@ CameraControls.install({
  *
  */
 export class Camera implements Disposable, Resizeable, Updateable {
-  protected readonly _frustumSize = 50;
+  protected readonly _frustumSize = 100;
   enabled = false;
 
   private perspectiveCamera!: THREE.PerspectiveCamera;
@@ -90,13 +91,16 @@ export class Camera implements Disposable, Resizeable, Updateable {
     return this.size;
   }
   setLookAt(position: THREE.Vector3, target: THREE.Vector3) {
+    const box = this.components.tools.get(CubeMapComponent).box;
+    this.cameraControls.zoomTo(1);
     this.cameraControls.setLookAt(
       position.x,
       position.y,
       position.z,
       target.x,
       target.y,
-      target.z
+      target.z,
+      true
     );
   }
   saveState() {

@@ -39,7 +39,7 @@ const VisibilityTabs = () => {
               <TabsContent
                 key={`${key}-${index}-TabsContent`}
                 value={key}
-                className="mt-0 border-1"
+                className="relative min-h-[400px] max-h-[100vh] overflow-x-hidden overflow-y-auto mt-0 border-1 "
               >
                 <TabTable
                   structure={modelStructureSignal.value!.children[key]}

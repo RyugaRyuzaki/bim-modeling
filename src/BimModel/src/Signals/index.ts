@@ -7,6 +7,7 @@ import {disposeClippingPlanes} from "./ClippingPlanes";
 import {disposeStructure} from "./Structure";
 import {disposeWorkPlane} from "./WorkPlane";
 import {disposeElementType} from "./ElementType";
+import {disposeAnnotation} from "./Annotation";
 
 export * from "./Modeling";
 export * from "./Project";
@@ -17,6 +18,7 @@ export * from "./ClippingPlanes";
 export * from "./Structure";
 export * from "./WorkPlane";
 export * from "./ElementType";
+export * from "./Annotation";
 
 export function disposeSignals() {
   disposeModeling();
@@ -28,4 +30,5 @@ export function disposeSignals() {
   disposeStructure();
   disposeWorkPlane();
   disposeElementType();
+  disposeAnnotation();
 }

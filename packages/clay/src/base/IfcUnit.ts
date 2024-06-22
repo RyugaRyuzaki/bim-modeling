@@ -3,7 +3,7 @@ import {Model} from "./model";
 
 export class IfcUnit {
   IfcDimensionalExponents: IFC.IfcDimensionalExponents =
-    new IFC.IfcDimensionalExponents(1, 1, 1, 1, 1, 1, 1);
+    new IFC.IfcDimensionalExponents(0, 0, 0, 0, 0, 0, 0);
   IfcLengthUnit: IFC.IfcSIUnit = new IFC.IfcSIUnit(
     this.IfcDimensionalExponents,
     IFC.IfcUnitEnum.LENGTHUNIT,

@@ -32,6 +32,7 @@ export abstract class ElementType<
     geometry.setIndex([]);
     const fragment = new Fragment(geometry, material, 0);
     fragment.mesh.frustumCulled = false;
+    fragment.mesh.renderOrder = 10;
     return fragment;
   }
   dispose() {

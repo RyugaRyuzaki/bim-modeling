@@ -20,7 +20,7 @@ const VisibilityPanel = () => {
         <DialogHeader>
           <DialogTitle>Model Visibility</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 py-4 z-7000">
           <VisibilityTabs />
         </div>
         <DialogFooter>

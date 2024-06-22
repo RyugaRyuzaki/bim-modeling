@@ -8,10 +8,11 @@ import {IfcUtils} from "../../../utils/ifc-utils";
 import {SimpleOpening} from "../../Openings";
 import {IndexedGeometry, FragmentMesh, Fragment} from "../../../fragment";
 import {BVH} from "../../../fragment/bvh";
+import {ILocation} from "../../../geometries";
 
 export abstract class Element extends ClayObject {
   abstract attributes: IFC.IfcElement;
-
+  location!: ILocation;
   position = new THREE.Vector3();
 
   rotation = new THREE.Euler();
@@ -73,9 +74,9 @@ export abstract class Element extends ClayObject {
         const geomID = geometry.geometryExpressID;
         const transformArray = geometry.flatTransformation;
         const fragment = this.type.fragments.get(geomID);
-        if (!fragment) throw new Error("Fragment not found!");
+        if (!fragment) continue;
         const instances = fragment.getInstancesIDs(id);
-        if (!instances) throw new Error("Instances not found!");
+        if (!instances) continue;
         tempMatrix.fromArray(transformArray);
         for (const instance of instances) {
           fragment.mesh.setMatrixAt(instance, tempMatrix);

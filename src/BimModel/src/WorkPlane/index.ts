@@ -9,6 +9,7 @@ import {Component, Disposable, UUID} from "@BimModel/src/types";
 import {RendererComponent} from "@BimModel/src/RendererComponent";
 import {effect} from "@preact/signals-react";
 import {showWorkPlaneSignal} from "@BimModel/src/Signals";
+import {Clipping} from "./src";
 export class WorkPlane extends Component<string> implements Disposable {
   static readonly uuid = UUID.WorkPlane;
   static readonly size1 = 1;
@@ -57,6 +58,7 @@ export class WorkPlane extends Component<string> implements Disposable {
   get grid() {
     return this._grid;
   }
+  clipping!: Clipping;
   /**
    *
    */
@@ -162,6 +164,7 @@ export class WorkPlane extends Component<string> implements Disposable {
 
     this._grid = new THREE.Mesh(geometry, material);
     this._grid.frustumCulled = false;
+    this.clipping = new Clipping(this.components);
     effect(() => {
       if (showWorkPlaneSignal.value) {
         this.components.annotationScene.add(this._grid);

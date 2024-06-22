@@ -10,6 +10,7 @@ export * from "./Signals";
 export * from "./system";
 export * from "./WorkPlane";
 export * from "./LevelSystem";
+export * from "./GridSystem";
 export * from "./Snapper";
 export * from "./DrawTool";
 export * from "./utils";

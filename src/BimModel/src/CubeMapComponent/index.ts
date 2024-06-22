@@ -297,6 +297,14 @@ export class CubeMapComponent
     controls.setLookAt(pos.x, pos.y, pos.z, center.x, center.y, center.z);
     controls.fitToSphere(this.sphere, true);
   }
+  onNavigation3D() {
+    const controls =
+      this.components.tools.get(RendererComponent).camera.cameraControls;
+    const {center} = this.sphere;
+    const {max} = this.box;
+    controls.setLookAt(max.x, max.y, max.z, center.x, center.y, center.z);
+    controls.fitToSphere(this.sphere, true);
+  }
   onNavigationElevation(view: IView) {
     if (view.viewType !== "Elevation" || !view.elevationType) return;
     const controls =

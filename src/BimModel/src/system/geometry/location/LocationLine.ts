@@ -9,12 +9,7 @@ import {
   getDirection,
   lengthUnitSignal,
 } from "@BimModel/src";
-import {
-  dimStyle,
-  GeometryCSS,
-  IBaseLocation,
-  ILocationLine,
-} from "@system/geometry/types";
+import {dimStyle, GeometryCSS, IBaseLocation} from "@system/geometry/types";
 import {BaseLocation} from "./BaseLocation";
 import {CSS2DObject} from "three/examples/jsm/renderers/CSS2DRenderer";
 import {LocationUtils} from "./LocationUtils";
@@ -22,6 +17,10 @@ import {createDimensionLocationLineContainer} from "./Components";
 import {effect} from "@preact/signals-react";
 import {createLabel, disposeLabel} from "./utils";
 import {disposeSegment} from "./utils";
+import {ILocationLine} from "clay";
+/**
+ *
+ */
 export class LocationLine
   extends BaseLocation
   implements Disposable, IBaseLocation<ILocationLine>

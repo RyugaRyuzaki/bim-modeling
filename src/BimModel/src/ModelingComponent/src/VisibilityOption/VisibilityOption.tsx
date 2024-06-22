@@ -12,14 +12,13 @@ import {openVisibilitySignal} from "@BimModel/src/Signals";
 
 const VisibilityOption = () => {
   return (
-    <div className="relative h-full flex justify-center items-center mx-2">
-      <div className="h-[80%] w-[1px] dark:bg-white bg-black  my-auto"></div>
+    <div className="relative h-full flex justify-center items-center mx-1">
       <TooltipProvider delayDuration={10}>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="outline"
-              className={`h-[90%] p-1 my-auto mx-1 hover:bg-green-400 disabled:cursor-none`}
+              className={`h-[80%] p-1 my-auto  hover:bg-green-400 disabled:cursor-none`}
               onClick={() => (openVisibilitySignal.value = true)}
             >
               <FaEye className={iConClassName} />

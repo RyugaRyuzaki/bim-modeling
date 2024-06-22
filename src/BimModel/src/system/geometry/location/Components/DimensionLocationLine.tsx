@@ -24,12 +24,11 @@ const DimensionLocationLine = ({location}: {location: LocationLine}) => {
     if (location.onChangeLength) location.onChangeLength(+value);
     setTimeout(() => (changeInputSignal.value = false), 100);
   };
-  // const onFocust
   return (
     <div className="relative shadow-xl rounded-md flex justify-start h-[26px] bg-slate-400 pointer-events-auto p-1">
       <input
         type="text"
-        className="text-black text-sm text-center h-[20px] my-auto w-[50px] bg-transparent outline-none mx-1 "
+        className=" text-black text-sm text-center h-[20px] my-auto w-[50px] bg-transparent outline-none mx-1 "
         ref={inputRef}
         onBlurCapture={onBlur}
         onFocusCapture={() => (changeInputSignal.value = true)}
