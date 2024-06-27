@@ -14,7 +14,6 @@ import {
   SelectionComponent,
   Snapper,
 } from "@BimModel/src";
-import {IDrawType} from "@ModelingComponent/types";
 import {IElement} from "clay";
 import {MaterialComponent} from "@BimModel/src/MaterialComponent";
 
@@ -31,7 +30,6 @@ export abstract class BaseDraw {
   abstract updateElement: (
     location: LocationPoint | LocationArc | LocationLine
   ) => void;
-  abstract drawType: IDrawType;
   public tempElement: IElement | null = null;
   get modelScene() {
     return this.components.modelScene;

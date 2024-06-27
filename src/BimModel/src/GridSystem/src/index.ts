@@ -152,7 +152,6 @@ export class Grid implements Disposable {
         }
       }
     }
-    this.onChangeName(this.gridItem.name);
     this.update(start, end);
   }
   onUpdateLevel(bottom: ILevel, top: ILevel) {

@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import {Components} from "@BimModel/src/Components";
 import {BaseDraw} from "./BaseDraw";
-import {IDrawType} from "@ModelingComponent/types";
 import {LocationArc, LocationLine, LocationPoint} from "@BimModel/src/system";
 import {
   currentLevelSignal,
@@ -14,7 +13,6 @@ import {IFC4X3 as IFC} from "web-ifc";
 import {SimpleColumn} from "clay";
 
 export class DrawPoint extends BaseDraw {
-  drawType: IDrawType = "Point";
   private locationPoint!: LocationPoint;
   /**
    *

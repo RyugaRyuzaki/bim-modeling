@@ -169,7 +169,6 @@ export class SelectionComponent extends Component<any> implements Disposable {
   constructor(components: Components) {
     super(components);
     this.components.tools.add(SelectionComponent.uuid, this);
-    this.setupEvent = true;
   }
   async dispose() {
     this.enabled = false;

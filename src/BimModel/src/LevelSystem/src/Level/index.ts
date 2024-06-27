@@ -11,6 +11,7 @@ import {
   strokeStyle,
   selectViewSignal,
   Annotation,
+  lengthUnitSignal,
 } from "@BimModel/src";
 import {IElevation, ILevel, IView} from "../../types";
 import {disposeSegment} from "@BimModel/src/system/geometry/location/utils";
@@ -100,6 +101,7 @@ export class Level implements Disposable {
     this.segment.computeLineDistances();
     this.segment.geometry.attributes.position.needsUpdate = true;
     this.point.point.y = value;
+    this.level.elevation = value / lengthUnitSignal.value.factor;
   };
   private update(start: THREE.Vector3, end: THREE.Vector3) {
     if (!this.initialized) {

@@ -28,6 +28,7 @@ import {effect} from "@preact/signals-react";
 import {
   currentLevelSignal,
   drawingTypeSignal,
+  modelingSignal,
   modifySignal,
 } from "@BimModel/src/Signals";
 import {ILevel} from "../LevelSystem/types";
@@ -76,7 +77,9 @@ export class DrawTool extends Component<string> implements Disposable {
         }
       }
       this.RaycasterComponent!.visibleInfo = drawingTypeSignal.value !== "None";
-      this.SelectionComponent.setupEvent = drawingTypeSignal.value === "None";
+    });
+    effect(() => {
+      this.SelectionComponent.setupEvent = modelingSignal.value === null;
     });
     effect(() => {
       for (const name in this.modifies) {
@@ -88,7 +91,6 @@ export class DrawTool extends Component<string> implements Disposable {
           modify.setupEvent = modifySignal.value === name;
         }
       }
-      this.RaycasterComponent!.visibleInfo = modifySignal.value !== null;
       this.SelectionComponent.setupEvent = modifySignal.value === null;
     });
     effect(() => {

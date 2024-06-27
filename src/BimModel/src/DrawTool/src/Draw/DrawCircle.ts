@@ -6,10 +6,8 @@ import {Components} from "@BimModel/src/Components";
 import {BaseDraw} from "./BaseDraw";
 import {LocationArc, LocationLine, LocationPoint} from "@system/geometry";
 import {getDirection} from "@BimModel/src";
-import {IDrawType} from "@ModelingComponent/types";
 
 export class DrawCircle extends BaseDraw {
-  drawType: IDrawType = "Circle";
   private leftLocationArc!: LocationArc;
   private rightLocationArc!: LocationArc;
   private count = 0;

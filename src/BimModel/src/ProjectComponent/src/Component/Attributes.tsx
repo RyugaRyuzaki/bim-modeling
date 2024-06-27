@@ -40,16 +40,11 @@ const Attributes = ({attributes}: {attributes: IAttribute}) => {
           >
             GlobalId
           </p>
-          <p
-            className="mx-2  
-          my-auto select-none 
-          whitespace-nowrap overflow-hidden 
-          overflow-ellipsis flex-1 max-w-[200px] w-[200px]
-          p-2
-          "
-          >
-            {attributes.globalId}
-          </p>
+          <Input
+            value={attributes.globalId}
+            disabled={true}
+            onChange={(e) => e.preventDefault()}
+          />
         </div>
       </div>
     </>
