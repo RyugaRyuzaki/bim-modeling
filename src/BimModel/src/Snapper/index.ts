@@ -15,6 +15,7 @@ import {FragmentMesh} from "clay";
 import {GeometryCSS} from "../system";
 import {SelectionComponent} from "../SelectionComponent";
 import {GridSystem} from "../GridSystem";
+import {selectViewSignal} from "../Signals";
 /**
  *
  */
@@ -77,10 +78,11 @@ export class Snapper extends Component<string> implements Disposable {
     }
   }
   set snapGrid(point: THREE.Vector3 | null) {
+    if (!selectViewSignal.value || selectViewSignal.value.viewType !== "Plan")
+      return;
     this._snap = null;
     this.visible = false;
     if (!point) return;
-
     this.getSnap(this.gridIntersect, point);
   }
 

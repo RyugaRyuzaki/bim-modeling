@@ -77,6 +77,7 @@ export class LevelSystem extends Component<string> implements Disposable {
           break;
         case "Elevation":
           this.camera!.resetState();
+          clippingPlanesSignal.value = [];
           this.onchangeLevel(null);
           this.CubeMapComponent.onNavigationElevation(selectViewSignal.value);
           break;

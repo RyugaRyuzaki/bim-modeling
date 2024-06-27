@@ -5,11 +5,9 @@ import * as THREE from "three";
 import {Components} from "@BimModel/src/Components";
 import {BaseDraw} from "./BaseDraw";
 import {LocationArc, LocationLine, LocationPoint} from "@system/geometry";
-import {IDrawType} from "@ModelingComponent/types";
 import {isOrthoSignal, lengthUnitSignal} from "@BimModel/src/Signals";
 
 export class DrawArc extends BaseDraw {
-  drawType: IDrawType = "Arc";
   private locationArc!: LocationArc;
   private count = 0;
   private movingPoint: THREE.Vector3 = new THREE.Vector3();
@@ -26,8 +24,10 @@ export class DrawArc extends BaseDraw {
     this.inputKey = "";
     if (this.count === 0) {
       this.start = this.foundPoint.clone();
+      if (this.Snapper.snap) this.start.copy(this.Snapper.snap);
     } else if (this.count === 1) {
       this.end = this.foundPoint.clone();
+      if (this.Snapper.snap) this.end.copy(this.Snapper.snap);
     }
     this.count++;
     if (this.count === 3) {

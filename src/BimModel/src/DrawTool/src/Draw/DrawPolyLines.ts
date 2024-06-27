@@ -2,10 +2,8 @@ import * as THREE from "three";
 
 import {Components} from "@BimModel/src";
 import {BaseDraw} from "./BaseDraw";
-import {IDrawType} from "@ModelingComponent/types";
 import {LocationArc, LocationLine, LocationPoint} from "@BimModel/src/system";
 export class DrawPolyLines extends BaseDraw {
-  drawType: IDrawType = "PolyLines";
   /**
    *
    */

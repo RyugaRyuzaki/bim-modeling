@@ -12,11 +12,7 @@ import AnnotationTabs from "./AnnotationTabs";
 
 const AnnotationPanel = () => {
   return (
-    <Dialog
-      open={showAnnotationPanelSignal.value}
-      onOpenChange={() => (showAnnotationPanelSignal.value = false)}
-      modal={false}
-    >
+    <Dialog open={showAnnotationPanelSignal.value}>
       <DialogContent className="xl:max-w-[800px] ">
         <DialogHeader>
           <DialogTitle>Annotation</DialogTitle>
@@ -24,6 +20,14 @@ const AnnotationPanel = () => {
         <div className="grid gap-4 py-4 z-7000">
           <AnnotationTabs />
         </div>
+        <DialogFooter className="flex justify-between">
+          <Button
+            type="button"
+            onClick={() => (showAnnotationPanelSignal.value = false)}
+          >
+            OK
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

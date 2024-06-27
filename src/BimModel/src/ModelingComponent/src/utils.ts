@@ -22,7 +22,7 @@ export const CategoryTool: Record<ICategory, IModeling[]> = {
   Column: [Point],
   Door: [Point],
   Window: [Point],
-  "Structure Beam": [Line, Arc, Circle, PickLine],
+  "Structure Beam": [Line, Arc, PickLine],
   "Structure Column": [Point],
   "Structure Wall": [Line, Rectangular, Arc, Circle, PolyLines, PickLine],
   "Structure Slab": [

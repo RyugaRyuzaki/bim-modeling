@@ -19,6 +19,7 @@ import {
   ProjectComponent,
   MaterialComponent,
 } from "@BimModel/src";
+import {ILevel} from "@BimModel/src/LevelSystem/types";
 
 export class ElementLocation implements Disposable {
   groupParameter: {[uuid: string]: BaseParameterGroup} = {};
@@ -121,7 +122,8 @@ export class ElementLocation implements Disposable {
       //
     }
   };
-
+  updateLevel(_level: ILevel) {}
+  updateWorkPlane(_workPlane: THREE.Plane) {}
   addQsetWallCommon() {
     const qset = new QsetWallCommon();
     this.groupParameter[qset.uuid] = qset;

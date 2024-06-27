@@ -14,10 +14,8 @@ import {
 } from "@BimModel/src";
 import {BaseDraw} from "./BaseDraw";
 import {LocationArc, LocationLine, LocationPoint} from "@system/geometry";
-import {IDrawType} from "@ModelingComponent/types";
 import {SimpleBeam, SimpleWall} from "clay";
 export class DrawLine extends BaseDraw {
-  drawType: IDrawType = "Line";
   private locationLine!: LocationLine;
   private count = 0;
   private points: THREE.Vector3[] = [];
@@ -146,7 +144,7 @@ export class DrawLine extends BaseDraw {
     elementLocation.groupParameter = {
       ...tempElementSignal.value.groupParameter,
     };
-    this.ProjectComponent.ifcProject.addElementLevel = elementLocation;
+    // this.ProjectComponent.ifcProject.addElementLevel = elementLocation;
     switch (type) {
       case "Structure Beam":
         elementLocation.addQsetBeamCommon();
@@ -191,6 +189,7 @@ export class DrawLine extends BaseDraw {
           this.tempElement.attributes.Name = new IFC.IfcLabel(
             `${type} ${currentElementIndex + 1}`
           );
+          (this.tempElement as SimpleWall).updateOffsetLevel({});
         }
         break;
       default:

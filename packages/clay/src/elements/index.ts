@@ -1,13 +1,3 @@
-import {SimpleBeam, SimpleBeamType} from "./Beam";
-import {SimpleCurtainWall, SimpleCurtainWallType} from "./CurtainWalls";
-import {SimpleFurniture, SimpleFurnitureType} from "./Furniture";
-import {SimpleMember, SimpleMemberType} from "./Members";
-import {SimpleOpening, SimpleOpeningType} from "./Openings";
-import {SimplePlate, SimplePlateType} from "./Plates";
-import {SimpleSlab, SimpleSlabType} from "./Slabs";
-import {SimpleWall, SimpleWallType} from "./Walls";
-import {SimpleWindow, SimpleWindowType} from "./Windows";
-
 export * from "./Openings";
 export * from "./Slabs";
 export * from "./Walls";
