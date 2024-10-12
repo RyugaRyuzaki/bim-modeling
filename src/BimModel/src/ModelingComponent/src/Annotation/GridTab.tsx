@@ -20,8 +20,13 @@ import {Button} from "@components/ui/button";
 import {IGrid} from "@BimModel/src/GridSystem/types";
 import GridItem from "./GridItem";
 import {parseText} from "@BimModel/src/utils/inputAnnotation/InputAnnotation";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const Orientations: IGridAxis[] = ["X", "Y"];
+
 const GridTab = () => {
+  useSignals();
+
   const [name, setName] = useState<string>("");
   const [axis, setAxis] = useState<IGridAxis>("X");
   const [coordinate, setCoordinate] = useState<number>(0);

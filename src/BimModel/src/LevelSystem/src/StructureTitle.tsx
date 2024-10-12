@@ -4,6 +4,8 @@ import {IoDocumentTextOutline} from "react-icons/io5";
 import {IView} from "../types";
 import {selectViewSignal} from "@BimModel/src/Signals";
 const iconClassName = "h-[16px] w-[16px]";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const StructureTitle: FC<IStructureTitle> = ({
   view,
   show,
@@ -11,6 +13,8 @@ const StructureTitle: FC<IStructureTitle> = ({
   handleCheck,
   onToggle,
 }) => {
+  useSignals();
+
   const onSelect = () => {
     if (view.viewType === "Browsers") return;
     selectViewSignal.value = view;

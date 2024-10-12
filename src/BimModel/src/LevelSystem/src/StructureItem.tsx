@@ -1,6 +1,7 @@
 import React, {memo} from "react";
 import StructureTitle from "./StructureTitle";
 import {IView} from "../types";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const isTreeGroupActive = (view: IView): boolean => {
   let checked = false;
@@ -25,6 +26,8 @@ const StructureItem = ({
   handleCheck: (view: IView) => void;
   onExpanded: (view: IView) => void;
 }) => {
+  useSignals();
+
   const onToggle = () => {
     onExpanded(view);
   };

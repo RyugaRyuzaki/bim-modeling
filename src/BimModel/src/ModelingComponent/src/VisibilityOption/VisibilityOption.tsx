@@ -9,8 +9,11 @@ import {
 } from "@/components/ui/tooltip";
 import {iConClassName} from "../constants";
 import {openVisibilitySignal} from "@BimModel/src/Signals";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const VisibilityOption = () => {
+  useSignals();
+
   return (
     <div className="relative h-full flex justify-center items-center mx-1">
       <TooltipProvider delayDuration={10}>

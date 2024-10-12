@@ -10,10 +10,10 @@
         "three-stdlib": "^2.29.6",
         "earcut": "^2.2.4",
         "uuid": "^9.0.1",
-        "bim-fragment": "^1.4.2",
-        "web-ifc": "^0.0.54"
+        "web-ifc": "^0.0.59"
     },
     "devDependencies": {
+        "@types/earcut": "^2.1.4",
         "@types/node": "^20.11.25",
         "@types/three": "^0.162.0"
     }

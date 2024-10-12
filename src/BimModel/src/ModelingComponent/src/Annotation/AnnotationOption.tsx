@@ -9,7 +9,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {showAnnotationPanelSignal} from "@BimModel/src/Signals";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const AnnotationOption = () => {
+  useSignals();
+
   return (
     <div className="relative h-full flex justify-center items-center mx-1">
       <TooltipProvider delayDuration={10}>

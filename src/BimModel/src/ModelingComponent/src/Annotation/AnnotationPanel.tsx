@@ -9,8 +9,11 @@ import {
 } from "@/components/ui/dialog";
 import {showAnnotationPanelSignal} from "@BimModel/src/Signals";
 import AnnotationTabs from "./AnnotationTabs";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const AnnotationPanel = () => {
+  useSignals();
+
   return (
     <Dialog open={showAnnotationPanelSignal.value}>
       <DialogContent className="xl:max-w-[800px] ">

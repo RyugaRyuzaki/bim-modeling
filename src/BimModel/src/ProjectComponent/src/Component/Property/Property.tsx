@@ -1,8 +1,11 @@
 import {selectElementSignal, tempElementSignal} from "@BimModel/src/Signals";
 import React from "react";
 import ElementProperty from "./ElementProperty";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const Property = () => {
+  useSignals();
+
   const getProperty = () => {
     if (tempElementSignal.value)
       return (

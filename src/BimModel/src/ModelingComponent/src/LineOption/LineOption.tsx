@@ -8,7 +8,11 @@ import {
 } from "@components/ui/select";
 import {lineTypeSignal, ListLineTypes} from "@BimModel/src/Signals";
 import {ILineType} from "@BimModel/src/ProjectComponent/types";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const LineOption = () => {
+  useSignals();
+
   return (
     <div className="relative h-full flex justify-center items-center">
       <Select

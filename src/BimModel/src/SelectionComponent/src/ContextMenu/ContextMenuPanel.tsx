@@ -1,12 +1,16 @@
 import React, {useEffect, useState} from "react";
 import {SelectionComponent} from "../..";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const contextMenuBg = "bg-slate-800";
+
 const ContextMenuPanel = ({
   selectionComponent,
 }: {
   selectionComponent: SelectionComponent;
 }) => {
+  useSignals();
+
   useEffect(() => {
     console.log(selectionComponent);
   }, []);

@@ -12,6 +12,7 @@ export class Revolved<T extends Profile> extends ClayGeometry {
     | IFC.IfcBooleanClippingResult;
   curve!: IFC.IfcTrimmedCurve;
   core!: IFC.IfcRevolvedAreaSolid;
+  trim!: IFC.IfcTrimmedCurve;
 
   profile: T;
 
@@ -38,7 +39,6 @@ export class Revolved<T extends Profile> extends ClayGeometry {
     this.profile = profile;
 
     const {dirX, dirZ} = MathUtils.basisFromEuler(this.rotation);
-
     const placement = new IFC.IfcAxis2Placement3D(
       IfcUtils.point(this.center),
       IfcUtils.direction(dirZ),
@@ -54,7 +54,19 @@ export class Revolved<T extends Profile> extends ClayGeometry {
       new IFC.IfcAxis1Placement(point, direction),
       new IFC.IfcPlaneAngleMeasure(this.angle)
     );
+    const circle = new IFC.IfcCircle(
+      placement,
+      new IFC.IfcPositiveLengthMeasure(this.radius)
+    );
+    this.trim = new IFC.IfcTrimmedCurve(
+      circle,
+      [],
+      [],
+      new IFC.IfcBoolean(true),
+      IFC.IfcTrimmingPreference.CARTESIAN
+    );
 
+    this.attributes = this.core;
     this.update();
   }
   update(): void {

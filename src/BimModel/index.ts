@@ -1,3 +1,4 @@
+import {spinnerSignal} from "@components/Spinner/Spinner";
 import {
   Components,
   disposeSignals,
@@ -81,14 +82,20 @@ export class BimModel {
     /* =====SelectionComponent===== */
     const selectionComponent = this.components.tools.get(SelectionComponent);
     selectionComponent.enabled = true;
+    spinnerSignal.value = true;
     this.components.ifcModel.init().then(() => {
       projectComponent.init(this.property);
-      projectComponent.initElement();
       modelingComponent.init(this.modeling, this.option);
-      levelSystem.initView(this.structure);
+      levelSystem.init(this.structure);
       gridSystem.init();
+      drawTool.init();
+      spinnerSignal.value = false;
     });
     this.components.gameLoop();
   }
+
+  onResize = () => {
+    this.components?.onResize();
+  };
 }
 //

@@ -12,8 +12,11 @@ import {useComputed} from "@preact/signals-react";
 import {modifySignal} from "@BimModel/src/Signals";
 import ModifyCopy from "./ModifyCopy";
 import ModifyMove from "./ModifyMove";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const ModifyButton = ({type}: {type: ITool}) => {
+  useSignals();
+
   const disabled = useComputed(() => {
     return modifySignal.value !== null && modifySignal.value !== type.type;
   });
@@ -44,6 +47,8 @@ const ModifyButton = ({type}: {type: ITool}) => {
 };
 
 const ModifyTabs = () => {
+  useSignals();
+
   return (
     <div className="relative h-full w-full flex justify-start items-center">
       <ModifyCopy />

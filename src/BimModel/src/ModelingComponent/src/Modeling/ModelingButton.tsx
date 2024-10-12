@@ -11,8 +11,11 @@ import {isModelingSignal, modelingSignal} from "@BimModel/src/Signals";
 import {useComputed} from "@preact/signals-react";
 import {ICategory} from "@BimModel/src/system";
 import {buttonClassName} from "../constants";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const ModelingButton: FC<Props> = ({type, discipline}) => {
+  useSignals();
+
   const handleModeling = (type: ICategory) => {
     modelingSignal.value = {discipline, type};
     isModelingSignal.value = true;

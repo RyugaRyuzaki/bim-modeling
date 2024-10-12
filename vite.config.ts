@@ -121,7 +121,12 @@ export default defineConfig(() => {
       environment: "jsdom",
     },
     optimizeDeps: {
-      exclude: ["js-big-decimal"],
+      exclude: [
+        "js-big-decimal",
+        "three-mesh-bvh",
+        "three-mesh-bvh/src/workers/GenerateMeshBVHWorker.js",
+        "three-mesh-bvh/src/workers/ParallelMeshBVHWorker.js",
+      ],
     },
   };
 });

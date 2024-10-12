@@ -1,4 +1,4 @@
-import {SimpleBeam, SimpleBeamType} from "./Beam";
+import {SimpleBeam, SimpleBeamType, ArcBeam, ArcBeamType} from "./Beam";
 import {SimpleColumn, SimpleColumnType} from "./Column";
 import {SimpleCurtainWall, SimpleCurtainWallType} from "./CurtainWalls";
 import {SimpleFurniture, SimpleFurnitureType} from "./Furniture";
@@ -23,6 +23,7 @@ export type IElement =
   | SimpleSlab
   | SimpleWall
   | SimpleBeam
+  | ArcBeam
   | SimpleColumn
   | SimpleWindow;
 export type IElementName =
@@ -34,6 +35,7 @@ export type IElementName =
   | "SimpleSlab"
   | "SimpleWall"
   | "SimpleBeam"
+  | "ArcBeam"
   | "SimpleColumn"
   | "SimpleWindow";
 export type IElementType =
@@ -45,6 +47,7 @@ export type IElementType =
   | SimpleSlabType
   | SimpleWallType
   | SimpleBeamType
+  | ArcBeamType
   | SimpleColumnType
   | SimpleWindowType;
 export type IElementTypeName =
@@ -57,4 +60,5 @@ export type IElementTypeName =
   | "SimpleWallType"
   | "SimpleWindowType"
   | "SimpleColumnType"
+  | "ArcBeamType"
   | "SimpleBeamType";

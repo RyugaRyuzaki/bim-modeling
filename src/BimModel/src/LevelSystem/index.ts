@@ -144,7 +144,7 @@ export class LevelSystem extends Component<string> implements Disposable {
       this.workPlane.grid
     );
   }
-  initView(structure: HTMLDivElement) {
+  init(structure: HTMLDivElement) {
     this.structureContainer = createStructureContainer(this);
     structure.appendChild(this.structureContainer);
   }

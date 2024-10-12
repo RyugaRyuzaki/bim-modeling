@@ -7,7 +7,9 @@ import {IIfcBaseConfig} from "../../types";
 import {Profile} from "../../../geometries";
 
 export * from "./src";
-
+/**
+ *
+ */
 export class SimpleBeamType extends DynamicElementType<SimpleBeam> {
   attributes: IFC4X3.IfcBeamType;
   constructor(model: Model, config: IIfcBaseConfig, public profile: Profile) {

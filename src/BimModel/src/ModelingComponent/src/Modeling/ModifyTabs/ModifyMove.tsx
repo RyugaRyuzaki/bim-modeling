@@ -10,8 +10,11 @@ import {
 } from "@/components/ui/tooltip";
 import {modifySignal, selectElementSignal} from "@BimModel/src/Signals";
 import {useComputed} from "@preact/signals-react";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const ModifyMove = () => {
+  useSignals();
+
   const disabled = useComputed(() => {
     return (
       !selectElementSignal.value ||

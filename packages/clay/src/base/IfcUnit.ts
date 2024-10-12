@@ -5,49 +5,41 @@ export class IfcUnit {
   IfcDimensionalExponents: IFC.IfcDimensionalExponents =
     new IFC.IfcDimensionalExponents(0, 0, 0, 0, 0, 0, 0);
   IfcLengthUnit: IFC.IfcSIUnit = new IFC.IfcSIUnit(
-    this.IfcDimensionalExponents,
     IFC.IfcUnitEnum.LENGTHUNIT,
     "",
     IFC.IfcSIUnitName.METRE
   );
   IfcAreaUnit: IFC.IfcSIUnit = new IFC.IfcSIUnit(
-    this.IfcDimensionalExponents,
     IFC.IfcUnitEnum.AREAUNIT,
     "",
     IFC.IfcSIUnitName.SQUARE_METRE
   );
   IfcVolumeUnit: IFC.IfcSIUnit = new IFC.IfcSIUnit(
-    this.IfcDimensionalExponents,
     IFC.IfcUnitEnum.VOLUMEUNIT,
     "",
     IFC.IfcSIUnitName.CUBIC_METRE
   );
   IfcPlaneAngleUnit: IFC.IfcSIUnit = new IFC.IfcSIUnit(
-    this.IfcDimensionalExponents,
     IFC.IfcUnitEnum.PLANEANGLEUNIT,
     IFC.IfcSIPrefix.ATTO,
     IFC.IfcSIUnitName.RADIAN
   );
   IfcMassUnit: IFC.IfcSIUnit = new IFC.IfcSIUnit(
-    this.IfcDimensionalExponents,
     IFC.IfcUnitEnum.MASSUNIT,
     IFC.IfcSIPrefix.KILO,
     IFC.IfcSIUnitName.GRAM
   );
   IfcTimeUnit: IFC.IfcSIUnit = new IFC.IfcSIUnit(
-    this.IfcDimensionalExponents,
     IFC.IfcUnitEnum.TIMEUNIT,
     IFC.IfcSIPrefix.ATTO,
     IFC.IfcSIUnitName.SECOND
   );
   IfcThermoDynamicTemperatureUnit: IFC.IfcSIUnit = new IFC.IfcSIUnit(
-    this.IfcDimensionalExponents,
     IFC.IfcUnitEnum.THERMODYNAMICTEMPERATUREUNIT,
     IFC.IfcSIPrefix.ATTO,
     IFC.IfcSIUnitName.PASCAL
   );
   IfcLuminousIntensityUnit: IFC.IfcSIUnit = new IFC.IfcSIUnit(
-    this.IfcDimensionalExponents,
     IFC.IfcUnitEnum.LUMINOUSINTENSITYUNIT,
     IFC.IfcSIPrefix.ATTO,
     IFC.IfcSIUnitName.LUMEN
@@ -99,7 +91,6 @@ export class IfcUnit {
       new IFC.IfcGeometricRepresentationSubContext(
         new IFC.IfcLabel("Axis"),
         new IFC.IfcLabel("Model"),
-        this.IfcAxis2PlacementGlobal3D,
         this.IfcGeometricRepresentationContext,
         null,
         IFC.IfcGeometricProjectionEnum.GRAPH_VIEW,
@@ -109,7 +100,6 @@ export class IfcUnit {
       new IFC.IfcGeometricRepresentationSubContext(
         new IFC.IfcLabel("Body"),
         new IFC.IfcLabel("Model"),
-        this.IfcAxis2PlacementGlobal3D,
         this.IfcGeometricRepresentationContext,
         null,
 
@@ -120,7 +110,6 @@ export class IfcUnit {
       new IFC.IfcGeometricRepresentationSubContext(
         new IFC.IfcLabel("Box"),
         new IFC.IfcLabel("Model"),
-        this.IfcAxis2PlacementGlobal3D,
         this.IfcGeometricRepresentationContext,
         null,
         IFC.IfcGeometricProjectionEnum.MODEL_VIEW,
@@ -130,7 +119,6 @@ export class IfcUnit {
       new IFC.IfcGeometricRepresentationSubContext(
         new IFC.IfcLabel("Box"),
         new IFC.IfcLabel("Model"),
-        this.IfcAxis2PlacementGlobal3D,
         this.IfcGeometricRepresentationContext,
         null,
 

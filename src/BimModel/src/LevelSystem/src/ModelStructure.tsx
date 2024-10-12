@@ -4,7 +4,11 @@ import {useSignal, useSignalEffect} from "@preact/signals-react";
 import StructureItem from "./StructureItem";
 import {LevelSystem} from "..";
 import {IView} from "../types";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const ModelStructure = ({level}: {level: LevelSystem}) => {
+  useSignals();
+
   const [modelStructure, setModelStructure] = useState<ReactElement>(<></>);
   const expanded = useSignal<string[]>([]);
 

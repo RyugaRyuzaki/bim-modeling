@@ -4,7 +4,11 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {modelStructureSignal} from "@BimModel/src/Signals";
 import {IStructure} from "@ProjectComponent/types";
 import TabTable from "./TabTable";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const VisibilityTabs = () => {
+  useSignals();
+
   const updateChildren = (structure: IStructure, visible: boolean) => {
     for (const key in structure.children) {
       structure.children[key].visible = visible;

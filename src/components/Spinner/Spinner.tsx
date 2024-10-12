@@ -1,11 +1,18 @@
 import React from "react";
+import {signal} from "@preact/signals-react";
 import {ReactComponent as OpenBim} from "@assets/openbim.svg";
 import "./spinner.css";
+import {useSignals} from "@preact/signals-react/runtime";
+
+export const spinnerSignal = signal<boolean>(false);
 
 const Spinner = () => {
+  useSignals();
   return (
     <div
-      className={`absolute h-full w-full top-0 left-0 z-5000 flex items-center bg-slate-400 `}
+      className={`absolute h-full w-full top-0 left-0 z-5000 flex items-center bg-slate-400 ${
+        spinnerSignal.value ? "visible" : "hidden"
+      }`}
     >
       <div className="openbim-fading-circle">
         <div className="openbim-circle1 openbim-circle"></div>

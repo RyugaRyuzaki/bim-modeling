@@ -22,6 +22,8 @@ import {
   openProjectInfoSignal,
   projectSignal,
 } from "@BimModel/src/Signals";
+import {useSignals} from "@preact/signals-react/runtime";
+
 //#endregion
 
 const FileButton = ({
@@ -31,6 +33,8 @@ const FileButton = ({
   tool: ITool;
   onClick: (e: any) => void;
 }) => {
+  useSignals();
+
   return (
     <TooltipProvider delayDuration={10}>
       <Tooltip>
@@ -52,6 +56,8 @@ const FileButton = ({
 };
 
 const FileTabs = () => {
+  useSignals();
+
   const New = {
     type: "New Project",
     icon: <NewProject className={iConClassName} />,

@@ -2,30 +2,38 @@
  * @module DrawLine
  */
 import * as THREE from "three";
-import {IFC4X3 as IFC} from "web-ifc";
 
-import {
-  Components,
-  isOrthoSignal,
-  lengthUnitSignal,
-  modelingSignal,
-  modelStructureSignal,
-  tempElementSignal,
-} from "@BimModel/src";
+import {isOrthoSignal, lengthUnitSignal} from "@BimModel/src";
 import {BaseDraw} from "./BaseDraw";
-import {LocationArc, LocationLine, LocationPoint} from "@system/geometry";
-import {SimpleBeam, SimpleWall} from "clay";
-export class DrawLine extends BaseDraw {
-  private locationLine!: LocationLine;
+import {LocationLine} from "@system/geometry";
+import {IElement} from "clay";
+import {BaseDrawCategory} from "./BaseDrawCategory";
+export abstract class DrawLine extends BaseDraw<LocationLine, IElement> {
+  abstract tempElement: IElement;
+
+  abstract disposeElement: () => void;
+
+  abstract addElement: () => void;
+
+  abstract createElement: () => void;
+
+  abstract updateElement: () => void;
+
+  public location!: LocationLine;
+
   private count = 0;
+
   private points: THREE.Vector3[] = [];
+
   private start: THREE.Vector3 = new THREE.Vector3();
+
   private end: THREE.Vector3 = new THREE.Vector3();
 
   /**
    *
    */
-  constructor(components: Components, workPlane: THREE.Plane) {
+  constructor(public category: BaseDrawCategory) {
+    const {components, workPlane} = category;
     super(components, workPlane);
   }
   onClick = (_e: MouseEvent) => {
@@ -41,7 +49,7 @@ export class DrawLine extends BaseDraw {
     // if the first time user click
     // if another time
     if (this.count >= 1) {
-      if (this.locationLine) this.locationLine.visible = false;
+      if (this.location) this.location.visible = false;
       this.addElement();
     }
     // increase the count
@@ -53,7 +61,7 @@ export class DrawLine extends BaseDraw {
   onMouseMove = (_e: MouseEvent) => {
     this.findPoint = _e;
     this.Snapper.find = _e;
-    this.Snapper.snapGrid = this.foundPoint;
+    // this.Snapper.snapGrid = this.foundPoint;
     if (!this.foundPoint || this.mousedown) return;
     this.RaycasterComponent!.updateInfo(this.foundPoint);
     if (this.count === 0) return;
@@ -67,17 +75,13 @@ export class DrawLine extends BaseDraw {
       this.orthoDir = null;
     }
     if (this.Snapper.snap) this.end = this.Snapper.snap.clone();
-    // if measureControl.tempDim is  null then create a dimensionLine
     const start = this.points[this.points.length - 1];
-    if (!this.locationLine)
-      this.locationLine = new LocationLine(
-        this.components,
-        this.workPlane.clone()
-      );
-    this.locationLine.update(start, this.end);
-    this.locationLine.visible = true;
+    if (!this.location)
+      this.location = new LocationLine(this.components, this.workPlane.clone());
+    this.location.update(start, this.end);
+    this.location.visible = true;
     this.createElement();
-    this.updateElement(this.locationLine);
+    this.updateElement();
   };
   onMousedown = (_e: MouseEvent) => {
     if (_e.button === 0) this.mousedown = true;
@@ -96,10 +100,10 @@ export class DrawLine extends BaseDraw {
       const {factor} = lengthUnitSignal.value;
       const start = this.points[this.points.length - 1];
       const end = this.getDistance(start, this.end, distance / factor);
-      if (this.locationLine) {
-        this.locationLine.update(start, end);
-        this.updateElement(this.locationLine);
-        this.locationLine.visible = false;
+      if (this.location) {
+        this.location.update(start, end);
+        this.updateElement();
+        this.location.visible = false;
       }
       this.onFinished();
       this.start = end.clone();
@@ -119,102 +123,10 @@ export class DrawLine extends BaseDraw {
   };
   onCallBack = (_value?: number) => {};
   dispose = () => {
-    this.disposeElement();
-    this.locationLine?.dispose();
-    (this.locationLine as any) = null;
+    this.disposeElement!();
+    this.location?.dispose();
+    (this.location as any) = null;
     this.count = 0;
     this.points = [];
-  };
-  addElement = () => {
-    if (
-      !this.tempElement ||
-      !tempElementSignal.value ||
-      !modelingSignal.value ||
-      !modelStructureSignal.value
-    )
-      return;
-    const {type} = modelingSignal.value;
-    const bimElementTypes = {...tempElementSignal.value.bimElementTypes};
-    const elementLocation = this.ProjectComponent.setElement(
-      type,
-      bimElementTypes,
-      this.tempElement,
-      this.locationLine
-    );
-    elementLocation.groupParameter = {
-      ...tempElementSignal.value.groupParameter,
-    };
-    // this.ProjectComponent.ifcProject.addElementLevel = elementLocation;
-    switch (type) {
-      case "Structure Beam":
-        elementLocation.addQsetBeamCommon();
-        break;
-      case "Wall":
-      case "Structure Wall":
-        elementLocation.addQsetWallCommon();
-        break;
-      default:
-        break;
-    }
-    (this.tempElement as any) = null;
-    (this.locationLine as any) = null;
-  };
-  createElement = () => {
-    if (!tempElementSignal.value || !modelingSignal.value) return;
-    const {selectType} = tempElementSignal.value.bimElementTypes;
-    if (!selectType) return;
-    const {type} = modelingSignal.value;
-    const currentElementIndex = Object.keys(
-      this.ProjectComponent.elements
-    ).length;
-    switch (type) {
-      case "Structure Beam":
-        if (!this.tempElement) {
-          this.tempElement = selectType.addInstance(
-            this.MaterialComponent.materialCategories[type]!
-          ) as SimpleBeam;
-          this.tempElement.attributes.Name = new IFC.IfcLabel(
-            `${type} ${currentElementIndex + 1}`
-          );
-          (this.tempElement as SimpleBeam).updateOffsetLevel({});
-        }
-        break;
-      case "Wall":
-      case "Structure Wall":
-        if (!this.tempElement) {
-          this.tempElement = selectType.addInstance(
-            this.MaterialComponent.materialCategories[type]!
-          ) as SimpleWall;
-
-          this.tempElement.attributes.Name = new IFC.IfcLabel(
-            `${type} ${currentElementIndex + 1}`
-          );
-          (this.tempElement as SimpleWall).updateOffsetLevel({});
-        }
-        break;
-      default:
-        break;
-    }
-    this.components.modelScene.updateMatrixWorld(true);
-    if (this.tempElement)
-      this.components.modelScene.add(...this.tempElement.meshes);
-  };
-
-  updateElement = (location: LocationPoint | LocationArc | LocationLine) => {
-    if (!tempElementSignal.value || !modelingSignal.value) return;
-    const {selectType} = tempElementSignal.value.bimElementTypes;
-    if (!selectType) return;
-    const {type} = modelingSignal.value;
-    if (!this.tempElement) return;
-    if (!(location instanceof LocationLine)) return;
-    switch (type) {
-      case "Structure Beam":
-      case "Wall":
-      case "Structure Wall":
-        this.tempElement.updateDraw(location.location);
-        break;
-      default:
-        break;
-    }
   };
 }

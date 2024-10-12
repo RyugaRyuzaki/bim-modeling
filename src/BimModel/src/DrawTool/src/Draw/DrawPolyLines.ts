@@ -2,8 +2,16 @@ import * as THREE from "three";
 
 import {Components} from "@BimModel/src";
 import {BaseDraw} from "./BaseDraw";
-import {LocationArc, LocationLine, LocationPoint} from "@BimModel/src/system";
-export class DrawPolyLines extends BaseDraw {
+import {LocationLine} from "@BimModel/src/system";
+import {IElement} from "clay";
+export abstract class DrawPolyLines extends BaseDraw<LocationLine, IElement> {
+  abstract disposeElement: () => void;
+
+  abstract addElement: () => void;
+
+  abstract createElement: () => void;
+
+  abstract updateElement: () => void;
   /**
    *
    */
@@ -17,8 +25,7 @@ export class DrawPolyLines extends BaseDraw {
 
   onFinished = () => {};
   onCallBack = (_value?: number) => {};
-  dispose = () => {};
-  addElement = () => {};
-  createElement = () => {};
-  updateElement = (_location: LocationPoint | LocationArc | LocationLine) => {};
+  dispose = () => {
+    this.disposeElement!();
+  };
 }

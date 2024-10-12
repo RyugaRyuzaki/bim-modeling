@@ -2,8 +2,11 @@ import React, {FC, useState} from "react";
 import {BaseParameterGroup} from "../../../system/element/Parameter";
 import GroupParameterTitle from "./GroupParameterTitle";
 import Parameter from "./Parameter";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const GroupParameter: FC<Props> = ({group}) => {
+  useSignals();
+
   const [show, setShow] = useState<boolean>(true);
   const onToggle = () => {
     setShow(!show);
