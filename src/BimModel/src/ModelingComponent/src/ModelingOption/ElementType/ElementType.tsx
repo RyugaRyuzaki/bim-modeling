@@ -11,7 +11,11 @@ import {
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {openElementTypeSignal} from "@BimModel/src/Signals";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const ElementType = () => {
+  useSignals();
+
   const handleOK = () => {
     openElementTypeSignal.value = false;
   };

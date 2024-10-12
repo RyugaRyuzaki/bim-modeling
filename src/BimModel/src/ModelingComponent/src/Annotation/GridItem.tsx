@@ -10,6 +10,8 @@ import {
 import {Signal} from "@preact/signals-react";
 import {IGrid, IGridAxis} from "@BimModel/src/GridSystem/types";
 import {lengthUnitSignal} from "@BimModel/src/Signals";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const GridItem = ({
   name,
   selectGrid,
@@ -21,6 +23,8 @@ const GridItem = ({
   setSelectGrid: Dispatch<SetStateAction<IGrid | null>>;
   grids: Signal<IGrid[]>;
 }) => {
+  useSignals();
+
   return (
     <div className="p-2 w-[50%]">
       <Table className="rounded-md border-1 p-1">

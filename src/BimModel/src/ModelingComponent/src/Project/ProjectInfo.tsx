@@ -12,8 +12,11 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {openProjectInfoSignal} from "@BimModel/src/Signals";
 import {ModelingComponent} from "../..";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const ProjectInfo: FC<Props> = ({modeling}) => {
+  useSignals();
+
   const handleShowProjectInfo = () => {
     openProjectInfoSignal.value = false;
     console.log(modeling);

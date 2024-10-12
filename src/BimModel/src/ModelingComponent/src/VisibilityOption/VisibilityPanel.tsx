@@ -9,7 +9,11 @@ import {
 } from "@/components/ui/dialog";
 import {openVisibilitySignal} from "@BimModel/src/Signals";
 import VisibilityTabs from "./VisibilityTabs";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const VisibilityPanel = () => {
+  useSignals();
+
   return (
     <Dialog
       open={openVisibilitySignal.value}

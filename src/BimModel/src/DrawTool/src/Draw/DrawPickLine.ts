@@ -1,13 +1,27 @@
 import * as THREE from "three";
 import {Components} from "@BimModel/src/Components";
 import {BaseDraw} from "./BaseDraw";
-import {LocationArc, LocationLine, LocationPoint} from "@BimModel/src/system";
+import {LocationLine} from "@BimModel/src/system";
+import {IElement} from "clay";
+import {BaseDrawCategory} from "./BaseDrawCategory";
 
-export class DrawPickLine extends BaseDraw {
+export abstract class DrawPickLine extends BaseDraw<LocationLine, IElement> {
+  abstract tempElement: IElement;
+
+  abstract disposeElement: () => void;
+
+  abstract addElement: () => void;
+
+  abstract createElement: () => void;
+
+  abstract updateElement: () => void;
+
+  public location!: LocationLine;
   /**
    *
    */
-  constructor(components: Components, workPlane: THREE.Plane) {
+  constructor(public category: BaseDrawCategory) {
+    const {components, workPlane} = category;
     super(components, workPlane);
   }
   onClick = (_e: MouseEvent) => {};
@@ -16,8 +30,7 @@ export class DrawPickLine extends BaseDraw {
   onKeyDown = (_e: KeyboardEvent) => {};
   onFinished = () => {};
   onCallBack = (_value?: number) => {};
-  dispose = () => {};
-  addElement = () => {};
-  createElement = () => {};
-  updateElement = (_location: LocationPoint | LocationArc | LocationLine) => {};
+  dispose = () => {
+    this.disposeElement!();
+  };
 }

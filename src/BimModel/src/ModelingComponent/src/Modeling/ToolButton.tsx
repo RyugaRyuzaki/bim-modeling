@@ -10,8 +10,11 @@ import {
 import {useComputed} from "@preact/signals-react";
 import {drawingTypeSignal} from "@BimModel/src/Signals";
 import {buttonClassName} from "../constants";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const ToolButton: FC<Props> = ({tool}) => {
+  useSignals();
+
   const disabled = useComputed(() => {
     return (
       drawingTypeSignal.value !== "None" &&

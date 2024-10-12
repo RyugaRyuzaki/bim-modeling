@@ -1,20 +1,23 @@
 import React, {FC, useState} from "react";
 import {IModeling, ITool} from "@ModelingComponent/types";
 import ModelingButton from "./ModelingButton";
-import {useSignalEffect} from "@preact/signals-react";
+import {useComputed, useSignalEffect} from "@preact/signals-react";
 import {modelingSignal} from "@BimModel/src/Signals";
 import {getModelings} from "../utils";
 import ToolButton from "./ToolButton";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const ContentModeling: FC<Props> = ({types, discipline}) => {
-  const [tools, setTools] = useState<IModeling[]>([]);
-  useSignalEffect(() => {
+  useSignals();
+
+  const tools = useComputed<{[drawType: string]: IModeling}>(() => {
     const modelings = modelingSignal.value
       ? getModelings(modelingSignal.value.type)
-      : [];
-    setTools(modelings);
-    if (!modelingSignal.value) return;
+      : {};
+
+    return modelings;
   });
+
   return (
     <div className="relative h-full w-full flex justify-start items-center">
       <>
@@ -27,13 +30,13 @@ const ContentModeling: FC<Props> = ({types, discipline}) => {
                 discipline={discipline}
               />
             ))}
-            {tools.length > 0 && (
+            {Object.keys(tools.value).length > 0 && (
               <div className="h-[80%] w-[1px] dark:bg-white bg-black mx-2 my-auto"></div>
             )}
-            {tools.map((tool: IModeling, index: number) => (
+            {Object.keys(tools.value).map((key: string, index: number) => (
               <ToolButton
-                key={`${tool.drawType}-${index}-${discipline}`}
-                tool={tool}
+                key={`${key}-${index}-${discipline}`}
+                tool={tools.value[key]}
               />
             ))}
           </>

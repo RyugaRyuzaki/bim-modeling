@@ -13,8 +13,11 @@ import {
 } from "@BimModel/src/Signals";
 import FileTabs from "./FileTabs";
 import ModifyTabs from "./ModifyTabs/ModifyTabs";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const ModelingTabs = () => {
+  useSignals();
+
   return (
     <Tabs
       value={disciplineSignal.value}

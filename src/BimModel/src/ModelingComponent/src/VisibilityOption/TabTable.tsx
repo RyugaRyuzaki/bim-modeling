@@ -13,6 +13,8 @@ import {Input} from "@/components/ui/input";
 
 import {Checkbox} from "@/components/ui/checkbox";
 import {IStructure} from "@ProjectComponent/types";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const isTreeGroupActive = (structure: IStructure): boolean => {
   let checked = false;
   if (Object.keys(structure.children).length === 0) {
@@ -24,6 +26,10 @@ const isTreeGroupActive = (structure: IStructure): boolean => {
   }
   return checked;
 };
+
+const getColor = (mat: THREE.MeshLambertMaterial) => {
+  return "#" + mat.color.getHexString();
+};
 const TabTable = ({
   structure,
   handleCheck,
@@ -31,9 +37,8 @@ const TabTable = ({
   structure: IStructure;
   handleCheck: (structure: IStructure) => void;
 }) => {
-  const getColor = (mat: THREE.MeshLambertMaterial) => {
-    return "#" + mat.color.getHexString();
-  };
+  useSignals();
+
   return (
     <Table>
       <TableHeader>

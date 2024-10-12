@@ -10,7 +10,11 @@ import {
 } from "@components/ui/select";
 import {ILevel} from "@BimModel/src/LevelSystem/types";
 import {drawingTypeSignal} from "@BimModel/src/Signals";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const Parameter = ({parameter}: {parameter: BaseParameter}) => {
+  useSignals();
+
   const {name, type} = parameter;
   const [value, setValue] = useState<
     string | number | boolean | BaseParameter | ILevel

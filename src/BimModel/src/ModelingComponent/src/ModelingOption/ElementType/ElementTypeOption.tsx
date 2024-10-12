@@ -14,8 +14,11 @@ import {
   SelectValue,
 } from "@components/ui/select";
 import {openElementTypeSignal} from "@BimModel/src/Signals";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const ElementTypeOption = () => {
+  useSignals();
+
   return (
     <div className="relative h-full flex justify-center items-center mx-1">
       <Select>

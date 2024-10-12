@@ -29,15 +29,25 @@ export class RaycasterComponent
   implements Disposable
 {
   static readonly uuid = UUID.RaycasterComponent;
+
   enabled = false;
+
   private positionInfo!: HTMLDivElement;
+
   private valueX!: HTMLParagraphElement;
+
   private valueY!: HTMLParagraphElement;
+
   private valueZ!: HTMLParagraphElement;
+
   public delta!: HTMLParagraphElement;
+
   public mouse: THREE.Vector2 = new THREE.Vector2();
+
   public currentPoint: THREE.Vector3 = new THREE.Vector3();
+
   public raycaster: THREE.Raycaster = new THREE.Raycaster();
+
   set mouseMove(event: MouseEvent) {
     const bounds = this.components.rect;
     const x1 = event.clientX - bounds.left;
@@ -47,18 +57,26 @@ export class RaycasterComponent
     this.mouse.x = (x1 / x2) * 2 - 1;
     this.mouse.y = -(y1 / y2) * 2 + 1;
   }
+
   get currentCamera() {
     return this.RendererComponent?.camera.currentCamera;
   }
+
   get RendererComponent() {
     return this.components.tools.get(RendererComponent);
   }
+
   private _visibleInfo = false;
+
   set visibleInfo(visible: boolean) {
     if (!this.components.container) return;
+
     if (this._visibleInfo === visible) return;
+
     this._visibleInfo = visible;
+
     if (!this.positionInfo) this.initPositionInfo();
+
     if (visible) {
       this.components.container.appendChild(this.positionInfo);
     } else {
@@ -74,15 +92,32 @@ export class RaycasterComponent
    */
   constructor(components: Components) {
     super(components);
+
     this.components.tools.add(RaycasterComponent.uuid, this);
+
     this.raycaster.firstHitOnly = true;
+
     this.raycaster.params.Points!.threshold = 50;
   }
-  async dispose() {}
-
+  /**
+   *
+   */
+  async dispose() {
+    this.positionInfo?.remove();
+    (this.positionInfo as any) = null;
+  }
+  /**
+   *
+   * @returns
+   */
   get() {
     return RaycasterComponent.uuid;
   }
+  /**
+   *
+   * @param currentPlane
+   * @returns
+   */
   getPointRayCasPlane(currentPlane: THREE.Plane) {
     this.raycaster.setFromCamera(this.mouse, this.currentCamera);
     return this.raycaster.ray.intersectPlane(currentPlane, this.currentPoint);
@@ -127,6 +162,11 @@ export class RaycasterComponent
     this.positionInfo.appendChild(pDelta);
     this.positionInfo.appendChild(this.delta);
   }
+  /**
+   *
+   * @param point
+   * @returns
+   */
   updateInfo(point: THREE.Vector3) {
     if (!this.positionInfo) return;
     const {x, y, z} = point;
@@ -135,11 +175,22 @@ export class RaycasterComponent
     this.valueY.textContent = `${(y * factor).toFixed(toFixed)}`;
     this.valueZ.textContent = `${(z * factor).toFixed(toFixed)}`;
   }
+  /**
+   *
+   * @param items
+   * @returns
+   */
   castRay(items = this.meshes): THREE.Intersection | null {
     this.raycaster.setFromCamera(this.mouse, this.currentCamera);
     return this.intersect(items);
   }
-
+  /**
+   *
+   * @param origin
+   * @param direction
+   * @param items
+   * @returns
+   */
   castRayFromVector(
     origin: THREE.Vector3,
     direction: THREE.Vector3,
@@ -148,13 +199,21 @@ export class RaycasterComponent
     this.raycaster.set(origin, direction);
     return this.intersect(items);
   }
-
+  /**
+   *
+   * @param items
+   * @returns
+   */
   intersect(items = this.meshes) {
     const result = this.raycaster.intersectObjects(items, true);
     const filtered = this.filterClippingPlanes(result);
     return filtered.length > 0 ? filtered[0] : null;
   }
-
+  /**
+   *
+   * @param objs
+   * @returns
+   */
   private filterClippingPlanes(objs: THREE.Intersection[]) {
     if (clippingPlanesSignal.value.length === 0) {
       return objs;

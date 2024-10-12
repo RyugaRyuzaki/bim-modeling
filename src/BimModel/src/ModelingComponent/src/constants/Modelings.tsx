@@ -20,8 +20,8 @@ const onClick = (drawType: IDrawType) => {
   }
   drawingTypeSignal.value = drawType;
 };
-
-export const Modelings = {
+//@ts-ignore
+export const Modelings: Record<IDrawType, IModeling> = {
   Finish: {
     icon: <Finish className={iConClassName} />,
     drawType: "Finish",

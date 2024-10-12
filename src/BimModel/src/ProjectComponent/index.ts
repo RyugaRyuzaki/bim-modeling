@@ -40,7 +40,6 @@ export class ProjectComponent extends Component<string> implements Disposable {
   get materialCategories() {
     return this.components.tools.get(MaterialComponent)?.materialCategories;
   }
-  tempElements!: Record<ICategory, ElementLocation | null>;
 
   elements: {[id: number]: ElementLocation} = {};
 
@@ -51,11 +50,11 @@ export class ProjectComponent extends Component<string> implements Disposable {
     super(components);
     this.components.tools.add(ProjectComponent.uuid, this);
 
-    effect(() => {
-      tempElementSignal.value = modelingSignal.value
-        ? this.tempElements[modelingSignal.value.type]
-        : null;
-    });
+    // effect(() => {
+    //   tempElementSignal.value = modelingSignal.value
+    //     ? this.tempElements[modelingSignal.value.type]
+    //     : null;
+    // });
     effect(() => {
       if (!exportIfcSignal.value) return;
       this.export();
@@ -68,7 +67,6 @@ export class ProjectComponent extends Component<string> implements Disposable {
       this.elements[id].dispose();
     }
     this.elements = {};
-    (this.tempElements as any) = {};
     (this.ifcProject as any) = null;
   }
   get() {
@@ -77,14 +75,10 @@ export class ProjectComponent extends Component<string> implements Disposable {
   init(property: HTMLDivElement) {
     this.propertyContainer = createElementContainer();
     property.appendChild(this.propertyContainer);
-  }
-  initElement() {
-    this.tempElements = ElementUtils.createTempElementInstances(
-      this.components
-    );
     modelStructureSignal.value = this.getDefaultStructure();
     this.ifcProject = new IfcProject(this.components.ifcModel);
   }
+
   setElement(
     category: ICategory,
     bimElementTypes: IBimElementType<IElementType>,
@@ -165,14 +159,14 @@ export class ProjectComponent extends Component<string> implements Disposable {
     for (const id in this.elements) {
       this.elements[id].export();
     }
-    for (const key in this.tempElements) {
-      if (!this.tempElements[key]) continue;
-      const {bimElementTypes} = this.tempElements[key] as ElementLocation;
-      const {types} = bimElementTypes;
-      for (const type of types) {
-        type.attributes.OwnerHistory = IfcOwnerHistory;
-      }
-    }
+    // for (const key in this.tempElements) {
+    //   if (!this.tempElements[key]) continue;
+    //   const {bimElementTypes} = this.tempElements[key] as ElementLocation;
+    //   const {types} = bimElementTypes;
+    //   for (const type of types) {
+    //     type.attributes.OwnerHistory = IfcOwnerHistory;
+    //   }
+    // }
     this.ifcProject.export();
     const model = this.components.ifcModel.export();
     const file = new File([model], "model.ifc", {

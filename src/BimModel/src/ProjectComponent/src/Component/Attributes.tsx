@@ -2,7 +2,11 @@ import {IAttribute} from "@BimModel/src/system";
 import React, {memo, useState} from "react";
 import GroupParameterTitle from "./GroupParameterTitle";
 import {Input} from "@components/ui/input";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const Attributes = ({attributes}: {attributes: IAttribute}) => {
+  useSignals();
+
   const [show, setShow] = useState<boolean>(true);
   const onToggle = () => {
     setShow(!show);

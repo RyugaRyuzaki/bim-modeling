@@ -6,11 +6,15 @@ import {IElementType} from "clay";
 import {BaseParameterGroup, IAttribute} from "@BimModel/src/system";
 import GroupParameter from "../GroupParameter";
 import Attributes from "../Attributes";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const ElementProperty: FC<Props> = ({
   bimElementTypes,
   groupParameter,
   attributes,
 }) => {
+  useSignals();
+
   return (
     <div className="h-auto w-full flex flex-col max-h-[100vh] overflow-x-hidden overflow-y-auto">
       <ElementTypes selectType={bimElementTypes} />

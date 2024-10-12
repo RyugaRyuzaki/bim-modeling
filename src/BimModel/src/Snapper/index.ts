@@ -91,7 +91,7 @@ export class Snapper extends Component<string> implements Disposable {
     this.snapper = null;
     this.components.tools.get(RaycasterComponent)!.mouseMove = event;
     this._found = this.RaycasterComponent.castRay();
-    this.SelectionComponent.cursor = this._found ? 4 : 0;
+    this.components.cursor = this._found ? 4 : 0;
     if (!this._found) {
       return;
     }

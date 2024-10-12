@@ -8,7 +8,11 @@ import {
 } from "@components/ui/select";
 import {ListUnits, unitSymbolSignal} from "@BimModel/src/Signals";
 import {IUnitSymbol} from "@BimModel/src/ProjectComponent/types";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const Units = () => {
+  useSignals();
+
   return (
     <div className="relative h-full flex justify-center items-center">
       <Select

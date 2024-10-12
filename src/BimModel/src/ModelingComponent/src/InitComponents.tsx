@@ -19,6 +19,7 @@ const ElementType = lazy(
 const AnnotationOption = lazy(() => import("./Annotation/AnnotationOption"));
 
 const AnnotationPanel = lazy(() => import("./Annotation/AnnotationPanel"));
+const ModelingOption = lazy(() => import("./ModelingOption/ModelingOption"));
 
 export function createModelingContainer(modeling: ModelingComponent) {
   const div = document.createElement("div");
@@ -40,7 +41,9 @@ export function createOptionContainer(_modeling: ModelingComponent) {
   div.className = "h-full w-full relative flex justify-between";
   ReactDOM.createRoot(div).render(
     <>
-      <div className="relative h-full flex justify-start"></div>
+      <div className="relative h-full flex justify-start">
+        <ModelingOption />
+      </div>
       <div className="relative h-full flex justify-end">
         <AnnotationOption />
         <VisibilityOption />

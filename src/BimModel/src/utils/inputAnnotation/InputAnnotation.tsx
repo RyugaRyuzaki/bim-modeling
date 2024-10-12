@@ -6,6 +6,7 @@ import isString from "lodash/isString";
 import {Signal, useSignalEffect} from "@preact/signals-react";
 
 import {changeInputSignal, lengthUnitSignal} from "@BimModel/src/Signals";
+import {useSignals} from "@preact/signals-react/runtime";
 
 export function parseText(text: string) {
   if (isNumber(text)) return text;
@@ -33,6 +34,8 @@ export const InputNumberAnnotation = ({
   onInputBlur: (value: string) => void;
   widthInput: number;
 }) => {
+  useSignals();
+
   const inputRef = useRef<HTMLInputElement | null>(null);
   useSignalEffect(() => {
     inputRef.current!.value = signal.value as string;

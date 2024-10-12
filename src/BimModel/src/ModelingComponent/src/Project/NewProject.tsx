@@ -11,7 +11,11 @@ import {
 
 import {newProjectInfoSignal} from "@BimModel/src/Signals";
 import {ModelingComponent} from "../..";
+import {useSignals} from "@preact/signals-react/runtime";
+
 const NewProject: FC<Props> = ({modeling}) => {
+  useSignals();
+
   const handleNewProject = () => {
     newProjectInfoSignal.value = false;
     console.log(modeling);

@@ -1,7 +1,10 @@
 import React, {FC} from "react";
 import {MdArrowForwardIos} from "react-icons/md";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const GroupParameterTitle: FC<Props> = ({name, show, onToggle}) => {
+  useSignals();
+
   return (
     <div className="group flex justify-start p-2  bg-green-300 text-slate-800 rounded-md border-1 mb-1">
       <button

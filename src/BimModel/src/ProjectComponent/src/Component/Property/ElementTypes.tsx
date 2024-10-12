@@ -17,12 +17,15 @@ import {drawingTypeSignal, openElementTypeSignal} from "@BimModel/src/Signals";
 import {IElementType} from "clay";
 import {useSignal} from "@preact/signals-react";
 import {IBimElementType} from "@ProjectComponent/types";
+import {useSignals} from "@preact/signals-react/runtime";
 
 const ElementTypes = ({
   selectType,
 }: {
   selectType: IBimElementType<IElementType>;
 }) => {
+  useSignals();
+
   const elementTypes = useSignal<IElementType[]>(
     selectType.types as IElementType[]
   );
